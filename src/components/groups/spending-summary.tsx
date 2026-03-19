@@ -13,7 +13,7 @@ interface SpendingSummaryProps {
   members: User[];
   memberSpend: MemberSpend[];
   currency: string;
-  currentUserId: string;
+  highlightedUserId?: string;
 }
 
 export function SpendingSummary({
@@ -21,7 +21,7 @@ export function SpendingSummary({
   members,
   memberSpend,
   currency,
-  currentUserId,
+  highlightedUserId,
 }: SpendingSummaryProps) {
   const spendMap = new Map(memberSpend.map((s) => [s.userId, s]));
 
@@ -45,17 +45,17 @@ export function SpendingSummary({
         {members.map((m) => {
           const spend = spendMap.get(m.id);
           if (!spend) return null;
-          const isMe = m.id === currentUserId;
+          const isHighlightedUser = m.id === highlightedUserId;
           return (
             <div
               key={m.id}
               className={cn(
                 "grid grid-cols-[1fr_auto_auto] items-center gap-4 px-4 py-3 text-sm",
-                isMe && "bg-primary/5"
+                isHighlightedUser && "bg-primary/5"
               )}
             >
-              <span className={cn("font-medium truncate", isMe && "text-primary")}>
-                {isMe ? "You" : (m.name ?? m.email)}
+              <span className={cn("font-medium truncate", isHighlightedUser && "text-primary")}>
+                {isHighlightedUser ? "You" : (m.name ?? m.email)}
               </span>
               <span className="w-24 text-right tabular-nums">
                 {formatCurrency(spend.paid, currency)}

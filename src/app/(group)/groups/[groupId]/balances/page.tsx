@@ -1,7 +1,6 @@
-import { getGroup } from "@/app/actions/group.actions";
+import { getAuthorizedGroup } from "@/lib/group-access";
 import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { getGroupSettlements } from "@/app/actions/settlement.actions";
-import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { fetchRates } from "@/lib/currency/frankfurter";
@@ -16,44 +15,42 @@ interface PageProps {
 
 export default async function BalancesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const session = await auth();
   const [group, expenses, settlements] = await Promise.all([
-    getGroup(groupId),
+    getAuthorizedGroup(groupId),
     getGroupExpenses(groupId),
     getGroupSettlements(groupId),
   ]);
-  if (!group || !session?.user?.id) notFound();
 
-  const dates = [
-    ...new Set(expenses.map((e) => e.date.toISOString().split("T")[0])),
-  ];
+  if (!group) notFound();
+
+  const dates = [...new Set(expenses.map((expense) => expense.date.toISOString().split("T")[0]))];
   const ratesByDate = new Map<string, ExchangeRates>();
-  let hasStaleRates = false;
-
-  await Promise.all(
-    dates.map(async (d) => {
+  const staleDateResults = await Promise.all(
+    dates.map(async (date) => {
       try {
-        ratesByDate.set(d, await fetchRates(group.currency, d));
+        ratesByDate.set(date, await fetchRates(group.currency, date));
+        return false;
       } catch {
-        hasStaleRates = true;
+        return true;
       }
     })
   );
-  try {
-    ratesByDate.set("latest", await fetchRates(group.currency, "latest"));
-  } catch {
-    hasStaleRates = true;
-  }
 
-  const balances = calculateBalances(
-    expenses,
-    settlements,
-    group.currency,
-    ratesByDate
-  );
-  const members = group.members.map((m) => m.user);
-  const currentUserId = session.user.id;
-  const allBalances = [...balances.values()];
+  const latestRatesStale = await (async () => {
+    try {
+      ratesByDate.set("latest", await fetchRates(group.currency, "latest"));
+      return false;
+    } catch {
+      return true;
+    }
+  })();
+
+  const balances = calculateBalances(expenses, settlements, group.currency, ratesByDate);
+  const allBalances = [...balances.values()].map((balance) => ({
+    userId: balance.userId,
+    netAmount: balance.netAmount.toString(),
+  }));
+  const hasStaleRates = staleDateResults.some(Boolean) || latestRatesStale;
 
   return (
     <div className="space-y-6">
@@ -65,19 +62,14 @@ export default async function BalancesPage({ params }: PageProps) {
       )}
 
       {allBalances.length === 0 ? (
-        <EmptyState
-          icon="⚖️"
-          title="No balances"
-          description="Add expenses to see balances."
-        />
+        <EmptyState icon="⚖️" title="No balances" description="Add expenses to see balances." />
       ) : (
         <BalanceBreakdown
           balances={allBalances}
-          members={members}
+          members={group.members.map((member) => member.user)}
           expenses={expenses}
           settlements={settlements}
           currency={group.currency}
-          currentUserId={currentUserId}
         />
       )}
     </div>

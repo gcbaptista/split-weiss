@@ -16,7 +16,7 @@ interface MemberSpendingBreakdownProps {
   memberSpend: MemberSpend[];
   grandTotal: string;
   currency: string;
-  currentUserId: string;
+  highlightedUserId?: string;
 }
 
 export function MemberSpendingBreakdown({
@@ -25,10 +25,10 @@ export function MemberSpendingBreakdown({
   memberSpend,
   grandTotal,
   currency,
-  currentUserId,
+  highlightedUserId,
 }: MemberSpendingBreakdownProps) {
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(
-    new Set([currentUserId])
+    new Set(highlightedUserId ? [highlightedUserId] : [])
   );
 
   const toggleMember = (userId: string) => {
@@ -45,10 +45,11 @@ export function MemberSpendingBreakdown({
 
   const spendMap = new Map(memberSpend.map((s) => [s.userId, s]));
 
-  // Sort members: current user first, then by total paid descending
   const sortedMembers = [...members].sort((a, b) => {
-    if (a.id === currentUserId) return -1;
-    if (b.id === currentUserId) return 1;
+    if (highlightedUserId) {
+      if (a.id === highlightedUserId) return -1;
+      if (b.id === highlightedUserId) return 1;
+    }
     const aPaid = parseFloat(spendMap.get(a.id)?.paid ?? "0");
     const bPaid = parseFloat(spendMap.get(b.id)?.paid ?? "0");
     return bPaid - aPaid;
@@ -78,14 +79,14 @@ export function MemberSpendingBreakdown({
           const expenses = expensesByMember.get(member.id) ?? [];
           const spend = spendMap.get(member.id);
           const isExpanded = expandedMembers.has(member.id);
-          const isCurrentUser = member.id === currentUserId;
+          const isHighlightedUser = member.id === highlightedUserId;
 
           return (
             <div
               key={member.id}
               className={cn(
                 "overflow-hidden",
-                isCurrentUser && "bg-primary/5"
+                isHighlightedUser && "bg-primary/5"
               )}
             >
               {/* Member header - clickable to expand/collapse */}
@@ -112,10 +113,10 @@ export function MemberSpendingBreakdown({
                     <p
                       className={cn(
                         "font-medium truncate text-sm",
-                        isCurrentUser && "text-primary"
+                        isHighlightedUser && "text-primary"
                       )}
                     >
-                      {isCurrentUser ? "You" : member.name ?? member.email}
+                      {isHighlightedUser ? "You" : member.name ?? member.email}
                     </p>
                     {expenses.length > 0 && (
                       <p className="text-xs text-muted-foreground">
@@ -144,7 +145,7 @@ export function MemberSpendingBreakdown({
               {isExpanded && expenses.length > 0 && (
                 <div className="border-t divide-y bg-muted/20">
                   {expenses.map((expense) => {
-                    // Find the current member's share in this expense
+                    // Share attributed to the member for this expense.
                     const memberSplit = expense.splits.find(
                       (s) => s.userId === member.id
                     );

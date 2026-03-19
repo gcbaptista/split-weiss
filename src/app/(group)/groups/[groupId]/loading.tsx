@@ -8,16 +8,17 @@ export default function GroupExpensesLoading() {
           key={i}
           className="flex items-center justify-between rounded-lg border bg-card p-4"
         >
-          <div className="space-y-2 flex-1">
+          <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-4 w-12 rounded-full" />
             </div>
             <Skeleton className="h-3 w-40" />
           </div>
-          <Skeleton className="h-5 w-16 ml-4" />
+          <Skeleton className="ml-4 h-5 w-16" />
         </div>
       ))}
     </div>
   );
 }
+

@@ -60,16 +60,18 @@ model VerificationToken {
 }
 
 model Group {
-  id          String        @id @default(cuid())
-  name        String
-  currency    String        @default("EUR")
-  emoji       String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  members     GroupMember[]
-  expenses    Expense[]
-  settlements Settlement[]
-  auditLogs   ExpenseAuditLog[]
+  id            String        @id @default(cuid())
+  name          String
+  currency      String        @default("EUR")
+  emoji         String?
+  passwordHash  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  members       GroupMember[]
+  expenses      Expense[]
+  settlements   Settlement[]
+  auditLogs     ExpenseAuditLog[]
+  deviceAccess  DeviceAccess[]
 }
 
 model GroupMember {
@@ -167,4 +169,18 @@ model ExchangeRateCache {
   rates        Json
   fetchedAt    DateTime @default(now())
   @@unique([baseCurrency, date])
+}
+
+
+model DeviceAccess {
+  id          String   @id @default(cuid())
+  groupId     String
+  deviceToken String
+  createdAt   DateTime @default(now())
+  lastUsedAt  DateTime @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, deviceToken])
+  @@index([deviceToken])
 }

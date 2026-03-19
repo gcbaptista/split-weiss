@@ -37,7 +37,6 @@ import {
 import Decimal from "decimal.js";
 import type { User, ExpenseWithSplitsClient } from "@/types/database";
 import type { SplitMode } from "@/hooks/use-split-calculator";
-import { formatCurrency } from "@/lib/utils";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import { AlertCircle, Lock, LockOpen } from "lucide-react";
 
@@ -73,7 +72,7 @@ interface ExpenseFormProps {
   groupId: string;
   members: User[];
   groupCurrency: string;
-  currentUserId: string;
+  defaultPayerId: string;
   onSuccess?: () => void;
   expenseId?: string;
   initialExpense?: ExpenseWithSplitsClient;
@@ -91,7 +90,7 @@ export function ExpenseForm({
   groupId,
   members,
   groupCurrency,
-  currentUserId,
+  defaultPayerId,
   onSuccess,
   expenseId,
   initialExpense,
@@ -124,7 +123,7 @@ export function ExpenseForm({
       date: initialExpense
         ? new Date(initialExpense.date).toISOString().split("T")[0]
         : new Date().toISOString().split("T")[0],
-      payerId: initialExpense?.payerId ?? currentUserId,
+      payerId: initialExpense?.payerId ?? defaultPayerId,
       splits: [],
     },
   });
@@ -154,12 +153,6 @@ export function ExpenseForm({
     if (!watchAmount || parseFloat(watchAmount) <= 0) return { splits: null, splitError: null };
     try {
       const total = new Decimal(watchAmount);
-      const inputs = splitInputs.map((s) => ({
-        userId: s.userId,
-        amount: s.amount,
-        percentage: s.percentage,
-        isLocked: s.isLocked,
-      }));
       let result;
       if (splitMode === "PERCENTAGE") {
         const includedInputs = splitInputs

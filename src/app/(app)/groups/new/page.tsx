@@ -9,12 +9,12 @@ import {
 
 export default function NewGroupPage() {
   return (
-    <div className="max-w-md">
-      <Card>
+    <div className="mx-auto w-full max-w-lg">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Create a group</CardTitle>
           <CardDescription>
-            Invite friends and start splitting
+            Start a group and add people by name
           </CardDescription>
         </CardHeader>
         <CardContent>

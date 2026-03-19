@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const rates = await fetchRates(base, date);
     return NextResponse.json(rates);
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch rates" },
       { status: 500 }

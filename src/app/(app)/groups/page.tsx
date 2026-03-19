@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { getUserGroups } from "@/app/actions/group.actions";
+import { getRecentAccessibleGroups } from "@/lib/group-access";
 import { GroupCard } from "@/components/groups/group-card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -7,17 +6,16 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 export default async function GroupsPage() {
-  const [session, groups] = await Promise.all([auth(), getUserGroups()]);
-  const firstName = session?.user?.name?.split(" ")[0] ?? "there";
+  const groups = await getRecentAccessibleGroups();
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">
-            Welcome back, {firstName}!
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Your groups</p>
+          <h1 className="text-xl font-bold sm:text-2xl">Groups</h1>
+          <p className="text-sm text-muted-foreground sm:text-base">
+            Recently opened on this device
+          </p>
         </div>
         <Button render={<Link href="/groups/new" />} className="shrink-0">
           <Plus className="mr-2 h-4 w-4" />
@@ -28,7 +26,7 @@ export default async function GroupsPage() {
         <EmptyState
           icon="👥"
           title="No groups yet"
-          description="Create a group to start splitting expenses with friends."
+          description="Create a group or open a group link to see it here."
           action={
             <Button render={<Link href="/groups/new" />}>
               Create your first group

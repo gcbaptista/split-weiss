@@ -1,4 +1,4 @@
-export default function AppLayout({
+export default function PublicGroupLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -11,3 +11,4 @@ export default function AppLayout({
     </main>
   );
 }
+

@@ -21,17 +21,16 @@ interface DebtListProps {
   groupId: string;
   currency: string;
   members: User[];
-  currentUserId?: string;
+  highlightedUserId?: string;
 }
 
-export function DebtList({ debts, groupId, currency, members, currentUserId }: DebtListProps) {
+export function DebtList({ debts, groupId, currency, members, highlightedUserId }: DebtListProps) {
   const [selected, setSelected] = useState<DebtItem | null>(null);
 
-  // Sort: debts involving current user come first
-  const sorted = currentUserId
+  const sorted = highlightedUserId
     ? [...debts].sort((a, b) => {
-        const aRelevant = a.fromUserId === currentUserId || a.toUserId === currentUserId;
-        const bRelevant = b.fromUserId === currentUserId || b.toUserId === currentUserId;
+        const aRelevant = a.fromUserId === highlightedUserId || a.toUserId === highlightedUserId;
+        const bRelevant = b.fromUserId === highlightedUserId || b.toUserId === highlightedUserId;
         if (aRelevant && !bRelevant) return -1;
         if (!aRelevant && bRelevant) return 1;
         return 0;
@@ -43,11 +42,11 @@ export function DebtList({ debts, groupId, currency, members, currentUserId }: D
       <ul className="space-y-2">
         {sorted.map((d, i) => {
           const isCurrentUserDebt =
-            currentUserId &&
-            (d.fromUserId === currentUserId || d.toUserId === currentUserId);
+            highlightedUserId &&
+            (d.fromUserId === highlightedUserId || d.toUserId === highlightedUserId);
 
-          const fromLabel = d.fromUserId === currentUserId ? "You" : d.fromName;
-          const toLabel = d.toUserId === currentUserId ? "You" : d.toName;
+          const fromLabel = d.fromUserId === highlightedUserId ? "You" : d.fromName;
+          const toLabel = d.toUserId === highlightedUserId ? "You" : d.toName;
 
           return (
             <li
@@ -60,14 +59,14 @@ export function DebtList({ debts, groupId, currency, members, currentUserId }: D
               <div className="flex items-center gap-2 text-sm min-w-0">
                 <span className={cn(
                   "font-medium truncate max-w-[120px] sm:max-w-none",
-                  d.fromUserId === currentUserId && "text-primary"
+                  d.fromUserId === highlightedUserId && "text-primary"
                 )}>
                   {fromLabel}
                 </span>
                 <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
                 <span className={cn(
                   "font-medium truncate max-w-[120px] sm:max-w-none",
-                  d.toUserId === currentUserId && "text-primary"
+                  d.toUserId === highlightedUserId && "text-primary"
                 )}>
                   {toLabel}
                 </span>
@@ -97,8 +96,8 @@ export function DebtList({ debts, groupId, currency, members, currentUserId }: D
                 fromUserId: selected.fromUserId,
                 toUserId: selected.toUserId,
                 amount: new Decimal(selected.amount),
-                fromName: selected.fromUserId === currentUserId ? "You" : selected.fromName,
-                toName: selected.toUserId === currentUserId ? "You" : selected.toName,
+                fromName: selected.fromUserId === highlightedUserId ? "You" : selected.fromName,
+                toName: selected.toUserId === highlightedUserId ? "You" : selected.toName,
               }
             : null
         }

@@ -8,7 +8,7 @@ export async function fetchRates(
   base: string,
   date: string = "latest"
 ): Promise<ExchangeRates> {
-  // Check DB cache
+  // Check the cache before hitting the external API.
   const cached = await db.exchangeRateCache.findUnique({
     where: { baseCurrency_date: { baseCurrency: base, date } },
   });

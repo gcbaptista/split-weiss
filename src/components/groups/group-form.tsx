@@ -24,7 +24,13 @@ export function GroupForm() {
   const router = useRouter();
   const form = useForm<CreateGroupInput>({
     resolver: zodResolver(createGroupSchema),
-    defaultValues: { name: "", currency: "EUR", emoji: "" },
+    defaultValues: {
+      creatorName: "",
+      name: "",
+      currency: "EUR",
+      emoji: "",
+      password: "",
+    },
   });
 
   async function onSubmit(data: CreateGroupInput) {
@@ -42,12 +48,25 @@ export function GroupForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
+          name="creatorName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Your name</FormLabel>
+              <FormControl>
+                <Input placeholder="Alex" autoComplete="name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Group name</FormLabel>
               <FormControl>
-                <Input placeholder="Weekend trip" {...field} />
+                <Input placeholder="Weekend trip" autoComplete="organization" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,6 +98,27 @@ export function GroupForm() {
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Leave blank"
+                  autoComplete="new-password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+              <p className="text-xs text-muted-foreground">
+                Leave it blank to keep the group open.
+              </p>
             </FormItem>
           )}
         />

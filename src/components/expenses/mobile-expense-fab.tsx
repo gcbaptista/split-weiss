@@ -9,14 +9,14 @@ interface MobileExpenseFABProps {
   groupId: string;
   members: User[];
   groupCurrency: string;
-  currentUserId: string;
+  defaultPayerId: string;
 }
 
 export function MobileExpenseFAB({
   groupId,
   members,
   groupCurrency,
-  currentUserId,
+  defaultPayerId,
 }: MobileExpenseFABProps) {
   const [open, setOpen] = useState(false);
 
@@ -33,7 +33,7 @@ export function MobileExpenseFAB({
         groupId={groupId}
         members={members}
         groupCurrency={groupCurrency}
-        currentUserId={currentUserId}
+        defaultPayerId={defaultPayerId}
         open={open}
         onOpenChange={setOpen}
       />

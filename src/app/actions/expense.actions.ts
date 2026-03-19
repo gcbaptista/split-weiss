@@ -1,6 +1,6 @@
 "use server";
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { canAccessGroup } from "@/lib/group-access";
 import type { Prisma } from "@prisma/client";
 import { createExpenseSchema } from "@/lib/validations/expense.schema";
 import {
@@ -14,20 +14,33 @@ import type { ActionResult } from "@/types/api";
 import type { Expense, ExpenseWithSplitsClient } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 
+function serializeExpenseForResult(expense: Expense): Expense {
+  return {
+    id: expense.id,
+    groupId: expense.groupId,
+    payerId: expense.payerId,
+    title: expense.title,
+    amount: expense.amount.toString(),
+    currency: expense.currency,
+    splitMode: expense.splitMode,
+    date: expense.date,
+    createdAt: expense.createdAt,
+    updatedAt: expense.updatedAt,
+  } as unknown as Expense;
+}
+
 export async function createExpense(
   formData: unknown
 ): Promise<ActionResult<Expense>> {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "Unauthorized" };
-  const userId = session.user.id;
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { groupId, splits: splitInputs, splitMode, amount, date, ...rest } =
     parsed.data;
-  const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId, userId } },
-  });
-  if (!member) return { error: "Not a member of this group" };
+
+  if (!(await canAccessGroup(groupId))) {
+    return { error: "Can't access this group" };
+  }
+
   try {
     const total = new Decimal(amount);
     const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
@@ -57,7 +70,7 @@ export async function createExpense(
           originalExpenseId: created.id,
           expenseId: created.id,
           groupId: created.groupId,
-          actorId: userId,
+          actorId: rest.payerId,
           action: "CREATED",
           snapshot: { action: "CREATED", after: buildStateSnapshot(created, created.splits) } as unknown as Prisma.InputJsonValue,
         },
@@ -66,8 +79,7 @@ export async function createExpense(
     });
     revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/balances`);
-    const { splits: _s, payer: _p, ...plain } = expense;
-    return { data: { ...plain, amount: plain.amount.toString() } as unknown as Expense };
+    return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return {
       error: e instanceof Error ? e.message : "Failed to create expense",
@@ -76,12 +88,10 @@ export async function createExpense(
 }
 
 export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSplitsClient[]> {
-  const session = await auth();
-  if (!session?.user?.id) return [];
-  const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId, userId: session.user.id } },
-  });
-  if (!member) return [];
+  if (!(await canAccessGroup(groupId))) {
+    return [];
+  }
+
   const expenses = await db.expense.findMany({
     where: { groupId },
     include: { splits: { include: { user: true } }, payer: true },
@@ -104,9 +114,6 @@ export async function updateExpense(
   expenseId: string,
   formData: unknown
 ): Promise<ActionResult<Expense>> {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "Unauthorized" };
-  const userId = session.user.id;
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const existing = await db.expense.findUnique({
@@ -114,10 +121,11 @@ export async function updateExpense(
     include: { splits: { include: { user: true } }, payer: true },
   });
   if (!existing) return { error: "Expense not found" };
-  const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId: existing.groupId, userId } },
-  });
-  if (!member) return { error: "Not a member" };
+
+  if (!(await canAccessGroup(existing.groupId))) {
+    return { error: "Can't access this group" };
+  }
+
   const { splits: splitInputs, splitMode, amount, date, ...rest } = parsed.data;
   try {
     const total = new Decimal(amount);
@@ -149,7 +157,7 @@ export async function updateExpense(
           originalExpenseId: expenseId,
           expenseId,
           groupId: existing.groupId,
-          actorId: userId,
+          actorId: rest.payerId,
           action: "UPDATED",
           snapshot: {
             action: "UPDATED",
@@ -162,31 +170,23 @@ export async function updateExpense(
     });
     revalidatePath(`/groups/${existing.groupId}`);
     revalidatePath(`/groups/${existing.groupId}/balances`);
-    const { splits: _s, payer: _p, ...plain } = expense;
-    return { data: { ...plain, amount: plain.amount.toString() } as unknown as Expense };
+    return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Failed to update expense" };
   }
 }
 
 export async function deleteExpense(expenseId: string): Promise<ActionResult> {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "Unauthorized" };
-  const userId = session.user.id;
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     select: { groupId: true, payerId: true },
   });
   if (!expense) return { error: "Expense not found" };
-  const member = await db.groupMember.findUnique({
-    where: {
-      groupId_userId: { groupId: expense.groupId, userId },
-    },
-  });
-  if (!member) return { error: "Not a member" };
-  if (expense.payerId !== userId && member.role !== "ADMIN") {
-    return { error: "Unauthorized" };
+
+  if (!(await canAccessGroup(expense.groupId))) {
+    return { error: "Can't access this group" };
   }
+
   try {
     await db.$transaction(async (tx) => {
       const full = await tx.expense.findUnique({
@@ -199,7 +199,7 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
           originalExpenseId: expenseId,
           expenseId,
           groupId: expense.groupId,
-          actorId: userId,
+          actorId: expense.payerId,
           action: "DELETED",
           snapshot: { action: "DELETED", before: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
         },
@@ -217,18 +217,16 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
 export async function getExpenseAuditLog(
   expenseId: string
 ): Promise<ActionResult<ExpenseAuditLogEntry[]>> {
-  const session = await auth();
-  if (!session?.user?.id) return { error: "Unauthorized" };
-  const userId = session.user.id;
   const firstLog = await db.expenseAuditLog.findFirst({
     where: { originalExpenseId: expenseId },
     select: { groupId: true },
   });
   if (!firstLog) return { data: [] };
-  const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId: firstLog.groupId, userId } },
-  });
-  if (!member) return { error: "Not a member" };
+
+  if (!(await canAccessGroup(firstLog.groupId))) {
+    return { error: "Can't access this group" };
+  }
+
   const logs = await db.expenseAuditLog.findMany({
     where: { originalExpenseId: expenseId },
     include: { actor: { select: { id: true, name: true, email: true } } },

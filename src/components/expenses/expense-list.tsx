@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2, History } from "lucide-react";
 import { deleteExpense } from "@/app/actions/expense.actions";
 import { toast } from "sonner";
@@ -10,29 +9,24 @@ import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AddExpenseDialog } from "./add-expense-dialog";
 import { ExpenseAuditLogDialog } from "./expense-audit-log-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { User, ExpenseWithSplitsClient } from "@/types/database";
 
 interface ExpenseListProps {
   expenses: ExpenseWithSplitsClient[];
-  currentUserId: string;
+  defaultPayerId: string;
   groupId: string;
   members: User[];
   groupCurrency: string;
-  isAdmin: boolean;
 }
-
-const MODE_LABELS: Record<string, string> = {
-  PERCENTAGE: "%",
-  LOCK: "Amount",
-};
 
 export function ExpenseList({
   expenses,
-  currentUserId,
+  defaultPayerId,
   groupId,
   members,
   groupCurrency,
-  isAdmin,
 }: ExpenseListProps) {
   const router = useRouter();
   const [visibleExpenses, setVisibleExpenses] = useState(expenses);
@@ -58,7 +52,6 @@ export function ExpenseList({
   }
 
   function handleDelete(expense: ExpenseWithSplitsClient) {
-    // Optimistically remove from view
     setVisibleExpenses((prev) => prev.filter((e) => e.id !== expense.id));
 
     const toastId = toast("Expense deleted", {
@@ -111,34 +104,65 @@ export function ExpenseList({
         {visibleExpenses.map((e) => (
           <li
             key={e.id}
-            className="flex items-center justify-between rounded-lg border bg-card p-4"
+            className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 rounded-lg border bg-card p-3 sm:p-4"
           >
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-medium">{e.title}</p>
-                <Badge variant="outline" className="text-xs">
-                  {MODE_LABELS[e.splitMode]}
-                </Badge>
+            {/* Left side: Content */}
+            <div className="min-w-0 flex-1 space-y-1.5">
+              {/* Row 1: Title and Amount (mobile) */}
+              <div className="flex items-start justify-between gap-2 sm:block">
+                <p className="font-medium flex-1 min-w-0">{e.title}</p>
+                <span className="font-semibold tabular-nums shrink-0 sm:hidden">
+                  {formatCurrency(e.amount, e.currency)}
+                </span>
               </div>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                {e.payer.name ?? e.payer.email} paid ·{" "}
-                {new Date(e.date).toLocaleDateString()}
+
+              {/* Row 2: Payer and Date */}
+              <p className="text-sm text-muted-foreground">
+                {e.payer.name ?? e.payer.email} paid · {new Date(e.date).toLocaleDateString()}
               </p>
+
+              {/* Row 3: Users Involved */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {e.splits.slice(0, 6).map((split) => (
+                  <Tooltip key={split.userId}>
+                    <TooltipTrigger>
+                      <Avatar size="sm">
+                        <AvatarFallback>
+                          {split.user.name?.[0]?.toUpperCase() ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{split.user.name ?? split.user.email}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+                {e.splits.length > 6 && (
+                  <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs text-muted-foreground">
+                    +{e.splits.length - 6}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-3 shrink-0 pl-2">
-              <span className="font-semibold tabular-nums">
+
+            {/* Right side: Amount (desktop) and Actions */}
+            <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
+              {/* Amount - desktop only */}
+              <span className="hidden sm:inline font-semibold tabular-nums">
                 {formatCurrency(e.amount, e.currency)}
               </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                onClick={() => setEditingExpense(e)}
-                aria-label="Edit expense"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              {(e.payerId === currentUserId || isAdmin) && (
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={() => setEditingExpense(e)}
+                  aria-label="Edit expense"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -148,16 +172,16 @@ export function ExpenseList({
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                onClick={() => { setHistoryExpenseId(e.id); setHistoryExpenseTitle(e.title); }}
-                aria-label="View history"
-              >
-                <History className="h-4 w-4" />
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  onClick={() => { setHistoryExpenseId(e.id); setHistoryExpenseTitle(e.title); }}
+                  aria-label="View history"
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </li>
         ))}
@@ -167,7 +191,7 @@ export function ExpenseList({
           groupId={groupId}
           members={members}
           groupCurrency={groupCurrency}
-          currentUserId={currentUserId}
+          defaultPayerId={defaultPayerId}
           expense={editingExpense}
           open={!!editingExpense}
           onOpenChange={(o) => { if (!o) setEditingExpense(null); }}

@@ -3,15 +3,19 @@ import { useState } from "react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { User, ExpenseWithSplitsClient, SettlementWithUsers } from "@/types/database";
-import type { NetBalance } from "@/lib/balances/calculator";
+
+interface SerializableNetBalance {
+  userId: string;
+  netAmount: string;
+}
 
 interface BalanceBreakdownProps {
-  balances: NetBalance[];
+  balances: SerializableNetBalance[];
   members: User[];
   expenses: ExpenseWithSplitsClient[];
   settlements: SettlementWithUsers[];
   currency: string;
-  currentUserId: string;
+  highlightedUserId?: string;
 }
 
 export function BalanceBreakdown({
@@ -20,10 +24,10 @@ export function BalanceBreakdown({
   expenses,
   settlements,
   currency,
-  currentUserId,
+  highlightedUserId,
 }: BalanceBreakdownProps) {
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(
-    new Set([currentUserId])
+    new Set(highlightedUserId ? [highlightedUserId] : [])
   );
 
   const toggleMember = (userId: string) => {
@@ -40,12 +44,13 @@ export function BalanceBreakdown({
 
   const balanceMap = new Map(balances.map((b) => [b.userId, b]));
 
-  // Sort members: current user first, then by net balance descending
   const sortedMembers = [...members].sort((a, b) => {
-    if (a.id === currentUserId) return -1;
-    if (b.id === currentUserId) return 1;
-    const aBalance = parseFloat(balanceMap.get(a.id)?.netAmount.toString() ?? "0");
-    const bBalance = parseFloat(balanceMap.get(b.id)?.netAmount.toString() ?? "0");
+    if (highlightedUserId) {
+      if (a.id === highlightedUserId) return -1;
+      if (b.id === highlightedUserId) return 1;
+    }
+    const aBalance = parseFloat(balanceMap.get(a.id)?.netAmount ?? "0");
+    const bBalance = parseFloat(balanceMap.get(b.id)?.netAmount ?? "0");
     return bBalance - aBalance;
   });
 
@@ -56,20 +61,20 @@ export function BalanceBreakdown({
         {sortedMembers.map((member) => {
           const balance = balanceMap.get(member.id);
           const isExpanded = expandedMembers.has(member.id);
-          const isCurrentUser = member.id === currentUserId;
+          const isHighlightedUser = member.id === highlightedUserId;
 
-          // Get all expenses where this member participated
+          // Expenses where this member participated.
           const memberExpenses = expenses.filter((e) =>
             e.splits.some((s) => s.userId === member.id)
           );
 
-          // Get all settlements involving this member
+          // Settlements where this member paid or received money.
           const memberSettlements = settlements.filter(
             (s) => s.fromUserId === member.id || s.toUserId === member.id
           );
 
           const transactionCount = memberExpenses.length + memberSettlements.length;
-          const netAmount = balance?.netAmount.toString() ?? "0";
+          const netAmount = balance?.netAmount ?? "0";
           const netValue = parseFloat(netAmount);
 
           return (
@@ -77,7 +82,7 @@ export function BalanceBreakdown({
               key={member.id}
               className={cn(
                 "overflow-hidden",
-                isCurrentUser && "bg-primary/5"
+                isHighlightedUser && "bg-primary/5"
               )}
             >
               {/* Member header - clickable to expand/collapse */}
@@ -105,10 +110,10 @@ export function BalanceBreakdown({
                       <p
                         className={cn(
                           "font-medium truncate text-sm",
-                          isCurrentUser && "text-primary"
+                          isHighlightedUser && "text-primary"
                         )}
                       >
-                        {isCurrentUser ? "You" : member.name ?? member.email}
+                        {isHighlightedUser ? "You" : member.name ?? member.email}
                       </p>
                       {transactionCount > 0 && (
                         <p className="text-xs text-muted-foreground">

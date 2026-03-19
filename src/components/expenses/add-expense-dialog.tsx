@@ -17,7 +17,7 @@ interface AddExpenseDialogProps {
   groupId: string;
   members: User[];
   groupCurrency: string;
-  currentUserId: string;
+  defaultPayerId: string;
   // Edit mode — when provided, renders no trigger button and is controlled externally
   expense?: ExpenseWithSplitsClient;
   open?: boolean;
@@ -28,7 +28,7 @@ export function AddExpenseDialog({
   groupId,
   members,
   groupCurrency,
-  currentUserId,
+  defaultPayerId,
   expense,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
@@ -55,7 +55,7 @@ export function AddExpenseDialog({
           groupId={groupId}
           members={members}
           groupCurrency={groupCurrency}
-          currentUserId={currentUserId}
+          defaultPayerId={defaultPayerId}
           onSuccess={() => setOpen(false)}
           expenseId={expense?.id}
           initialExpense={expense}

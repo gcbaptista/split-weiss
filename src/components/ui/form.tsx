@@ -77,10 +77,11 @@ function FormLabel({
 function FormControl({
   ...props
 }: React.ComponentProps<"div">) {
-  const { error, name } = useFormField();
+  const { error } = useFormField();
   return (
     <div
       data-slot="form-control"
+      data-invalid={error ? "true" : undefined}
       {...props}
     />
   );

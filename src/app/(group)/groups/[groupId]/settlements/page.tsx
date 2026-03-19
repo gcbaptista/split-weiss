@@ -1,7 +1,6 @@
-import { getGroup } from "@/app/actions/group.actions";
+import { getAuthorizedGroup } from "@/lib/group-access";
 import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { getGroupSettlements } from "@/app/actions/settlement.actions";
-import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
@@ -16,41 +15,39 @@ interface PageProps {
 
 export default async function SettlementsPage({ params }: PageProps) {
   const { groupId } = await params;
-  const session = await auth();
   const [group, expenses, settlements] = await Promise.all([
-    getGroup(groupId),
+    getAuthorizedGroup(groupId),
     getGroupExpenses(groupId),
     getGroupSettlements(groupId),
   ]);
-  if (!group || !session?.user?.id) notFound();
 
-  const dates = [
-    ...new Set(expenses.map((e) => e.date.toISOString().split("T")[0])),
-  ];
+  if (!group) notFound();
+
   const ratesByDate = new Map<string, ExchangeRates>();
+  const dates = [...new Set(expenses.map((expense) => expense.date.toISOString().split("T")[0]))];
+
   await Promise.all(
-    dates.map(async (d) => {
+    dates.map(async (date) => {
       try {
-        ratesByDate.set(d, await fetchRates(group.currency, d));
+        ratesByDate.set(date, await fetchRates(group.currency, date));
       } catch {}
     })
   );
+
   try {
     ratesByDate.set("latest", await fetchRates(group.currency, "latest"));
   } catch {}
 
   const balances = calculateBalances(expenses, settlements, group.currency, ratesByDate);
   const debts = simplifyDebts(balances);
-  const userMap = new Map(group.members.map((m) => [m.userId, m.user]));
-  const members = group.members.map((m) => m.user);
-  const currentUserId = session.user.id;
+  const userMap = new Map(group.members.map((member) => [member.userId, member.user]));
 
-  const debtsWithNames = debts.map((d) => ({
-    fromUserId: d.fromUserId,
-    fromName: userMap.get(d.fromUserId)?.name ?? userMap.get(d.fromUserId)?.email ?? "?",
-    toUserId: d.toUserId,
-    toName: userMap.get(d.toUserId)?.name ?? userMap.get(d.toUserId)?.email ?? "?",
-    amount: d.amount.toString(),
+  const debtsWithNames = debts.map((debt) => ({
+    fromUserId: debt.fromUserId,
+    fromName: userMap.get(debt.fromUserId)?.name ?? userMap.get(debt.fromUserId)?.email ?? "?",
+    toUserId: debt.toUserId,
+    toName: userMap.get(debt.toUserId)?.name ?? userMap.get(debt.toUserId)?.email ?? "?",
+    amount: debt.amount.toString(),
   }));
 
   return (
@@ -62,8 +59,7 @@ export default async function SettlementsPage({ params }: PageProps) {
             debts={debtsWithNames}
             groupId={groupId}
             currency={group.currency}
-            members={members}
-            currentUserId={currentUserId}
+            members={group.members.map((member) => member.user)}
           />
         </div>
       )}

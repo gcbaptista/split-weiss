@@ -17,14 +17,12 @@ interface GroupSettingsFormProps {
   groupId: string;
   initialName: string;
   initialEmoji: string | null;
-  isAdmin: boolean;
 }
 
 export function GroupSettingsForm({
   groupId,
   initialName,
   initialEmoji,
-  isAdmin,
 }: GroupSettingsFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
@@ -40,20 +38,9 @@ export function GroupSettingsForm({
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Group updated");
+      toast.success("Changes saved");
       router.refresh();
     }
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{emoji}</span>
-          <p className="text-base font-medium">{name}</p>
-        </div>
-      </div>
-    );
   }
 
   return (

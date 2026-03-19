@@ -92,26 +92,71 @@ function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
   );
 }
 
-export function ExpenseAuditLogDialog({ expenseId, expenseTitle, onOpenChange }: Props) {
+function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
   const [logs, setLogs] = useState<ExpenseAuditLogEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!expenseId) {
-      setLogs(null);
-      setError(null);
-      return;
-    }
-    setLogs(null);
-    setError(null);
-    getExpenseAuditLog(expenseId).then((result) => {
-      if (result.error) {
-        setError(result.error);
-      } else {
+    let cancelled = false;
+
+    void getExpenseAuditLog(expenseId)
+      .then((result) => {
+        if (cancelled) return;
+
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
+
         setLogs(result.data ?? []);
-      }
-    });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError("Failed to load history");
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [expenseId]);
+
+  return (
+    <div className="px-4 pb-4 space-y-4">
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      {!logs && !error && (
+        <>
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </>
+      )}
+      {logs && logs.length === 0 && (
+        <p className="text-sm text-muted-foreground">No history found.</p>
+      )}
+      {logs && logs.map((entry) => {
+        const badge = ACTION_BADGE[entry.action];
+        return (
+          <div key={entry.id} className="rounded-lg border p-3 space-y-2">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {entry.actor.name ?? entry.actor.email}
+                </span>
+                <Badge className={badge.className}>{badge.label}</Badge>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {new Date(entry.createdAt).toLocaleString()}
+              </span>
+            </div>
+            <EntryContent entry={entry} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function ExpenseAuditLogDialog({ expenseId, expenseTitle, onOpenChange }: Props) {
 
   return (
     <Sheet open={!!expenseId} onOpenChange={onOpenChange}>
@@ -119,38 +164,7 @@ export function ExpenseAuditLogDialog({ expenseId, expenseTitle, onOpenChange }:
         <SheetHeader>
           <SheetTitle>History · {expenseTitle}</SheetTitle>
         </SheetHeader>
-        <div className="px-4 pb-4 space-y-4">
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {!logs && !error && (
-            <>
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </>
-          )}
-          {logs && logs.length === 0 && (
-            <p className="text-sm text-muted-foreground">No history found.</p>
-          )}
-          {logs && logs.map((entry) => {
-            const badge = ACTION_BADGE[entry.action];
-            return (
-              <div key={entry.id} className="rounded-lg border p-3 space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">
-                      {entry.actor.name ?? entry.actor.email}
-                    </span>
-                    <Badge className={badge.className}>{badge.label}</Badge>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(entry.createdAt).toLocaleString()}
-                  </span>
-                </div>
-                <EntryContent entry={entry} />
-              </div>
-            );
-          })}
-        </div>
+        {expenseId ? <ExpenseAuditLogContent key={expenseId} expenseId={expenseId} /> : null}
       </SheetContent>
     </Sheet>
   );

@@ -1,24 +1,59 @@
 import Link from "next/link";
+import { getRecentAccessibleGroups } from "@/lib/group-access";
+import { GroupCard } from "@/components/groups/group-card";
 import { Button } from "@/components/ui/button";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const recentGroups = await getRecentAccessibleGroups();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-background to-muted/30 p-6 sm:p-8 text-center">
-      <div className="max-w-2xl">
-        <div className="mb-6 text-5xl sm:text-7xl">💸</div>
-        <h1 className="mb-4 text-3xl sm:text-5xl font-bold tracking-tight">split-weiss</h1>
-        <p className="mb-8 text-base sm:text-xl text-muted-foreground">
-          Split your Weiss expenses with your friends. Multi-currency. Free forever.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button render={<Link href="/sign-up" />} size="lg">
-            Get started free
-          </Button>
-          <Button render={<Link href="/sign-in" />} variant="outline" size="lg">
-            Sign in
-          </Button>
-        </div>
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
+    <main className="min-h-screen bg-linear-to-b from-background to-muted/30 p-6 sm:p-8">
+      <div className="mx-auto max-w-6xl space-y-10">
+        <section className="text-center">
+          <div className="mb-6 text-5xl sm:text-7xl">💸</div>
+          <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-5xl">split-weiss</h1>
+          <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-xl">
+            Split your Weiss expenses with your friends. Multi-currency. Free forever.
+          </p>
+        </section>
+
+        {recentGroups.length > 0 && (
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold sm:text-2xl">Recent groups</h2>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                Pick up where you left off.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recentGroups.map((group) => (
+                <GroupCard key={group.id} group={group} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="rounded-2xl border bg-card/70 p-6 text-center sm:p-8">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="mb-3 text-2xl font-semibold">
+              {recentGroups.length > 0 ? "Open another group" : "No recent groups yet"}
+            </h2>
+            <p className="mb-6 text-sm text-muted-foreground sm:text-base">
+              Open a group link and it will show up here next time. If a group uses a
+              password, you only need it once per device.
+            </p>
+            <Button
+              render={<Link href="/groups/new" />}
+              size="lg"
+              variant={recentGroups.length > 0 ? "outline" : "default"}
+            >
+                Create group
+            </Button>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-1 gap-6 text-left sm:grid-cols-3">
           {[
             {
               emoji: "⚖️",
@@ -42,7 +77,7 @@ export default function LandingPage() {
               <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
             </div>
           ))}
-        </div>
+        </section>
       </div>
     </main>
   );
