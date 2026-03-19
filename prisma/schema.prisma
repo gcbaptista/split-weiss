@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String?
+  email           String   @unique
+  emailVerified   DateTime?
+  image           String?
+  passwordHash    String?
+  defaultCurrency String   @default("EUR")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  accounts        Account[]
+  sessions        Session[]
+  groupMembers    GroupMember[]
+  expenses        Expense[]
+  expenseSplits   ExpenseSplit[]
+  settlementsFrom Settlement[] @relation("SettlementFrom")
+  settlementsTo   Settlement[] @relation("SettlementTo")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  currency    String        @default("EUR")
+  emoji       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     GroupMember[]
+  expenses    Expense[]
+  settlements Settlement[]
+}
+
+model GroupMember {
+  groupId  String
+  userId   String
+  role     GroupRole @default(MEMBER)
+  joinedAt DateTime  @default(now())
+  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([groupId, userId])
+}
+
+enum GroupRole {
+  ADMIN
+  MEMBER
+}
+
+model Expense {
+  id        String         @id @default(cuid())
+  groupId   String
+  payerId   String
+  title     String
+  amount    Decimal        @db.Decimal(12, 4)
+  currency  String
+  splitMode SplitMode
+  date      DateTime
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  group     Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  payer     User           @relation(fields: [payerId], references: [id])
+  splits    ExpenseSplit[]
+}
+
+enum SplitMode {
+  EQUAL
+  PERCENTAGE
+  VALUE
+  LOCK
+}
+
+model ExpenseSplit {
+  id         String   @id @default(cuid())
+  expenseId  String
+  userId     String
+  amount     Decimal  @db.Decimal(12, 4)
+  percentage Decimal? @db.Decimal(7, 4)
+  isLocked   Boolean  @default(false)
+  expense    Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+  @@unique([expenseId, userId])
+}
+
+model Settlement {
+  id         String   @id @default(cuid())
+  groupId    String
+  fromUserId String
+  toUserId   String
+  amount     Decimal  @db.Decimal(12, 4)
+  currency   String
+  date       DateTime
+  note       String?
+  createdAt  DateTime @default(now())
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  fromUser   User     @relation("SettlementFrom", fields: [fromUserId], references: [id])
+  toUser     User     @relation("SettlementTo", fields: [toUserId], references: [id])
+}
+
+model ExchangeRateCache {
+  id           String   @id @default(cuid())
+  baseCurrency String
+  date         String
+  rates        Json
+  fetchedAt    DateTime @default(now())
+  @@unique([baseCurrency, date])
+}

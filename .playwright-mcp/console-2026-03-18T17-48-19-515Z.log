@@ -1,0 +1,20 @@
+[   22163ms] [ERROR] Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.
+    at TabsTrigger (http://localhost:3000/_next/static/chunks/src_components_ui_tabs_tsx_2ab88fd9._.js:66:214)
+    at GroupLayout (about://React/Server/file:///Users/gbs10/dev/gcbaptista/split-weiss/.next/dev/server/chunks/ssr/src_d9a4eeda._.js?65:331:276) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   22165ms] [ERROR] Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.
+    at TabsTrigger (http://localhost:3000/_next/static/chunks/src_components_ui_tabs_tsx_2ab88fd9._.js:66:214)
+    at GroupLayout (about://React/Server/file:///Users/gbs10/dev/gcbaptista/split-weiss/.next/dev/server/chunks/ssr/src_d9a4eeda._.js?66:346:276) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   22165ms] [ERROR] Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.
+    at TabsTrigger (http://localhost:3000/_next/static/chunks/src_components_ui_tabs_tsx_2ab88fd9._.js:66:214)
+    at GroupLayout (about://React/Server/file:///Users/gbs10/dev/gcbaptista/split-weiss/.next/dev/server/chunks/ssr/src_d9a4eeda._.js?67:361:276) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   22166ms] [ERROR] Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.
+    at TabsTrigger (http://localhost:3000/_next/static/chunks/src_components_ui_tabs_tsx_2ab88fd9._.js:66:214)
+    at GroupLayout (about://React/Server/file:///Users/gbs10/dev/gcbaptista/split-weiss/.next/dev/server/chunks/ssr/src_d9a4eeda._.js?68:376:276) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127
+[   56251ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
