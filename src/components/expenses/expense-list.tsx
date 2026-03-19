@@ -1,7 +1,15 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Pencil, Trash2, History } from "lucide-react";
 import { deleteExpense } from "@/app/actions/expense.actions";
 import { toast } from "sonner";
@@ -29,7 +37,9 @@ export function ExpenseList({
   groupCurrency,
 }: ExpenseListProps) {
   const router = useRouter();
-  const [visibleExpenses, setVisibleExpenses] = useState(expenses);
+  const [localExpenses, setLocalExpenses] = useState(expenses);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [payerFilter, setPayerFilter] = useState("all");
   const [editingExpense, setEditingExpense] = useState<ExpenseWithSplitsClient | null>(null);
   const [historyExpenseId, setHistoryExpenseId] = useState<string | null>(null);
   const [historyExpenseTitle, setHistoryExpenseTitle] = useState<string>("");
@@ -38,10 +48,27 @@ export function ExpenseList({
 
   // Sync when server re-renders with fresh data
   useEffect(() => {
-    setVisibleExpenses(expenses);
+    setLocalExpenses(expenses);
   }, [expenses]);
 
-  if (visibleExpenses.length === 0) {
+  const filteredExpenses = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    return localExpenses.filter((expense) => {
+      const matchesQuery =
+        normalizedQuery.length === 0 ||
+        expense.title.toLowerCase().includes(normalizedQuery) ||
+        expense.amount.toLowerCase().includes(normalizedQuery);
+
+      const matchesPayer = payerFilter === "all" || expense.payerId === payerFilter;
+
+      return matchesQuery && matchesPayer;
+    });
+  }, [localExpenses, payerFilter, searchQuery]);
+
+  const selectedPayer = members.find((member) => member.id === payerFilter);
+
+  if (localExpenses.length === 0) {
     return (
       <EmptyState
         icon="🧾"
@@ -52,7 +79,7 @@ export function ExpenseList({
   }
 
   function handleDelete(expense: ExpenseWithSplitsClient) {
-    setVisibleExpenses((prev) => prev.filter((e) => e.id !== expense.id));
+    setLocalExpenses((prev) => prev.filter((e) => e.id !== expense.id));
 
     const toastId = toast("Expense deleted", {
       action: {
@@ -65,7 +92,7 @@ export function ExpenseList({
             deleteTimers.current.delete(expense.id);
           }
           // Restore the expense in the correct position
-          setVisibleExpenses((prev) => {
+          setLocalExpenses((prev) => {
             const next = [...prev, expense];
             return next.sort(
               (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -84,7 +111,7 @@ export function ExpenseList({
       if (result.error) {
         toast.error(result.error);
         // Rollback on failure
-        setVisibleExpenses((prev) => {
+        setLocalExpenses((prev) => {
           const next = [...prev, expense];
           return next.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -100,8 +127,40 @@ export function ExpenseList({
 
   return (
     <>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+        <Input
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Search by title or amount"
+          aria-label="Search expenses by title or amount"
+          className="h-10 sm:flex-1"
+        />
+        <Select value={payerFilter} onValueChange={(value) => setPayerFilter(value ?? "all")}>
+          <SelectTrigger className="h-10 w-full sm:w-56" aria-label="Filter expenses by payer">
+            <SelectValue>
+              {selectedPayer?.name ?? selectedPayer?.email ?? "All payers"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All payers</SelectItem>
+            {members.map((member) => (
+              <SelectItem key={member.id} value={member.id}>
+                {member.name ?? member.email}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {filteredExpenses.length === 0 ? (
+        <EmptyState
+          icon="🔎"
+          title="No matching expenses"
+          description="Try a different title, amount, or payer."
+        />
+      ) : (
       <ul className="space-y-2">
-        {visibleExpenses.map((e) => (
+        {filteredExpenses.map((e) => (
           <li
             key={e.id}
             className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 rounded-lg border bg-card p-3 sm:p-4"
@@ -186,6 +245,7 @@ export function ExpenseList({
           </li>
         ))}
       </ul>
+      )}
       {editingExpense && (
         <AddExpenseDialog
           groupId={groupId}

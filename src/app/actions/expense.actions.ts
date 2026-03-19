@@ -14,6 +14,14 @@ import type { ActionResult } from "@/types/api";
 import type { Expense, ExpenseWithSplitsClient } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 
+const userSelect = {
+  id: true,
+  name: true,
+  email: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
+
 function serializeExpenseForResult(expense: Expense): Expense {
   return {
     id: expense.id,
@@ -63,7 +71,10 @@ export async function createExpense(
             })),
           },
         },
-        include: { splits: { include: { user: true } }, payer: true },
+        include: {
+          splits: { include: { user: { select: userSelect } } },
+          payer: { select: userSelect },
+        },
       });
       await tx.expenseAuditLog.create({
         data: {
@@ -94,7 +105,10 @@ export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSpli
 
   const expenses = await db.expense.findMany({
     where: { groupId },
-    include: { splits: { include: { user: true } }, payer: true },
+    include: {
+      splits: { include: { user: { select: userSelect } } },
+      payer: { select: userSelect },
+    },
     orderBy: { date: "desc" },
   });
 
@@ -118,7 +132,10 @@ export async function updateExpense(
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const existing = await db.expense.findUnique({
     where: { id: expenseId },
-    include: { splits: { include: { user: true } }, payer: true },
+    include: {
+      splits: { include: { user: { select: userSelect } } },
+      payer: { select: userSelect },
+    },
   });
   if (!existing) return { error: "Expense not found" };
 
@@ -150,7 +167,10 @@ export async function updateExpense(
             })),
           },
         },
-        include: { splits: { include: { user: true } }, payer: true },
+        include: {
+          splits: { include: { user: { select: userSelect } } },
+          payer: { select: userSelect },
+        },
       });
       await tx.expenseAuditLog.create({
         data: {
@@ -191,7 +211,10 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
     await db.$transaction(async (tx) => {
       const full = await tx.expense.findUnique({
         where: { id: expenseId },
-        include: { splits: { include: { user: true } }, payer: true },
+        include: {
+          splits: { include: { user: { select: userSelect } } },
+          payer: { select: userSelect },
+        },
       });
       if (!full) throw new Error("Expense not found");
       await tx.expenseAuditLog.create({

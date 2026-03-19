@@ -6,6 +6,14 @@ import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 import type { Settlement } from "@/types/database";
 
+const userSelect = {
+  id: true,
+  name: true,
+  email: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
+
 export async function createSettlement(
   formData: unknown
 ): Promise<ActionResult<Settlement>> {
@@ -36,7 +44,10 @@ export async function getGroupSettlements(groupId: string) {
 
   return db.settlement.findMany({
     where: { groupId },
-    include: { fromUser: true, toUser: true },
+    include: {
+      fromUser: { select: userSelect },
+      toUser: { select: userSelect },
+    },
     orderBy: { date: "desc" },
   });
 }

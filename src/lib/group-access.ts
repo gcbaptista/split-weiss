@@ -14,6 +14,14 @@ import { verifyPassword } from "@/lib/password";
 import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
 import type { GroupWithMembers } from "@/types/database";
 
+const userSelect = {
+  id: true,
+  name: true,
+  email: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
+
 export type GroupRequestAccess =
   | { status: "not-found" }
   | { status: "locked" }
@@ -60,7 +68,7 @@ export async function getGroupRequestAccess(
 
   const authorizedGroup = await db.group.findUnique({
     where: { id: groupId },
-    include: { members: { include: { user: true } } },
+    include: { members: { include: { user: { select: userSelect } } } },
   });
 
   if (!authorizedGroup) {
@@ -83,7 +91,7 @@ export async function getRecentAccessibleGroups() {
   const groups = await db.group.findMany({
     where: { id: { in: recentGroupIds } },
     include: {
-      members: { include: { user: true } },
+      members: { include: { user: { select: userSelect } } },
       _count: { select: { expenses: true } },
     },
   });

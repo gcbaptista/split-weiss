@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
 import { fetchRates } from "@/lib/currency/frankfurter";
-import { DebtList } from "@/components/groups/debt-list";
-import { SettlementList } from "@/components/settlements/settlement-list";
+import { SettlementPairs } from "@/components/settlements/settlement-pairs";
 import type { ExchangeRates } from "@/types/currency";
 
 interface PageProps {
@@ -51,22 +50,12 @@ export default async function SettlementsPage({ params }: PageProps) {
   }));
 
   return (
-    <div className="space-y-6">
-      {debtsWithNames.length > 0 && (
-        <div>
-          <h2 className="mb-3 font-semibold">Suggested settlements</h2>
-          <DebtList
-            debts={debtsWithNames}
-            groupId={groupId}
-            currency={group.currency}
-            members={group.members.map((member) => member.user)}
-          />
-        </div>
-      )}
-      <div>
-        <h2 className="mb-4 font-semibold">Settlement history</h2>
-        <SettlementList settlements={settlements} />
-      </div>
-    </div>
+    <SettlementPairs
+      debts={debtsWithNames}
+      settlements={settlements}
+      groupId={groupId}
+      currency={group.currency}
+      members={group.members.map((member) => member.user)}
+    />
   );
 }
