@@ -24,6 +24,7 @@ model User {
   expenseSplits   ExpenseSplit[]
   settlementsFrom Settlement[] @relation("SettlementFrom")
   settlementsTo   Settlement[] @relation("SettlementTo")
+  auditLogs       ExpenseAuditLog[] @relation("AuditActor")
 }
 
 model Account {
@@ -68,6 +69,7 @@ model Group {
   members     GroupMember[]
   expenses    Expense[]
   settlements Settlement[]
+  auditLogs   ExpenseAuditLog[]
 }
 
 model GroupMember {
@@ -99,13 +101,36 @@ model Expense {
   group     Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
   payer     User           @relation(fields: [payerId], references: [id])
   splits    ExpenseSplit[]
+  auditLogs ExpenseAuditLog[]
 }
 
 enum SplitMode {
-  EQUAL
   PERCENTAGE
-  VALUE
   LOCK
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+model ExpenseAuditLog {
+  id                String      @id @default(cuid())
+  originalExpenseId String
+  expenseId         String?
+  groupId           String
+  actorId           String
+  action            AuditAction
+  snapshot          Json
+  createdAt         DateTime    @default(now())
+
+  expense           Expense?    @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+  group             Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  actor             User        @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([originalExpenseId])
+  @@index([groupId])
 }
 
 model ExpenseSplit {

@@ -15,5 +15,4 @@ export interface SplitResult {
 
 export { calculateEqual } from "./equal";
 export { calculatePercentage } from "./percentage";
-export { calculateValue } from "./value";
 export { calculateLock } from "./lock";

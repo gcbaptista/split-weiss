@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { CurrencySelect } from "./currency-select";
+import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 
 interface AmountInputProps {
   value: string;
@@ -17,17 +18,32 @@ export function AmountInput({
   onCurrencyChange,
   placeholder = "0.00",
 }: AmountInputProps) {
+  const symbol = CURRENCY_SYMBOLS[currency];
+
+  function handleChange(raw: string) {
+    // Allow digits, one decimal point, and nothing else
+    const clean = raw.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*$/, "$1");
+    onChange(clean);
+  }
+
   return (
     <div className="flex gap-2">
-      <Input
-        type="number"
-        min="0"
-        step="0.01"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="flex-1"
-      />
+      <div className="relative flex-1">
+        {symbol && (
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">
+            {symbol}
+          </span>
+        )}
+        <Input
+          type="text"
+          inputMode="decimal"
+          value={value}
+          onChange={(e) => handleChange(e.target.value)}
+          placeholder={placeholder}
+          // text-base prevents iOS from auto-zooming into inputs with font-size < 16px
+          className={`text-base ${symbol ? "pl-7" : ""}`}
+        />
+      </div>
       <CurrencySelect value={currency} onChange={onCurrencyChange} />
     </div>
   );

@@ -1,62 +1,73 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
 import { createExpenseSchema } from "@/lib/validations/expense.schema";
 import {
-  calculateEqual,
   calculatePercentage,
-  calculateValue,
   calculateLock,
 } from "@/lib/splitting";
+import { buildStateSnapshot } from "@/lib/audit/snapshot";
 import Decimal from "decimal.js";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 import type { Expense, ExpenseWithSplitsClient } from "@/types/database";
+import type { ExpenseAuditLogEntry } from "@/types/audit";
 
 export async function createExpense(
   formData: unknown
 ): Promise<ActionResult<Expense>> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
+  const userId = session.user.id;
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { groupId, splits: splitInputs, splitMode, amount, date, ...rest } =
     parsed.data;
   const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId, userId: session.user.id } },
+    where: { groupId_userId: { groupId, userId } },
   });
   if (!member) return { error: "Not a member of this group" };
   try {
     const total = new Decimal(amount);
-    let splitResults;
-    if (splitMode === "EQUAL") {
-      splitResults = calculateEqual(total, splitInputs.map((s) => s.userId));
-    } else if (splitMode === "PERCENTAGE") {
-      splitResults = calculatePercentage(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    } else if (splitMode === "VALUE") {
-      splitResults = calculateValue(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    } else {
-      splitResults = calculateLock(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    }
-    const expense = await db.expense.create({
-      data: {
-        ...rest,
-        groupId,
-        amount,
-        splitMode,
-        date: new Date(date),
-        splits: {
-          create: splitResults.map((s) => ({
-            userId: s.userId,
-            amount: s.amount.toString(),
-            isLocked: s.isLocked,
-          })),
+    const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
+    const splitResults = splitMode === "PERCENTAGE"
+      ? calculatePercentage(total, mappedInputs)
+      : calculateLock(total, mappedInputs);
+    const expense = await db.$transaction(async (tx) => {
+      const created = await tx.expense.create({
+        data: {
+          ...rest,
+          groupId,
+          amount,
+          splitMode,
+          date: new Date(date),
+          splits: {
+            create: splitResults.map((s) => ({
+              userId: s.userId,
+              amount: s.amount.toString(),
+              isLocked: s.isLocked,
+            })),
+          },
         },
-      },
+        include: { splits: { include: { user: true } }, payer: true },
+      });
+      await tx.expenseAuditLog.create({
+        data: {
+          originalExpenseId: created.id,
+          expenseId: created.id,
+          groupId: created.groupId,
+          actorId: userId,
+          action: "CREATED",
+          snapshot: { action: "CREATED", after: buildStateSnapshot(created, created.splits) } as unknown as Prisma.InputJsonValue,
+        },
+      });
+      return created;
     });
     revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/balances`);
-    return { data: expense };
+    const { splits: _s, payer: _p, ...plain } = expense;
+    return { data: { ...plain, amount: plain.amount.toString() } as unknown as Expense };
   } catch (e) {
     return {
       error: e instanceof Error ? e.message : "Failed to create expense",
@@ -95,36 +106,28 @@ export async function updateExpense(
 ): Promise<ActionResult<Expense>> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
+  const userId = session.user.id;
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const existing = await db.expense.findUnique({
     where: { id: expenseId },
-    select: { groupId: true, payerId: true },
+    include: { splits: { include: { user: true } }, payer: true },
   });
   if (!existing) return { error: "Expense not found" };
   const member = await db.groupMember.findUnique({
-    where: { groupId_userId: { groupId: existing.groupId, userId: session.user.id } },
+    where: { groupId_userId: { groupId: existing.groupId, userId } },
   });
   if (!member) return { error: "Not a member" };
-  if (existing.payerId !== session.user.id && member.role !== "ADMIN") {
-    return { error: "Only the payer or an admin can edit this expense" };
-  }
   const { splits: splitInputs, splitMode, amount, date, ...rest } = parsed.data;
   try {
     const total = new Decimal(amount);
-    let splitResults;
-    if (splitMode === "EQUAL") {
-      splitResults = calculateEqual(total, splitInputs.map((s) => s.userId));
-    } else if (splitMode === "PERCENTAGE") {
-      splitResults = calculatePercentage(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    } else if (splitMode === "VALUE") {
-      splitResults = calculateValue(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    } else {
-      splitResults = calculateLock(total, splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false })));
-    }
+    const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
+    const splitResults = splitMode === "PERCENTAGE"
+      ? calculatePercentage(total, mappedInputs)
+      : calculateLock(total, mappedInputs);
     const expense = await db.$transaction(async (tx) => {
       await tx.expenseSplit.deleteMany({ where: { expenseId } });
-      return tx.expense.update({
+      const updated = await tx.expense.update({
         where: { id: expenseId },
         data: {
           ...rest,
@@ -139,11 +142,28 @@ export async function updateExpense(
             })),
           },
         },
+        include: { splits: { include: { user: true } }, payer: true },
       });
+      await tx.expenseAuditLog.create({
+        data: {
+          originalExpenseId: expenseId,
+          expenseId,
+          groupId: existing.groupId,
+          actorId: userId,
+          action: "UPDATED",
+          snapshot: {
+            action: "UPDATED",
+            before: buildStateSnapshot(existing, existing.splits),
+            after: buildStateSnapshot(updated, updated.splits),
+          } as unknown as Prisma.InputJsonValue,
+        },
+      });
+      return updated;
     });
     revalidatePath(`/groups/${existing.groupId}`);
     revalidatePath(`/groups/${existing.groupId}/balances`);
-    return { data: expense };
+    const { splits: _s, payer: _p, ...plain } = expense;
+    return { data: { ...plain, amount: plain.amount.toString() } as unknown as Expense };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Failed to update expense" };
   }
@@ -152,6 +172,7 @@ export async function updateExpense(
 export async function deleteExpense(expenseId: string): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
+  const userId = session.user.id;
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     select: { groupId: true, payerId: true },
@@ -159,19 +180,59 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
   if (!expense) return { error: "Expense not found" };
   const member = await db.groupMember.findUnique({
     where: {
-      groupId_userId: { groupId: expense.groupId, userId: session.user.id },
+      groupId_userId: { groupId: expense.groupId, userId },
     },
   });
   if (!member) return { error: "Not a member" };
-  if (expense.payerId !== session.user.id && member.role !== "ADMIN") {
+  if (expense.payerId !== userId && member.role !== "ADMIN") {
     return { error: "Unauthorized" };
   }
   try {
-    await db.expense.delete({ where: { id: expenseId } });
+    await db.$transaction(async (tx) => {
+      const full = await tx.expense.findUnique({
+        where: { id: expenseId },
+        include: { splits: { include: { user: true } }, payer: true },
+      });
+      if (!full) throw new Error("Expense not found");
+      await tx.expenseAuditLog.create({
+        data: {
+          originalExpenseId: expenseId,
+          expenseId,
+          groupId: expense.groupId,
+          actorId: userId,
+          action: "DELETED",
+          snapshot: { action: "DELETED", before: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
+        },
+      });
+      await tx.expense.delete({ where: { id: expenseId } });
+    });
     revalidatePath(`/groups/${expense.groupId}`);
     revalidatePath(`/groups/${expense.groupId}/balances`);
     return { data: undefined };
   } catch {
     return { error: "Failed to delete expense" };
   }
+}
+
+export async function getExpenseAuditLog(
+  expenseId: string
+): Promise<ActionResult<ExpenseAuditLogEntry[]>> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+  const userId = session.user.id;
+  const firstLog = await db.expenseAuditLog.findFirst({
+    where: { originalExpenseId: expenseId },
+    select: { groupId: true },
+  });
+  if (!firstLog) return { data: [] };
+  const member = await db.groupMember.findUnique({
+    where: { groupId_userId: { groupId: firstLog.groupId, userId } },
+  });
+  if (!member) return { error: "Not a member" };
+  const logs = await db.expenseAuditLog.findMany({
+    where: { originalExpenseId: expenseId },
+    include: { actor: { select: { id: true, name: true, email: true } } },
+    orderBy: { createdAt: "asc" },
+  });
+  return { data: logs as unknown as ExpenseAuditLogEntry[] };
 }

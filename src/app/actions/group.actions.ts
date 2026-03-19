@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { createGroupSchema } from "@/lib/validations/group.schema";
+import { createGroupSchema, updateGroupSchema } from "@/lib/validations/group.schema";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 import type { Group } from "@/types/database";
@@ -45,6 +45,31 @@ export async function getGroup(groupId: string) {
     where: { id: groupId, members: { some: { userId: session.user.id } } },
     include: { members: { include: { user: true } } },
   });
+}
+
+export async function updateGroup(
+  groupId: string,
+  formData: unknown
+): Promise<ActionResult<Group>> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+  const member = await db.groupMember.findUnique({
+    where: { groupId_userId: { groupId, userId: session.user.id } },
+  });
+  if (member?.role !== "ADMIN") return { error: "Only admins can edit group details" };
+  const parsed = updateGroupSchema.safeParse(formData);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  try {
+    const group = await db.group.update({
+      where: { id: groupId },
+      data: parsed.data,
+    });
+    revalidatePath(`/groups/${groupId}`);
+    revalidatePath("/groups");
+    return { data: group };
+  } catch {
+    return { error: "Failed to update group" };
+  }
 }
 
 export async function deleteGroup(groupId: string): Promise<ActionResult> {

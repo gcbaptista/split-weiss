@@ -2,6 +2,7 @@ import { getGroup } from "@/app/actions/group.actions";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { MemberList } from "@/components/groups/member-list";
+import { GroupSettingsForm } from "@/components/groups/group-settings-form";
 import {
   Card,
   CardContent,
@@ -25,6 +26,20 @@ export default async function GroupSettingsPage({ params }: PageProps) {
 
   return (
     <div className="max-w-lg space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Group details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <GroupSettingsForm
+            groupId={groupId}
+            initialName={group.name}
+            initialEmoji={group.emoji}
+            isAdmin={isAdmin}
+          />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Members</CardTitle>

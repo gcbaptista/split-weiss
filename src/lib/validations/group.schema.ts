@@ -6,6 +6,13 @@ export const createGroupSchema = z.object({
   emoji: z.string().optional(),
 });
 
+export const updateGroupSchema = z.object({
+  name: z.string().min(1).max(100),
+  emoji: z.string().optional(),
+});
+
+export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;
+
 export const addMemberSchema = z.object({
   groupId: z.string(),
   email: z.string().email(),

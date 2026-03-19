@@ -17,6 +17,9 @@ export default async function GroupExpensesPage({ params }: PageProps) {
   ]);
   if (!session?.user?.id || !group) notFound();
 
+  const currentMember = group.members.find(m => m.user.id === session.user?.id);
+  const isAdmin = currentMember?.role === "ADMIN";
+
   return (
     <ExpenseList
       expenses={expenses}
@@ -24,6 +27,7 @@ export default async function GroupExpensesPage({ params }: PageProps) {
       groupId={groupId}
       members={group.members.map((m) => m.user)}
       groupCurrency={group.currency}
+      isAdmin={isAdmin}
     />
   );
 }

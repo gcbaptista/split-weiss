@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS "public";
 CREATE TYPE "GroupRole" AS ENUM ('ADMIN', 'MEMBER');
 
 -- CreateEnum
-CREATE TYPE "SplitMode" AS ENUM ('EQUAL', 'PERCENTAGE', 'VALUE', 'LOCK');
+CREATE TYPE "SplitMode" AS ENUM ('EQUAL', 'PERCENTAGE', 'LOCK');
 
 -- CreateTable
 CREATE TABLE "User" (

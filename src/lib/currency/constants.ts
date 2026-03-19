@@ -37,3 +37,14 @@ export const CURRENCY_NAMES: Record<string, string> = {
 };
 
 export const DEFAULT_CURRENCY = "EUR";
+
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  EUR: "€", USD: "$", GBP: "£", CHF: "Fr", JPY: "¥", CNY: "¥",
+  CAD: "$", AUD: "$", NZD: "$", SGD: "$", HKD: "$",
+  SEK: "kr", NOK: "kr", DKK: "kr", ISK: "kr",
+  PLN: "zł", CZK: "Kč", HUF: "Ft", RON: "lei", BGN: "лв",
+  BRL: "R$", INR: "₹", KRW: "₩", TRY: "₺", ZAR: "R",
+  MXN: "$", ARS: "$", AED: "د.إ", SAR: "﷼", QAR: "﷼",
+  ILS: "₪", PKR: "₨", BDT: "৳", TWD: "NT$", UAH: "₴",
+  RUB: "₽", THB: "฿", MYR: "RM", IDR: "Rp", PHP: "₱",
+};

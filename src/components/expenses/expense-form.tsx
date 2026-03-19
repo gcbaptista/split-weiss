@@ -31,16 +31,43 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
-  calculateEqual,
   calculatePercentage,
-  calculateValue,
   calculateLock,
 } from "@/lib/splitting";
 import Decimal from "decimal.js";
 import type { User, ExpenseWithSplitsClient } from "@/types/database";
 import type { SplitMode } from "@/hooks/use-split-calculator";
 import { formatCurrency } from "@/lib/utils";
-import { AlertCircle } from "lucide-react";
+import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
+import { AlertCircle, Lock, LockOpen } from "lucide-react";
+
+const BAR_COLORS = [
+  "bg-blue-400", "bg-emerald-400", "bg-amber-400", "bg-rose-400",
+  "bg-violet-400", "bg-cyan-400", "bg-orange-400", "bg-pink-400",
+];
+
+function SplitPreviewBar({
+  splits,
+}: {
+  splits: { userId: string; amount: Decimal }[];
+}) {
+  const total = splits.reduce((s, m) => s.plus(m.amount), new Decimal(0));
+  if (total.lte(0)) return null;
+  return (
+    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+      {splits.map((s, i) => {
+        const pct = s.amount.div(total).mul(100).toFixed(1);
+        return (
+          <div
+            key={s.userId}
+            style={{ width: `${pct}%` }}
+            className={BAR_COLORS[i % BAR_COLORS.length]}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 interface ExpenseFormProps {
   groupId: string;
@@ -57,6 +84,7 @@ interface SplitInputState {
   amount: string;
   percentage: string;
   isLocked: boolean;
+  isIncluded: boolean;
 }
 
 export function ExpenseForm({
@@ -71,7 +99,7 @@ export function ExpenseForm({
   const router = useRouter();
   const [currency, setCurrency] = useState(initialExpense?.currency ?? groupCurrency);
   const [splitMode, setSplitMode] = useState<SplitMode>(
-    (initialExpense?.splitMode as SplitMode) ?? "EQUAL"
+    (initialExpense?.splitMode as SplitMode) ?? "LOCK"
   );
   const [splitInputs, setSplitInputs] = useState<SplitInputState[]>(() =>
     members.map((m) => {
@@ -81,6 +109,7 @@ export function ExpenseForm({
         amount: s?.amount ?? "",
         percentage: s?.percentage ?? "",
         isLocked: s?.isLocked ?? false,
+        isIncluded: initialExpense ? s !== undefined : true,
       };
     })
   );
@@ -91,7 +120,7 @@ export function ExpenseForm({
       title: initialExpense?.title ?? "",
       amount: initialExpense?.amount ?? "",
       currency,
-      splitMode: (initialExpense?.splitMode as SplitMode) ?? "EQUAL",
+      splitMode: (initialExpense?.splitMode as SplitMode) ?? "LOCK",
       date: initialExpense
         ? new Date(initialExpense.date).toISOString().split("T")[0]
         : new Date().toISOString().split("T")[0],
@@ -101,6 +130,25 @@ export function ExpenseForm({
   });
 
   const watchAmount = form.watch("amount");
+
+  function handleModeChange(newMode: SplitMode) {
+    if (newMode === "PERCENTAGE") {
+      setSplitInputs((prev) => {
+        const included = prev.filter((s) => s.isIncluded);
+        const n = included.length || prev.length;
+        const base = new Decimal(100).div(n).toDecimalPlaces(2, Decimal.ROUND_DOWN);
+        const remainder = new Decimal(100).minus(base.times(n - 1));
+        let idx = 0;
+        return prev.map((s) => {
+          if (!s.isIncluded) return { ...s, percentage: "", isLocked: false };
+          const pct = idx === n - 1 ? remainder : base;
+          idx++;
+          return { ...s, percentage: pct.toString(), isLocked: false };
+        });
+      });
+    }
+    setSplitMode(newMode);
+  }
 
   const { splits, splitError } = useMemo(() => {
     if (!watchAmount || parseFloat(watchAmount) <= 0) return { splits: null, splitError: null };
@@ -113,15 +161,24 @@ export function ExpenseForm({
         isLocked: s.isLocked,
       }));
       let result;
-      if (splitMode === "EQUAL") result = calculateEqual(total, members.map((m) => m.id));
-      else if (splitMode === "PERCENTAGE") result = calculatePercentage(total, inputs);
-      else if (splitMode === "VALUE") result = calculateValue(total, inputs);
-      else result = calculateLock(total, inputs);
+      if (splitMode === "PERCENTAGE") {
+        const includedInputs = splitInputs
+          .filter((s) => s.isIncluded)
+          .map((s) => ({ userId: s.userId, percentage: s.percentage, isLocked: s.isLocked }));
+        if (includedInputs.length === 0) return { splits: null, splitError: "Include at least one person" };
+        result = calculatePercentage(total, includedInputs);
+      } else {
+        const includedInputs = splitInputs
+          .filter((s) => s.isIncluded)
+          .map((s) => ({ userId: s.userId, amount: s.amount, isLocked: s.isLocked }));
+        if (includedInputs.length === 0) return { splits: null, splitError: "Include at least one person" };
+        result = calculateLock(total, includedInputs);
+      }
       return { splits: result, splitError: null };
     } catch (e) {
       return { splits: null, splitError: e instanceof Error ? e.message : "Split error" };
     }
-  }, [watchAmount, splitMode, splitInputs, members]);
+  }, [watchAmount, splitMode, splitInputs]);
 
   async function onSubmit(data: CreateExpenseInput) {
     if (!splits) {
@@ -156,7 +213,7 @@ export function ExpenseForm({
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Dinner, taxi, hotel..." {...field} />
+                <Input autoFocus placeholder="Dinner, taxi, hotel..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -213,101 +270,140 @@ export function ExpenseForm({
         />
         <div className="space-y-3">
           <Label>Split</Label>
-          <SplitModeSelector value={splitMode} onChange={setSplitMode} />
-          {splitMode !== "EQUAL" && (
+          <SplitModeSelector value={splitMode} onChange={handleModeChange} />
+
+          {/* PERCENTAGE — name | include switch | % input | lock icon */}
+          {splitMode === "PERCENTAGE" && (
             <div className="space-y-2">
-              {members.map((m, i) => (
-                <div
-                  key={m.id}
-                  className="space-y-1.5 rounded-md border p-3 sm:flex sm:items-center sm:gap-3 sm:space-y-0"
-                >
-                  <div className="flex items-center justify-between sm:contents">
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium sm:w-24 sm:flex-none">
+              {members.map((m, i) => {
+                const isIncluded = splitInputs[i].isIncluded;
+                const isLocked = splitInputs[i].isLocked;
+                return (
+                  <div
+                    key={m.id}
+                    className={`flex items-center gap-3 rounded-md border px-3 py-2 transition-opacity ${!isIncluded ? "opacity-40" : ""}`}
+                  >
+                    <label
+                      htmlFor={`pct-include-${m.id}`}
+                      className="min-w-0 flex-1 truncate text-sm font-medium cursor-pointer"
+                    >
                       {m.name ?? m.email}
-                    </span>
-                    {splits && (
-                      <span className="text-sm font-medium text-muted-foreground sm:hidden">
-                        {formatCurrency(
-                          splits.find((s) => s.userId === m.id)?.amount.toString() ?? "0",
-                          currency
-                        )}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 sm:contents">
-                    {splitMode === "LOCK" && (
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <Switch
-                          checked={splitInputs[i].isLocked}
-                          onCheckedChange={(v) =>
-                            setSplitInputs((prev) =>
-                              prev.map((s, j) => (j === i ? { ...s, isLocked: v } : s))
-                            )
-                          }
-                          id={`lock-${m.id}`}
-                        />
-                        <label
-                          htmlFor={`lock-${m.id}`}
-                          className="text-xs text-muted-foreground"
-                        >
-                          Lock
-                        </label>
-                      </div>
-                    )}
-                    {(splitMode === "VALUE" ||
-                      (splitMode === "LOCK" && splitInputs[i].isLocked)) && (
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        value={splitInputs[i].amount}
-                        onChange={(e) =>
-                          setSplitInputs((prev) =>
-                            prev.map((s, j) =>
-                              j === i ? { ...s, amount: e.target.value } : s
-                            )
-                          )
-                        }
-                        className="w-full sm:w-28"
-                      />
-                    )}
-                    {splitMode === "PERCENTAGE" && (
+                    </label>
+                    <Switch
+                      id={`pct-include-${m.id}`}
+                      checked={isIncluded}
+                      onCheckedChange={(v) =>
+                        setSplitInputs((prev) =>
+                          prev.map((s, j) => (j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s))
+                        )
+                      }
+                    />
+                    <div className="flex items-center gap-1">
                       <Input
                         type="number"
                         min="0"
                         max="100"
                         step="0.01"
                         placeholder="0"
+                        disabled={!isIncluded}
                         value={splitInputs[i].percentage}
                         onChange={(e) =>
                           setSplitInputs((prev) =>
                             prev.map((s, j) =>
-                              j === i ? { ...s, percentage: e.target.value } : s
+                              j === i ? { ...s, percentage: e.target.value, isLocked: true } : s
                             )
                           )
                         }
-                        className="w-full sm:w-20"
+                        className="w-16 text-right"
                       />
-                    )}
+                      <span className="text-sm text-muted-foreground shrink-0">%</span>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!isIncluded}
+                      onClick={() =>
+                        setSplitInputs((prev) =>
+                          prev.map((s, j) => (j === i ? { ...s, isLocked: !s.isLocked } : s))
+                        )
+                      }
+                      className="shrink-0 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-30 transition-colors"
+                      aria-label={isLocked ? "Unlock percentage" : "Lock percentage"}
+                    >
+                      {isLocked ? <Lock className="h-4 w-4" /> : <LockOpen className="h-4 w-4" />}
+                    </button>
                   </div>
-                  {splits && (
-                    <span className="hidden sm:block ml-auto text-sm font-medium text-muted-foreground">
-                      {formatCurrency(
-                        splits.find((s) => s.userId === m.id)?.amount.toString() ?? "0",
-                        currency
-                      )}
-                    </span>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
-          {splitMode === "EQUAL" && splits && watchAmount && (
-            <p className="text-sm text-muted-foreground">
-              Each person pays{" "}
-              {formatCurrency(splits[0]?.amount.toString() ?? "0", currency)}
-            </p>
+
+          {/* LOCK (Amount) — name | include switch | amount input | lock icon */}
+          {splitMode === "LOCK" && (
+            <div className="space-y-2">
+              {members.map((m, i) => {
+                const isIncluded = splitInputs[i].isIncluded;
+                const isLocked = splitInputs[i].isLocked;
+                const computedAmount = splits?.find((s) => s.userId === m.id)?.amount;
+                return (
+                  <div
+                    key={m.id}
+                    className={`flex items-center gap-3 rounded-md border px-3 py-2 transition-opacity ${!isIncluded ? "opacity-40" : ""}`}
+                  >
+                    <label
+                      htmlFor={`include-${m.id}`}
+                      className="min-w-0 flex-1 truncate text-sm font-medium cursor-pointer"
+                    >
+                      {m.name ?? m.email}
+                    </label>
+                    <Switch
+                      id={`include-${m.id}`}
+                      checked={isIncluded}
+                      onCheckedChange={(v) =>
+                        setSplitInputs((prev) =>
+                          prev.map((s, j) => (j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s))
+                        )
+                      }
+                    />
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        disabled={!isIncluded}
+                        value={isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")}
+                        onChange={(e) =>
+                          setSplitInputs((prev) =>
+                            prev.map((s, j) =>
+                              j === i ? { ...s, amount: e.target.value, isLocked: true } : s
+                            )
+                          )
+                        }
+                        className="w-20 text-right"
+                      />
+                      <span className="text-sm text-muted-foreground shrink-0">{CURRENCY_SYMBOLS[currency] ?? currency}</span>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!isIncluded}
+                      onClick={() =>
+                        setSplitInputs((prev) =>
+                          prev.map((s, j) => (j === i ? { ...s, isLocked: !s.isLocked } : s))
+                        )
+                      }
+                      className="shrink-0 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-30 transition-colors"
+                      aria-label={isLocked ? "Unlock amount" : "Lock amount"}
+                    >
+                      {isLocked ? <Lock className="h-4 w-4" /> : <LockOpen className="h-4 w-4" />}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {splits && watchAmount && (
+            <SplitPreviewBar splits={splits} />
           )}
           {splitError && (
             <p className="flex items-center gap-1 text-sm text-destructive">
