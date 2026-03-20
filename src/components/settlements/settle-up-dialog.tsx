@@ -12,7 +12,6 @@ import { createSettlement } from "@/app/actions/settlement.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { User } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
 import Decimal from "decimal.js";
 
@@ -30,7 +29,6 @@ interface SettleUpDialogProps {
   debt: DebtForDialog | null;
   groupId: string;
   currency: string;
-  members: User[];
 }
 
 export function SettleUpDialog({

@@ -6,7 +6,7 @@ import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, cn } from "@/lib/utils";
 import Decimal from "decimal.js";
-import type { User, SettlementWithUsersClient } from "@/types/database";
+import type { UserSummary, SettlementHistoryClient } from "@/types/database";
 
 interface DebtItem {
   fromUserId: string;
@@ -23,15 +23,15 @@ interface PairData {
   fromName: string;
   toName: string;
   debt: DebtItem | null;
-  settlements: SettlementWithUsersClient[];
+  settlements: SettlementHistoryClient[];
 }
 
 interface SettlementPairsProps {
   debts: DebtItem[];
-  settlements: SettlementWithUsersClient[];
+  settlements: SettlementHistoryClient[];
   groupId: string;
   currency: string;
-  members: User[];
+  members: UserSummary[];
   highlightedUserId?: string;
 }
 
@@ -98,7 +98,13 @@ export function SettlementPairs({
   const togglePair = (key: string) => {
     setExpandedPairs((prev) => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+
       return next;
     });
   };
@@ -171,7 +177,6 @@ export function SettlementPairs({
         debt={selectedDebt ? { fromUserId: selectedDebt.fromUserId, toUserId: selectedDebt.toUserId, amount: new Decimal(selectedDebt.amount), fromName: selectedDebt.fromUserId === highlightedUserId ? "You" : selectedDebt.fromName, toName: selectedDebt.toUserId === highlightedUserId ? "You" : selectedDebt.toName } : null}
         groupId={groupId}
         currency={currency}
-        members={members}
       />
     </>
   );

@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { ExpenseForm } from "./expense-form";
-import type { User, ExpenseWithSplitsClient } from "@/types/database";
+import type { UserSummary, ExpenseWithSplitsClient } from "@/types/database";
 
 interface AddExpenseDialogProps {
   groupId: string;
-  members: User[];
+  members: UserSummary[];
   groupCurrency: string;
   defaultPayerId: string;
   // Edit mode — when provided, renders no trigger button and is controlled externally

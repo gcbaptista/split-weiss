@@ -13,7 +13,7 @@ npm run lint      # Run ESLint
 There are no test scripts configured. Database commands:
 
 ```bash
-npx prisma migrate dev    # Run migrations in development
+npx prisma db push        # Push schema.prisma directly to the database
 npx prisma generate       # Regenerate Prisma client after schema changes
 npx prisma studio         # Open Prisma Studio GUI
 ```

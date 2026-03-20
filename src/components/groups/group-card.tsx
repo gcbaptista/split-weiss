@@ -9,8 +9,7 @@ interface GroupCardProps {
     name: string;
     emoji?: string | null;
     currency: string;
-    _count?: { expenses: number };
-    members: { user: { name?: string | null } }[];
+    _count: { members: number; expenses: number };
   };
 }
 
@@ -30,7 +29,7 @@ export function GroupCard({ group }: GroupCardProps) {
               </div>
             </div>
             <Badge variant="secondary">
-              {group._count?.expenses ?? 0} expenses
+              {group._count.expenses} expenses
             </Badge>
           </div>
         </CardHeader>
@@ -38,8 +37,8 @@ export function GroupCard({ group }: GroupCardProps) {
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
             <span>
-              {group.members.length} member
-              {group.members.length !== 1 ? "s" : ""}
+              {group._count.members} member
+              {group._count.members !== 1 ? "s" : ""}
             </span>
           </div>
         </CardContent>

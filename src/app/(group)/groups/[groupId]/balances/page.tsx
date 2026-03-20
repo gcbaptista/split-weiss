@@ -1,9 +1,9 @@
 import { getAuthorizedGroup } from "@/lib/group-access";
-import { getGroupExpenses } from "@/app/actions/expense.actions";
-import { getGroupSettlements } from "@/app/actions/settlement.actions";
+import { getGroupExpensesForBreakdown } from "@/app/actions/expense.actions";
+import { getGroupSettlementsForBreakdown } from "@/app/actions/settlement.actions";
 import { notFound } from "next/navigation";
 import { calculateBalances } from "@/lib/balances/calculator";
-import { fetchRates } from "@/lib/currency/frankfurter";
+import { fetchRatesMap } from "@/lib/currency/frankfurter";
 import { convert } from "@/lib/currency/converter";
 import { BalanceBreakdown } from "@/components/groups/balance-breakdown";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -19,8 +19,8 @@ export default async function BalancesPage({ params }: PageProps) {
   const { groupId } = await params;
   const [group, expenses, settlements] = await Promise.all([
     getAuthorizedGroup(groupId),
-    getGroupExpenses(groupId),
-    getGroupSettlements(groupId),
+    getGroupExpensesForBreakdown(groupId),
+    getGroupSettlementsForBreakdown(groupId),
   ]);
 
   if (!group) notFound();
@@ -34,27 +34,12 @@ export default async function BalancesPage({ params }: PageProps) {
     );
   }
 
-  const dates = [...new Set(expenses.map((expense) => expense.date.toISOString().split("T")[0]))];
-  const ratesByDate = new Map<string, ExchangeRates>();
-  const staleDateResults = await Promise.all(
-    dates.map(async (date) => {
-      try {
-        ratesByDate.set(date, await fetchRates(groupCurrency, date));
-        return false;
-      } catch {
-        return true;
-      }
-    })
-  );
-
-  const latestRatesStale = await (async () => {
-    try {
-      ratesByDate.set("latest", await fetchRates(groupCurrency, "latest"));
-      return false;
-    } catch {
-      return true;
-    }
-  })();
+  const dates = [
+    ...new Set(
+      [...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])
+    ),
+  ];
+  const { ratesByDate, staleDates } = await fetchRatesMap(groupCurrency, [...dates, "latest"]);
 
   function getRates(date: Date): ExchangeRates {
     const day = date.toISOString().split("T")[0];
@@ -90,7 +75,7 @@ export default async function BalancesPage({ params }: PageProps) {
     userId: balance.userId,
     netAmount: balance.netAmount.toString(),
   }));
-  const hasStaleRates = staleDateResults.some(Boolean) || latestRatesStale;
+  const hasStaleRates = staleDates.length > 0;
 
   return (
     <div className="space-y-6">
@@ -105,7 +90,7 @@ export default async function BalancesPage({ params }: PageProps) {
         balances={allBalances}
         members={members}
         expenses={expenses}
-        settlements={settlements.map((s) => ({ ...s, amount: s.amount.toString() }))}
+        settlements={settlements}
         memberSpend={memberSpend}
         grandTotal={grandTotal.toString()}
         currency={groupCurrency}

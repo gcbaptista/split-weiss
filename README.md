@@ -25,7 +25,7 @@ SplitWeiss is a no-login expense-sharing app built for groups — trips, dinners
 ```bash
 npm install
 cp .env.example .env.local  # fill in your DATABASE_URL
-npx prisma migrate dev
+npx prisma db push
 npm run dev
 ```
 
@@ -38,7 +38,7 @@ npm run dev       # Start development server
 npm run build     # Production build
 npm run lint      # Run ESLint
 
-npx prisma migrate dev    # Run migrations
+npx prisma db push        # Push schema.prisma to the database
 npx prisma generate       # Regenerate Prisma client
 npx prisma studio         # Open Prisma Studio GUI
 ```

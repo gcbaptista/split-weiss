@@ -2,11 +2,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { NetBalance } from "@/lib/balances/calculator";
-import type { User } from "@/types/database";
+import type { UserSummary } from "@/types/database";
 
 interface BalanceCardProps {
   balance: NetBalance;
-  user: User;
+  user: UserSummary;
   currency: string;
   isCurrentUser?: boolean;
 }

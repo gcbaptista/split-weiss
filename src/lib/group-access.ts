@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { db } from "@/lib/db";
 import {
   getDeviceTokenFromCookies,
@@ -18,8 +19,6 @@ const userSelect = {
   id: true,
   name: true,
   email: true,
-  createdAt: true,
-  updatedAt: true,
 } as const;
 
 export type GroupRequestAccess =
@@ -27,61 +26,68 @@ export type GroupRequestAccess =
   | { status: "locked" }
   | { status: "authorized"; group: GroupWithMembers };
 
-export async function canAccessGroup(groupId: string): Promise<boolean> {
-  const group = await db.group.findUnique({
-    where: { id: groupId },
-    select: { passwordHash: true },
-  });
+type GroupAccessStatus = GroupRequestAccess["status"];
 
-  if (!group) return false;
-  if (!group.passwordHash) return true;
+const getGroupAccessStatus = cache(
+  async (groupId: string): Promise<GroupAccessStatus> => {
+    const group = await db.group.findUnique({
+      where: { id: groupId },
+      select: { id: true, passwordHash: true },
+    });
 
-  const deviceToken = await getDeviceTokenFromCookies();
-  if (!deviceToken) return false;
+    if (!group) return "not-found";
+    if (!group.passwordHash) return "authorized";
 
-  return verifyDeviceAccess(groupId, deviceToken);
-}
+    const deviceToken = await getDeviceTokenFromCookies();
+    if (!deviceToken) return "locked";
 
-export async function getGroupRequestAccess(
+    return (await verifyDeviceAccess(groupId, deviceToken))
+      ? "authorized"
+      : "locked";
+  }
+);
+
+export const canAccessGroup = cache(async (groupId: string): Promise<boolean> => {
+  return (await getGroupAccessStatus(groupId)) === "authorized";
+});
+
+export const getGroupRequestAccess = cache(async (
   groupId: string
-): Promise<GroupRequestAccess> {
+): Promise<GroupRequestAccess> => {
+  const status = await getGroupAccessStatus(groupId);
+
+  if (status !== "authorized") {
+    return { status };
+  }
+
   const group = await db.group.findUnique({
     where: { id: groupId },
-    select: { id: true, passwordHash: true },
+    select: {
+      id: true,
+      name: true,
+      emoji: true,
+      currency: true,
+      passwordHash: true,
+      members: {
+        select: {
+          userId: true,
+          user: { select: userSelect },
+        },
+      },
+    },
   });
 
   if (!group) {
     return { status: "not-found" };
   }
 
-  if (group.passwordHash) {
-    const deviceToken = await getDeviceTokenFromCookies();
-    if (!deviceToken) {
-      return { status: "locked" };
-    }
+  return { status: "authorized", group };
+});
 
-    const hasAccess = await verifyDeviceAccess(groupId, deviceToken);
-    if (!hasAccess) {
-      return { status: "locked" };
-    }
-  }
-
-  const authorizedGroup = await db.group.findUnique({
-    where: { id: groupId },
-    include: { members: { include: { user: { select: userSelect } } } },
-  });
-
-  if (!authorizedGroup) {
-    return { status: "not-found" };
-  }
-
-  return { status: "authorized", group: authorizedGroup };
-}
-
-export async function getAuthorizedGroup(groupId: string) {
+export const getAuthorizedGroup = cache(async (groupId: string) => {
   const access = await getGroupRequestAccess(groupId);
   return access.status === "authorized" ? access.group : null;
-}
+});
 
 export async function getRecentAccessibleGroups() {
   const recentGroupIds = await getRecentGroupIds();
@@ -89,27 +95,23 @@ export async function getRecentAccessibleGroups() {
 
   const deviceToken = await getDeviceTokenFromCookies();
   const groups = await db.group.findMany({
-    where: { id: { in: recentGroupIds } },
-    include: {
-      members: { include: { user: { select: userSelect } } },
-      _count: { select: { expenses: true } },
+    where: {
+      id: { in: recentGroupIds },
+      OR: deviceToken
+        ? [{ passwordHash: null }, { deviceAccess: { some: { deviceToken } } }]
+        : [{ passwordHash: null }],
+    },
+    select: {
+      id: true,
+      name: true,
+      emoji: true,
+      currency: true,
+      _count: { select: { members: true, expenses: true } },
     },
   });
 
-  const accessibleGroups = await Promise.all(
-    groups.map(async (group) => {
-      if (!group.passwordHash) return group;
-      if (!deviceToken) return null;
-
-      const hasAccess = await verifyDeviceAccess(group.id, deviceToken);
-      return hasAccess ? group : null;
-    })
-  );
-
   const groupMap = new Map(
-    accessibleGroups
-      .filter((group): group is NonNullable<typeof group> => group !== null)
-      .map((group) => [group.id, group])
+    groups.map((group) => [group.id, group])
   );
 
   return recentGroupIds
@@ -140,4 +142,3 @@ export async function unlockGroupAccess(
 
   return "ok";
 }
-

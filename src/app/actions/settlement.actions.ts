@@ -4,14 +4,15 @@ import { canAccessGroup } from "@/lib/group-access";
 import { createSettlementSchema } from "@/lib/validations/settlement.schema";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
-import type { Settlement } from "@/types/database";
+import type {
+  Settlement,
+  SettlementBreakdownClient,
+} from "@/types/database";
 
 const userSelect = {
   id: true,
   name: true,
   email: true,
-  createdAt: true,
-  updatedAt: true,
 } as const;
 
 export async function createSettlement(
@@ -50,4 +51,52 @@ export async function getGroupSettlements(groupId: string) {
     },
     orderBy: { date: "desc" },
   });
+}
+
+export async function getGroupSettlementHistory(groupId: string) {
+  if (!(await canAccessGroup(groupId))) {
+    return [];
+  }
+
+  return db.settlement.findMany({
+    where: { groupId },
+    select: {
+      id: true,
+      fromUserId: true,
+      toUserId: true,
+      amount: true,
+      currency: true,
+      date: true,
+      note: true,
+    },
+    orderBy: { date: "desc" },
+  });
+}
+
+export async function getGroupSettlementsForBreakdown(
+  groupId: string
+): Promise<SettlementBreakdownClient[]> {
+  if (!(await canAccessGroup(groupId))) {
+    return [];
+  }
+
+  const settlements = await db.settlement.findMany({
+    where: { groupId },
+    select: {
+      id: true,
+      fromUserId: true,
+      toUserId: true,
+      amount: true,
+      currency: true,
+      date: true,
+      fromUser: { select: userSelect },
+      toUser: { select: userSelect },
+    },
+    orderBy: { date: "desc" },
+  });
+
+  return settlements.map((settlement) => ({
+    ...settlement,
+    amount: settlement.amount.toString(),
+  }));
 }

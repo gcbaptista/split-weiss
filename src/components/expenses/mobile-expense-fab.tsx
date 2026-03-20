@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { AddExpenseDialog } from "./add-expense-dialog";
-import type { User } from "@/types/database";
+import type { UserSummary } from "@/types/database";
 
 interface MobileExpenseFABProps {
   groupId: string;
-  members: User[];
+  members: UserSummary[];
   groupCurrency: string;
   defaultPayerId: string;
 }

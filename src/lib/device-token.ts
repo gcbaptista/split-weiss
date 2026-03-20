@@ -1,6 +1,8 @@
 import { randomBytes } from "crypto";
 import { db } from "@/lib/db";
 
+const ACCESS_TOUCH_INTERVAL_MS = 60 * 60 * 1000;
+
 export function generateDeviceToken(): string {
   return randomBytes(32).toString("hex");
 }
@@ -37,13 +39,20 @@ export async function verifyDeviceAccess(
         deviceToken,
       },
     },
+    select: {
+      id: true,
+      lastUsedAt: true,
+    },
   });
 
   if (access) {
-    await db.deviceAccess.update({
-      where: { id: access.id },
-      data: { lastUsedAt: new Date() },
-    });
+    if (Date.now() - access.lastUsedAt.getTime() >= ACCESS_TOUCH_INTERVAL_MS) {
+      await db.deviceAccess.update({
+        where: { id: access.id },
+        data: { lastUsedAt: new Date() },
+      });
+    }
+
     return true;
   }
 

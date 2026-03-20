@@ -133,10 +133,6 @@ export async function unlockGroup(
 }
 
 export async function rememberRecentGroupVisit(groupId: string): Promise<void> {
-  if (!(await canAccessGroup(groupId))) {
-    return;
-  }
-
   await rememberRecentGroup(groupId);
 }
 

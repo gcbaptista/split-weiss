@@ -19,13 +19,13 @@ import { AddExpenseDialog } from "./add-expense-dialog";
 import { ExpenseAuditLogDialog } from "./expense-audit-log-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { User, ExpenseWithSplitsClient } from "@/types/database";
+import type { UserSummary, ExpenseWithSplitsClient } from "@/types/database";
 
 interface ExpenseListProps {
   expenses: ExpenseWithSplitsClient[];
   defaultPayerId: string;
   groupId: string;
-  members: User[];
+  members: UserSummary[];
   groupCurrency: string;
 }
 

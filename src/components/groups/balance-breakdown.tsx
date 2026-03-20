@@ -4,7 +4,11 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { convert } from "@/lib/currency/converter";
 import type { ExchangeRates } from "@/types/currency";
-import type { User, ExpenseWithSplitsClient, SettlementWithUsersClient } from "@/types/database";
+import type {
+  UserSummary,
+  ExpenseBreakdownClient,
+  SettlementBreakdownClient,
+} from "@/types/database";
 
 export interface MemberSpend {
   userId: string;
@@ -19,9 +23,9 @@ interface SerializableNetBalance {
 
 interface BalanceBreakdownProps {
   balances: SerializableNetBalance[];
-  members: User[];
-  expenses: ExpenseWithSplitsClient[];
-  settlements: SettlementWithUsersClient[];
+  members: UserSummary[];
+  expenses: ExpenseBreakdownClient[];
+  settlements: SettlementBreakdownClient[];
   memberSpend: MemberSpend[];
   grandTotal: string;
   currency: string;
@@ -33,8 +37,8 @@ interface MemberTransaction {
   id: string;
   type: "expense" | "settlement";
   date: Date;
-  expense?: ExpenseWithSplitsClient;
-  settlement?: SettlementWithUsersClient;
+  expense?: ExpenseBreakdownClient;
+  settlement?: SettlementBreakdownClient;
   impactGroupCurrency: number;
   runningBalance: number;
 }

@@ -30,6 +30,9 @@ export async function addMember(formData: unknown): Promise<ActionResult> {
       },
     });
     revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/balances`);
+    revalidatePath(`/groups/${groupId}/settlements`);
+    revalidatePath(`/groups/${groupId}/settings`);
     return { data: undefined };
   } catch (error) {
     console.error("addMember failed", error);
@@ -55,6 +58,9 @@ export async function removeMember(
       where: { groupId_userId: { groupId, userId } },
     });
     revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/balances`);
+    revalidatePath(`/groups/${groupId}/settlements`);
+    revalidatePath(`/groups/${groupId}/settings`);
     return { data: undefined };
   } catch {
     return { error: "Couldn't remove them" };

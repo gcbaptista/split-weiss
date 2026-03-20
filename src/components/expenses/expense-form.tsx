@@ -35,7 +35,7 @@ import {
   calculateLock,
 } from "@/lib/splitting";
 import Decimal from "decimal.js";
-import type { User, ExpenseWithSplitsClient } from "@/types/database";
+import type { UserSummary, ExpenseWithSplitsClient } from "@/types/database";
 import type { SplitMode } from "@/hooks/use-split-calculator";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import { AlertCircle, Lock, LockOpen } from "lucide-react";
@@ -70,7 +70,7 @@ function SplitPreviewBar({
 
 interface ExpenseFormProps {
   groupId: string;
-  members: User[];
+  members: UserSummary[];
   groupCurrency: string;
   defaultPayerId: string;
   onSuccess?: () => void;

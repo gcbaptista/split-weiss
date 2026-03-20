@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { addMember, removeMember } from "@/app/actions/member.actions";
 import { toast } from "sonner";
 import { useState } from "react";
-import type { GroupMember, User } from "@/types/database";
+import type { GroupMemberWithUser } from "@/types/database";
 
 interface MemberListProps {
-  members: (GroupMember & { user: User })[];
+  members: GroupMemberWithUser[];
   groupId: string;
 }
 

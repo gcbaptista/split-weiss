@@ -1,12 +1,11 @@
 import { getAuthorizedGroup } from "@/lib/group-access";
-import { getGroupExpenses } from "@/app/actions/expense.actions";
-import { getGroupSettlements } from "@/app/actions/settlement.actions";
+import { getGroupExpensesForCalculation } from "@/app/actions/expense.actions";
+import { getGroupSettlementHistory } from "@/app/actions/settlement.actions";
 import { notFound } from "next/navigation";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
-import { fetchRates } from "@/lib/currency/frankfurter";
+import { fetchRatesMap } from "@/lib/currency/frankfurter";
 import { SettlementPairs } from "@/components/settlements/settlement-pairs";
-import type { ExchangeRates } from "@/types/currency";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;
@@ -16,26 +15,18 @@ export default async function SettlementsPage({ params }: PageProps) {
   const { groupId } = await params;
   const [group, expenses, settlements] = await Promise.all([
     getAuthorizedGroup(groupId),
-    getGroupExpenses(groupId),
-    getGroupSettlements(groupId),
+    getGroupExpensesForCalculation(groupId),
+    getGroupSettlementHistory(groupId),
   ]);
 
   if (!group) notFound();
 
-  const ratesByDate = new Map<string, ExchangeRates>();
-  const dates = [...new Set(expenses.map((expense) => expense.date.toISOString().split("T")[0]))];
-
-  await Promise.all(
-    dates.map(async (date) => {
-      try {
-        ratesByDate.set(date, await fetchRates(group.currency, date));
-      } catch {}
-    })
-  );
-
-  try {
-    ratesByDate.set("latest", await fetchRates(group.currency, "latest"));
-  } catch {}
+  const dates = [
+    ...new Set(
+      [...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])
+    ),
+  ];
+  const { ratesByDate } = await fetchRatesMap(group.currency, [...dates, "latest"]);
 
   const balances = calculateBalances(expenses, settlements, group.currency, ratesByDate);
   const debts = simplifyDebts(balances);

@@ -1,14 +1,20 @@
 import Decimal from "decimal.js";
 import { convert } from "@/lib/currency/converter";
 import type { ExchangeRates } from "@/types/currency";
-import type { SettlementWithUsers } from "@/types/database";
-
 interface ExpenseInput {
   date: Date;
   currency: string;
   amount: { toString(): string };
   payerId: string;
   splits: { userId: string; amount: { toString(): string } }[];
+}
+
+interface SettlementInput {
+  date: Date;
+  currency: string;
+  amount: { toString(): string };
+  fromUserId: string;
+  toUserId: string;
 }
 
 export interface NetBalance {
@@ -18,7 +24,7 @@ export interface NetBalance {
 
 export function calculateBalances(
   expenses: ExpenseInput[],
-  settlements: SettlementWithUsers[],
+  settlements: SettlementInput[],
   groupCurrency: string,
   ratesByDate: Map<string, ExchangeRates>
 ): Map<string, NetBalance> {

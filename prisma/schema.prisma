@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -66,6 +65,8 @@ model Expense {
   payer     User           @relation(fields: [payerId], references: [id])
   splits    ExpenseSplit[]
   auditLogs ExpenseAuditLog[]
+
+  @@index([groupId, date])
 }
 
 enum SplitMode {
@@ -94,6 +95,7 @@ model ExpenseAuditLog {
   actor             User        @relation("AuditActor", fields: [actorId], references: [id])
 
   @@index([originalExpenseId])
+  @@index([originalExpenseId, createdAt])
   @@index([groupId])
 }
 
@@ -122,6 +124,8 @@ model Settlement {
   group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   fromUser   User     @relation("SettlementFrom", fields: [fromUserId], references: [id])
   toUser     User     @relation("SettlementTo", fields: [toUserId], references: [id])
+
+  @@index([groupId, date])
 }
 
 model ExchangeRateCache {

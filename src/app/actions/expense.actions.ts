@@ -11,15 +11,13 @@ import { buildStateSnapshot } from "@/lib/audit/snapshot";
 import Decimal from "decimal.js";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
-import type { Expense, ExpenseWithSplitsClient } from "@/types/database";
+import type { Expense, ExpenseBreakdownClient, ExpenseWithSplitsClient } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 
 const userSelect = {
   id: true,
   name: true,
   email: true,
-  createdAt: true,
-  updatedAt: true,
 } as const;
 
 function serializeExpenseForResult(expense: Expense): Expense {
@@ -90,6 +88,7 @@ export async function createExpense(
     });
     revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/balances`);
+    revalidatePath(`/groups/${groupId}/settlements`);
     return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return {
@@ -120,6 +119,66 @@ export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSpli
       ...s,
       amount: s.amount.toString(),
       percentage: s.percentage?.toString() ?? null,
+    })),
+  }));
+}
+
+export async function getGroupExpensesForCalculation(groupId: string) {
+  if (!(await canAccessGroup(groupId))) {
+    return [];
+  }
+
+  return db.expense.findMany({
+    where: { groupId },
+    select: {
+      payerId: true,
+      currency: true,
+      date: true,
+      amount: true,
+      splits: {
+        select: {
+          userId: true,
+          amount: true,
+        },
+      },
+    },
+    orderBy: { date: "desc" },
+  });
+}
+
+export async function getGroupExpensesForBreakdown(
+  groupId: string
+): Promise<ExpenseBreakdownClient[]> {
+  if (!(await canAccessGroup(groupId))) {
+    return [];
+  }
+
+  const expenses = await db.expense.findMany({
+    where: { groupId },
+    select: {
+      id: true,
+      title: true,
+      payerId: true,
+      currency: true,
+      date: true,
+      amount: true,
+      payer: { select: userSelect },
+      splits: {
+        select: {
+          userId: true,
+          amount: true,
+        },
+      },
+    },
+    orderBy: { date: "desc" },
+  });
+
+  return expenses.map((expense) => ({
+    ...expense,
+    amount: expense.amount.toString(),
+    splits: expense.splits.map((split) => ({
+      ...split,
+      amount: split.amount.toString(),
     })),
   }));
 }
@@ -190,6 +249,7 @@ export async function updateExpense(
     });
     revalidatePath(`/groups/${existing.groupId}`);
     revalidatePath(`/groups/${existing.groupId}/balances`);
+    revalidatePath(`/groups/${existing.groupId}/settlements`);
     return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Failed to update expense" };
@@ -231,6 +291,7 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
     });
     revalidatePath(`/groups/${expense.groupId}`);
     revalidatePath(`/groups/${expense.groupId}/balances`);
+    revalidatePath(`/groups/${expense.groupId}/settlements`);
     return { data: undefined };
   } catch {
     return { error: "Failed to delete expense" };
