@@ -129,18 +129,18 @@ export function SettlementPairs({
               <div className="p-4 space-y-2 sm:flex sm:items-center sm:justify-between sm:space-y-0">
                 <div className="flex items-center gap-2 text-sm min-w-0">
                   {!isOutstanding && <Check className="h-4 w-4 text-green-600 shrink-0" />}
-                  <span className={cn("font-medium truncate max-w-[120px] sm:max-w-none", pair.fromUserId === highlightedUserId && "text-primary")}>{fromLabel}</span>
+                  <span className={cn("text-sm font-medium truncate max-w-[120px] sm:max-w-none", pair.fromUserId === highlightedUserId && "text-primary")}>{fromLabel}</span>
                   <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className={cn("font-medium truncate max-w-[120px] sm:max-w-none", pair.toUserId === highlightedUserId && "text-primary")}>{toLabel}</span>
+                  <span className={cn("text-sm font-medium truncate max-w-[120px] sm:max-w-none", pair.toUserId === highlightedUserId && "text-primary")}>{toLabel}</span>
                 </div>
                 <div className="flex items-center justify-between sm:justify-end sm:gap-3">
                   {isOutstanding ? (
                     <>
-                      <span className="font-semibold tabular-nums">{formatCurrency(pair.debt!.amount, currency)}</span>
+                      <span className="text-base font-semibold tabular-nums">{formatCurrency(pair.debt!.amount, currency)}</span>
                       <Button size="sm" variant={isUserRelevant ? "default" : "outline"} onClick={() => setSelectedDebt(pair.debt)}>Settle up</Button>
                     </>
                   ) : (
-                    <span className="text-sm text-green-600 font-medium">Settled up</span>
+                    <span className="text-xs text-green-600 font-medium">Settled up</span>
                   )}
                 </div>
               </div>
@@ -155,12 +155,14 @@ export function SettlementPairs({
                   {isExpanded && (
                     <div className="divide-y border-t">
                       {pair.settlements.map((s) => (
-                        <div key={s.id} className="flex items-center justify-between px-4 py-2.5 pl-9 text-sm bg-muted/10">
+                        <div key={s.id} className="flex items-center justify-between gap-3 px-4 py-2.5 pl-9 bg-muted/10">
                           <div className="min-w-0">
-                            <span className="text-muted-foreground">{new Date(s.date).toLocaleDateString()}</span>
-                            {s.note && <span className="text-muted-foreground ml-1">· {s.note}</span>}
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(s.date).toLocaleDateString()}
+                              {s.note && <span>{" · "}{s.note}</span>}
+                            </p>
                           </div>
-                          <span className="font-medium tabular-nums text-green-600 shrink-0">{formatCurrency(s.amount.toString(), s.currency)}</span>
+                          <span className="text-sm font-medium tabular-nums text-green-600 shrink-0">{formatCurrency(s.amount.toString(), s.currency)}</span>
                         </div>
                       ))}
                     </div>

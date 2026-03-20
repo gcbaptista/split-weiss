@@ -44,7 +44,7 @@ export default async function GroupLayout({
         </Link>
         <div className="flex items-center justify-between gap-3 pb-4">
           <div className="min-w-0 flex items-center gap-3">
-            <span className="shrink-0 text-2xl sm:text-3xl">{group.emoji ?? "💰"}</span>
+            {group.emoji && <span className="shrink-0 text-2xl sm:text-3xl">{group.emoji}</span>}
             <div className="min-w-0">
               <h1 className="truncate text-xl font-bold sm:text-2xl">{group.name}</h1>
               <p className="text-sm text-muted-foreground">

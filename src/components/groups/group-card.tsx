@@ -20,7 +20,7 @@ export function GroupCard({ group }: GroupCardProps) {
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">{group.emoji ?? "💰"}</span>
+              {group.emoji && <span className="text-2xl">{group.emoji}</span>}
               <div>
                 <h3 className="font-semibold leading-none">{group.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">

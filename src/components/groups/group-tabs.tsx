@@ -16,12 +16,14 @@ export function GroupTabs({ groupId }: { groupId: string }) {
   const active = getActiveTab(pathname, groupId);
   return (
     <Tabs value={active} className="mb-6">
-      <TabsList variant="line" className="w-full overflow-x-auto border-b rounded-none">
-        <TabsTrigger render={<Link href={`/groups/${groupId}`} />} value="expenses">Expenses</TabsTrigger>
-        <TabsTrigger render={<Link href={`/groups/${groupId}/balances`} />} value="balances">Balances</TabsTrigger>
-        <TabsTrigger render={<Link href={`/groups/${groupId}/settlements`} />} value="settlements">Settlements</TabsTrigger>
-        <TabsTrigger render={<Link href={`/groups/${groupId}/settings`} />} value="settings">Settings</TabsTrigger>
-      </TabsList>
+      <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <TabsList variant="line" className="min-w-full border-b rounded-none">
+          <TabsTrigger render={<Link href={`/groups/${groupId}`} />} value="expenses">Expenses</TabsTrigger>
+          <TabsTrigger render={<Link href={`/groups/${groupId}/balances`} />} value="balances">Balances</TabsTrigger>
+          <TabsTrigger render={<Link href={`/groups/${groupId}/settlements`} />} value="settlements">Settlements</TabsTrigger>
+          <TabsTrigger render={<Link href={`/groups/${groupId}/settings`} />} value="settings">Settings</TabsTrigger>
+        </TabsList>
+      </div>
     </Tabs>
   );
 }

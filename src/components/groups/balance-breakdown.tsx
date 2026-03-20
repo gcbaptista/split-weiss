@@ -188,7 +188,7 @@ export function BalanceBreakdown({
                   </p>
                 </div>
                 <span className={cn(
-                  "text-sm font-semibold tabular-nums shrink-0",
+                  "text-base font-semibold tabular-nums shrink-0",
                   netValue > 0 && "text-green-600",
                   netValue < 0 && "text-red-600"
                 )}>
@@ -242,7 +242,7 @@ export function BalanceBreakdown({
                                 </p>
                               </div>
                               <span className={cn(
-                                "text-sm tabular-nums shrink-0",
+                                "text-sm font-medium tabular-nums shrink-0",
                                 tx.runningBalance > 0.005 && "text-green-600",
                                 tx.runningBalance < -0.005 && "text-red-600"
                               )}>
@@ -273,7 +273,7 @@ export function BalanceBreakdown({
                                 </p>
                               </div>
                               <span className={cn(
-                                "text-sm tabular-nums shrink-0",
+                                "text-sm font-medium tabular-nums shrink-0",
                                 tx.runningBalance > 0.005 && "text-green-600",
                                 tx.runningBalance < -0.005 && "text-red-600"
                               )}>

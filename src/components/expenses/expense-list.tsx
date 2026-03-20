@@ -169,14 +169,14 @@ export function ExpenseList({
             <div className="min-w-0 flex-1 space-y-1.5">
               {/* Row 1: Title and Amount (mobile) */}
               <div className="flex items-start justify-between gap-2 sm:block">
-                <p className="font-medium flex-1 min-w-0">{e.title}</p>
-                <span className="font-semibold tabular-nums shrink-0 sm:hidden">
+                <p className="text-sm font-medium flex-1 min-w-0">{e.title}</p>
+                <span className="text-base font-semibold tabular-nums shrink-0 sm:hidden">
                   {formatCurrency(e.amount, e.currency)}
                 </span>
               </div>
 
               {/* Row 2: Payer and Date */}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {e.payer.name ?? e.payer.email} paid · {new Date(e.date).toLocaleDateString()}
               </p>
 
@@ -207,7 +207,7 @@ export function ExpenseList({
             {/* Right side: Amount (desktop) and Actions */}
             <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
               {/* Amount - desktop only */}
-              <span className="hidden sm:inline font-semibold tabular-nums">
+              <span className="hidden sm:inline text-base font-semibold tabular-nums">
                 {formatCurrency(e.amount, e.currency)}
               </span>
 

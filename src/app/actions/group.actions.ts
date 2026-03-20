@@ -33,11 +33,12 @@ export async function createGroup(formData: unknown): Promise<ActionResult<Group
   const parsed = createGroupSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   try {
-    const { creatorName, password, ...groupData } = parsed.data;
+    const { creatorName, password, emoji, ...groupData } = parsed.data;
     const passwordHash = password ? await hashPassword(password) : null;
     const group = await db.group.create({
       data: {
         ...groupData,
+        emoji: emoji?.trim() ? emoji.trim() : null,
         passwordHash,
         members: {
           create: {
@@ -77,9 +78,16 @@ export async function updateGroup(
   }
 
   try {
+    const data: Record<string, unknown> = {};
+    if (parsed.data.name !== undefined) data.name = parsed.data.name;
+    if ("emoji" in parsed.data) {
+      const raw = parsed.data.emoji;
+      data.emoji = typeof raw === "string" && raw.trim() ? raw.trim() : null;
+    }
+
     const group = await db.group.update({
       where: { id: groupId },
-      data: parsed.data,
+      data,
     });
     revalidatePath(`/groups/${groupId}`);
     revalidatePath("/groups");

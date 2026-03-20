@@ -26,9 +26,9 @@ export function GroupSettingsForm({
 }: GroupSettingsFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
-  const [emoji, setEmoji] = useState(initialEmoji ?? "💰");
+  const [emoji, setEmoji] = useState<string | null>(initialEmoji);
   const [saving, setSaving] = useState(false);
-  const isDirty = name !== initialName || emoji !== (initialEmoji ?? "💰");
+  const isDirty = name !== initialName || emoji !== initialEmoji;
 
   async function handleSave() {
     if (!name.trim()) return;
@@ -39,6 +39,19 @@ export function GroupSettingsForm({
       toast.error(result.error);
     } else {
       toast.success("Changes saved");
+      router.refresh();
+    }
+  }
+
+  async function handleRemoveEmoji() {
+    setSaving(true);
+    const result = await updateGroup(groupId, { emoji: null });
+    setSaving(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Emoji removed");
+      setEmoji(null);
       router.refresh();
     }
   }
@@ -78,13 +91,27 @@ export function GroupSettingsForm({
         </div>
       </div>
 
-      <Button
-        onClick={handleSave}
-        disabled={!isDirty || saving || !name.trim()}
-        size="sm"
-      >
-        {saving ? "Saving..." : "Save changes"}
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          onClick={handleSave}
+          disabled={!isDirty || saving || !name.trim()}
+          size="sm"
+        >
+          {saving ? "Saving..." : "Save changes"}
+        </Button>
+
+        {emoji && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleRemoveEmoji}
+            disabled={saving}
+          >
+            Remove emoji
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

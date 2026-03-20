@@ -54,7 +54,7 @@ export function MemberList({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium truncate">{m.user.name}</p>
+              <p className="text-sm font-medium truncate">{m.user.name}</p>
             </div>
             <Button
               variant="ghost"
