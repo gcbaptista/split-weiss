@@ -299,24 +299,20 @@ export function ExpenseForm({
                         step="0.01"
                         placeholder="0"
                         disabled={!isIncluded}
-                        value={isLocked ? splitInputs[i].percentage : (() => {
-                          const lockedSum = splitInputs
-                            .filter((s, j) => s.isIncluded && s.isLocked && j !== i)
-                            .reduce((sum, s) => sum.plus(new Decimal(s.percentage || "0")), new Decimal(0));
-                          const unlocked = splitInputs.filter((s) => s.isIncluded && !s.isLocked);
-                          if (unlocked.length === 0) return "";
-                          const remaining = new Decimal(100).minus(lockedSum);
-                          return remaining.div(unlocked.length).toDecimalPlaces(2, Decimal.ROUND_DOWN).toString();
-                        })()}
+                        value={splitInputs[i].percentage}
                         onChange={(e) =>
                           setSplitInputs((prev) => {
+                            const val = e.target.value;
                             const updated = prev.map((s, j) =>
-                              j === i ? { ...s, percentage: e.target.value, isLocked: true } : s
+                              j === i ? { ...s, percentage: val, isLocked: true } : s
                             );
                             // Redistribute remaining percentage among unlocked included rows
                             const lockedSum = updated
                               .filter((s) => s.isIncluded && s.isLocked)
-                              .reduce((sum, s) => sum.plus(new Decimal(s.percentage || "0")), new Decimal(0));
+                              .reduce((sum, s) => {
+                                const p = s.percentage?.trim();
+                                return sum.plus(new Decimal(p && !isNaN(Number(p)) ? p : "0"));
+                              }, new Decimal(0));
                             const unlockedIncluded = updated.filter((s) => s.isIncluded && !s.isLocked);
                             if (unlockedIncluded.length > 0) {
                               const remaining = Decimal.max(new Decimal(0), new Decimal(100).minus(lockedSum));
