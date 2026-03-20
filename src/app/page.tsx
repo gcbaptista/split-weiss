@@ -2,83 +2,78 @@ import Link from "next/link";
 import { getRecentAccessibleGroups } from "@/lib/group-access";
 import { GroupCard } from "@/components/groups/group-card";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/layout/navbar";
+
+const features = [
+  {
+    emoji: "⚖️",
+    title: "Flexible splitting",
+    desc: "Split by fixed amount or percentage — per person, your way.",
+  },
+  {
+    emoji: "💱",
+    title: "Multi-currency",
+    desc: "Add expenses in any currency, settled in the group's base currency.",
+  },
+  {
+    emoji: "🧮",
+    title: "Smart settlement",
+    desc: "Minimizes the number of payments needed to clear all debts.",
+  },
+];
 
 export default async function LandingPage() {
   const recentGroups = await getRecentAccessibleGroups();
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-muted/30 p-6 sm:p-8">
-      <div className="mx-auto max-w-6xl space-y-10">
-        <section className="text-center">
-          <div className="mb-6 text-5xl sm:text-7xl">💸</div>
-          <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-5xl">split-weiss</h1>
-          <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-xl">
-            Split your Weiss expenses with your friends. Multi-currency. Free forever.
-          </p>
-        </section>
+    <div className="min-h-screen bg-muted/10">
+      <Navbar />
+      <main className="container mx-auto max-w-5xl px-4 md:px-6">
 
-        {recentGroups.length > 0 && (
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-xl font-semibold sm:text-2xl">Recent groups</h2>
-              <p className="text-sm text-muted-foreground sm:text-base">
-                Pick up where you left off.
-              </p>
+        {recentGroups.length > 0 ? (
+          <section className="pt-10 pb-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold">Recent groups</h2>
+                <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+              </div>
+              <Button render={<Link href="/groups/new" />} variant="outline">
+                New group
+              </Button>
             </div>
-
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {recentGroups.map((group) => (
                 <GroupCard key={group.id} group={group} />
               ))}
             </div>
           </section>
+        ) : (
+          <section className="py-24 text-center space-y-6 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl leading-tight">
+              Never wonder who owes whom again.
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Split expenses with friends. Multi-currency. Free forever.
+            </p>
+            <Button render={<Link href="/groups/new" />} size="lg">
+              Create a group
+            </Button>
+          </section>
         )}
 
-        <section className="rounded-2xl border bg-card/70 p-6 text-center sm:p-8">
-          <div className="mx-auto max-w-2xl">
-            <h2 className="mb-3 text-2xl font-semibold">
-              {recentGroups.length > 0 ? "Open another group" : "No recent groups yet"}
-            </h2>
-            <p className="mb-6 text-sm text-muted-foreground sm:text-base">
-              Open a group link and it will show up here next time. If a group uses a
-              password, you only need it once per device.
-            </p>
-            <Button
-              render={<Link href="/groups/new" />}
-              size="lg"
-              variant={recentGroups.length > 0 ? "outline" : "default"}
-            >
-                Create group
-            </Button>
+        <section className="py-10">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {features.map((f) => (
+              <div key={f.title} className="rounded-xl border bg-card p-6 space-y-3">
+                <div className="text-4xl">{f.emoji}</div>
+                <h3 className="font-semibold">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-6 text-left sm:grid-cols-3">
-          {[
-            {
-              emoji: "⚖️",
-              title: "4 split modes",
-              desc: "Equal, percentage, fixed value, or lock some and split the rest",
-            },
-            {
-              emoji: "💱",
-              title: "Multi-currency",
-              desc: "Live exchange rates via Frankfurter API, cached automatically",
-            },
-            {
-              emoji: "🧮",
-              title: "Smart settlement",
-              desc: "Greedy algorithm minimizes the number of payments needed",
-            },
-          ].map((f) => (
-            <div key={f.title} className="rounded-lg border bg-card p-4">
-              <div className="mb-2 text-2xl">{f.emoji}</div>
-              <h3 className="font-semibold">{f.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
-            </div>
-          ))}
-        </section>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
