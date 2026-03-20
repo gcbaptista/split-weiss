@@ -335,7 +335,7 @@ export function ExpenseForm({
                             return updated;
                           })
                         }
-                        className="w-16 text-right"
+                        className="w-20 text-right"
                       />
                       <span className="text-sm text-muted-foreground shrink-0">%</span>
                     </div>
