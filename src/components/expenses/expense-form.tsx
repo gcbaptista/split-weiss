@@ -299,13 +299,41 @@ export function ExpenseForm({
                         step="0.01"
                         placeholder="0"
                         disabled={!isIncluded}
-                        value={splitInputs[i].percentage}
+                        value={isLocked ? splitInputs[i].percentage : (() => {
+                          const lockedSum = splitInputs
+                            .filter((s, j) => s.isIncluded && s.isLocked && j !== i)
+                            .reduce((sum, s) => sum.plus(new Decimal(s.percentage || "0")), new Decimal(0));
+                          const unlocked = splitInputs.filter((s) => s.isIncluded && !s.isLocked);
+                          if (unlocked.length === 0) return "";
+                          const remaining = new Decimal(100).minus(lockedSum);
+                          return remaining.div(unlocked.length).toDecimalPlaces(2, Decimal.ROUND_DOWN).toString();
+                        })()}
                         onChange={(e) =>
-                          setSplitInputs((prev) =>
-                            prev.map((s, j) =>
+                          setSplitInputs((prev) => {
+                            const updated = prev.map((s, j) =>
                               j === i ? { ...s, percentage: e.target.value, isLocked: true } : s
-                            )
-                          )
+                            );
+                            // Redistribute remaining percentage among unlocked included rows
+                            const lockedSum = updated
+                              .filter((s) => s.isIncluded && s.isLocked)
+                              .reduce((sum, s) => sum.plus(new Decimal(s.percentage || "0")), new Decimal(0));
+                            const unlockedIncluded = updated.filter((s) => s.isIncluded && !s.isLocked);
+                            if (unlockedIncluded.length > 0) {
+                              const remaining = Decimal.max(new Decimal(0), new Decimal(100).minus(lockedSum));
+                              const each = remaining.div(unlockedIncluded.length).toDecimalPlaces(2, Decimal.ROUND_DOWN);
+                              const lastAdj = remaining.minus(each.times(unlockedIncluded.length - 1));
+                              let idx = 0;
+                              return updated.map((s) => {
+                                if (s.isIncluded && !s.isLocked) {
+                                  const pct = idx === unlockedIncluded.length - 1 ? lastAdj : each;
+                                  idx++;
+                                  return { ...s, percentage: pct.toString() };
+                                }
+                                return s;
+                              });
+                            }
+                            return updated;
+                          })
                         }
                         className="w-16 text-right"
                       />
@@ -361,7 +389,7 @@ export function ExpenseForm({
                       <Input
                         type="number"
                         min="0"
-                        step="0.01"
+                        step="0.1"
                         placeholder="0.00"
                         disabled={!isIncluded}
                         value={isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")}
