@@ -1,10 +1,10 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { convert } from "@/lib/currency/converter";
 import type { ExchangeRates } from "@/types/currency";
-import type { User, ExpenseWithSplitsClient, SettlementWithUsers } from "@/types/database";
+import type { User, ExpenseWithSplitsClient, SettlementWithUsersClient } from "@/types/database";
 
 export interface MemberSpend {
   userId: string;
@@ -21,7 +21,7 @@ interface BalanceBreakdownProps {
   balances: SerializableNetBalance[];
   members: User[];
   expenses: ExpenseWithSplitsClient[];
-  settlements: SettlementWithUsers[];
+  settlements: SettlementWithUsersClient[];
   memberSpend: MemberSpend[];
   grandTotal: string;
   currency: string;
@@ -34,7 +34,7 @@ interface MemberTransaction {
   type: "expense" | "settlement";
   date: Date;
   expense?: ExpenseWithSplitsClient;
-  settlement?: SettlementWithUsers;
+  settlement?: SettlementWithUsersClient;
   impactGroupCurrency: number;
   runningBalance: number;
 }
@@ -145,26 +145,15 @@ export function BalanceBreakdown({
   });
 
   return (
-    <div className="rounded-lg border bg-card overflow-hidden">
-      {/* Grand total header */}
-      <div className="flex items-center justify-between border-b px-4 py-3 bg-muted/40">
-        <span className="text-sm font-semibold">Group total</span>
-        <span className="font-bold tabular-nums">
-          {formatCurrency(grandTotal, currency)}
-        </span>
+    <div className="space-y-3">
+      {/* Grand total line */}
+      <div className="flex items-center justify-between px-1 pb-1">
+        <span className="text-sm font-semibold text-muted-foreground">Group total</span>
+        <span className="font-bold tabular-nums">{formatCurrency(grandTotal, currency)}</span>
       </div>
 
-      {/* Column headers */}
-      <div className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-3 px-4 py-2 border-b bg-muted/20">
-        <div className="h-4 w-4" />
-        <span className="text-xs text-muted-foreground">Member</span>
-        <span className="w-16 sm:w-24 text-right text-xs text-muted-foreground hidden sm:block">Paid</span>
-        <span className="w-16 sm:w-24 text-right text-xs text-muted-foreground hidden sm:block">Share</span>
-        <span className="w-16 sm:w-24 text-right text-xs text-muted-foreground">Balance</span>
-      </div>
-
-      {/* Member breakdown */}
-      <div className="divide-y">
+      {/* Member cards */}
+      <ul className="space-y-2">
         {sortedMembers.map((member) => {
           const balance = balanceMap.get(member.id);
           const spend = spendMap.get(member.id);
@@ -177,190 +166,130 @@ export function BalanceBreakdown({
           const netValue = parseFloat(netAmount);
 
           return (
-            <div
+            <li
               key={member.id}
               className={cn(
-                "overflow-hidden",
-                isHighlightedUser && "bg-primary/5"
+                "rounded-lg border bg-card overflow-hidden",
+                isHighlightedUser && "border-primary/30 bg-primary/5"
               )}
             >
-              {/* Member header */}
-              <button
-                onClick={() => toggleMember(member.id)}
-                className="w-full hover:bg-muted/50 transition-colors"
-              >
-                <div className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-3 px-4 py-3">
-                  <div className="shrink-0">
-                    {transactionCount > 0 ? (
-                      isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      )
+              {/* Card header: name + paid/share + balance */}
+              <div className="flex items-start justify-between gap-3 p-4">
+                <div className="min-w-0 flex-1">
+                  <p className={cn("font-medium text-sm truncate", isHighlightedUser && "text-primary")}>
+                    {isHighlightedUser ? "You" : member.name ?? member.email}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Paid {formatCurrency(spend?.paid ?? "0", currency)} · Share {formatCurrency(spend?.share ?? "0", currency)}
+                  </p>
+                </div>
+                <span className={cn(
+                  "text-sm font-semibold tabular-nums shrink-0",
+                  netValue > 0 && "text-green-600",
+                  netValue < 0 && "text-red-600"
+                )}>
+                  {netValue > 0 && "+"}{formatCurrency(netAmount, currency)}
+                </span>
+              </div>
+
+              {/* Expandable toggle + transaction list */}
+              {transactionCount > 0 && (
+                <>
+                  <button
+                    onClick={() => toggleMember(member.id)}
+                    className="w-full flex items-center gap-2 px-4 py-2 border-t bg-muted/20 hover:bg-muted/40 transition-colors text-xs text-muted-foreground"
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="h-3 w-3" />
                     ) : (
-                      <div className="h-4 w-4" />
+                      <ChevronRight className="h-3 w-3" />
                     )}
-                  </div>
+                    {transactionCount} transaction{transactionCount !== 1 ? "s" : ""}
+                  </button>
 
-                  <div className="min-w-0 text-left">
-                    <p
-                      className={cn(
-                        "font-medium truncate text-sm",
-                        isHighlightedUser && "text-primary"
-                      )}
-                    >
-                      {isHighlightedUser ? "You" : member.name ?? member.email}
-                    </p>
-                    {transactionCount > 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        {transactionCount} transaction{transactionCount !== 1 ? "s" : ""}
-                      </p>
-                    )}
-                  </div>
+                  {isExpanded && (
+                    <div className="divide-y border-t">
+                      {transactions.map((tx) => {
+                        if (tx.type === "expense" && tx.expense) {
+                          const expense = tx.expense;
+                          const memberSplit = expense.splits.find((s) => s.userId === member.id);
+                          const memberShare = memberSplit?.amount ?? "0";
+                          const isPayer = expense.payerId === member.id;
+                          const payerName = isPayer
+                            ? null
+                            : expense.payer.name ?? expense.payer.email;
 
-                  {/* Paid */}
-                  <div className="w-16 sm:w-24 text-right hidden sm:block">
-                    <span className="text-sm tabular-nums">
-                      {formatCurrency(spend?.paid ?? "0", currency)}
-                    </span>
-                  </div>
-
-                  {/* Share */}
-                  <div className="w-16 sm:w-24 text-right hidden sm:block">
-                    <span className="text-sm tabular-nums text-muted-foreground">
-                      {formatCurrency(spend?.share ?? "0", currency)}
-                    </span>
-                  </div>
-
-                  {/* Balance */}
-                  <div className="w-16 sm:w-24 text-right">
-                    <span
-                      className={cn(
-                        "text-sm font-semibold tabular-nums",
-                        netValue > 0 && "text-green-600",
-                        netValue < 0 && "text-red-600"
-                      )}
-                    >
-                      {netValue > 0 && "+"}
-                      {formatCurrency(netAmount, currency)}
-                    </span>
-                  </div>
-                </div>
-              </button>
-
-              {/* Expanded transaction list */}
-              {isExpanded && transactionCount > 0 && (
-                <div className="border-t divide-y bg-muted/20">
-                  {transactions.map((tx) => {
-                    if (tx.type === "expense" && tx.expense) {
-                      const expense = tx.expense;
-                      const memberSplit = expense.splits.find(
-                        (s) => s.userId === member.id
-                      );
-                      const memberShare = memberSplit?.amount ?? "0";
-                      const isPayer = expense.payerId === member.id;
-                      const payerName = isPayer
-                        ? null
-                        : expense.payer.name ?? expense.payer.email;
-
-                      return (
-                        <div
-                          key={tx.id}
-                          className="px-4 py-3 pl-14 grid grid-cols-[1fr_auto_auto_auto] items-center gap-3"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              {expense.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(expense.date).toLocaleDateString()}
-                              {!isPayer && payerName && (
-                                <span className="ml-1">· paid by {payerName}</span>
-                              )}
-                            </p>
-                          </div>
-                          {/* Paid */}
-                          <div className="w-16 sm:w-24 text-right shrink-0 hidden sm:block">
-                            {isPayer ? (
-                              <span className="text-sm tabular-nums">
-                                {formatCurrency(expense.amount, expense.currency)}
+                          return (
+                            <div
+                              key={tx.id}
+                              className="flex items-center justify-between gap-3 px-4 py-3 pl-9 bg-muted/10"
+                            >
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium truncate">{expense.title}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(expense.date).toLocaleDateString()}
+                                  {!isPayer && payerName && (
+                                    <span className="ml-1">· paid by {payerName}</span>
+                                  )}
+                                  {isPayer && (
+                                    <span className="ml-1">· paid {formatCurrency(expense.amount, expense.currency)}</span>
+                                  )}
+                                  <span className="ml-1">· share {formatCurrency(memberShare, expense.currency)}</span>
+                                </p>
+                              </div>
+                              <span className={cn(
+                                "text-sm tabular-nums shrink-0",
+                                tx.runningBalance > 0.005 && "text-green-600",
+                                tx.runningBalance < -0.005 && "text-red-600"
+                              )}>
+                                {tx.runningBalance > 0.005 && "+"}
+                                {formatCurrency(tx.runningBalance.toFixed(2), currency)}
                               </span>
-                            ) : (
-                              <span className="text-sm tabular-nums text-muted-foreground">—</span>
-                            )}
-                          </div>
-                          {/* Share */}
-                          <div className="w-16 sm:w-24 text-right shrink-0 hidden sm:block">
-                            <span className="text-sm tabular-nums text-muted-foreground">
-                              {formatCurrency(memberShare, expense.currency)}
-                            </span>
-                          </div>
-                          {/* Running Balance */}
-                          <div className="w-16 sm:w-24 text-right shrink-0">
-                            <span
-                              className={cn(
-                                "text-sm tabular-nums",
+                            </div>
+                          );
+                        }
+
+                        if (tx.type === "settlement" && tx.settlement) {
+                          const settlement = tx.settlement;
+                          const isPayer = settlement.fromUserId === member.id;
+                          const otherUser = isPayer ? settlement.toUser : settlement.fromUser;
+
+                          return (
+                            <div
+                              key={tx.id}
+                              className="flex items-center justify-between gap-3 px-4 py-3 pl-9 bg-muted/10"
+                            >
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium truncate">
+                                  Settlement {isPayer ? "to" : "from"} {otherUser.name ?? otherUser.email}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(settlement.date).toLocaleDateString()}
+                                  <span className="ml-1">· {formatCurrency(settlement.amount.toString(), settlement.currency)}</span>
+                                </p>
+                              </div>
+                              <span className={cn(
+                                "text-sm tabular-nums shrink-0",
                                 tx.runningBalance > 0.005 && "text-green-600",
                                 tx.runningBalance < -0.005 && "text-red-600"
-                              )}
-                            >
-                              {tx.runningBalance > 0.005 && "+"}
-                              {formatCurrency(tx.runningBalance.toFixed(2), currency)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
+                              )}>
+                                {tx.runningBalance > 0.005 && "+"}
+                                {formatCurrency(tx.runningBalance.toFixed(2), currency)}
+                              </span>
+                            </div>
+                          );
+                        }
 
-                    if (tx.type === "settlement" && tx.settlement) {
-                      const settlement = tx.settlement;
-                      const isPayer = settlement.fromUserId === member.id;
-                      const otherUser = isPayer
-                        ? settlement.toUser
-                        : settlement.fromUser;
-
-                      return (
-                        <div
-                          key={tx.id}
-                          className="px-4 py-3 pl-14 grid grid-cols-[1fr_auto_auto_auto] items-center gap-3"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              Settlement {isPayer ? "to" : "from"}{" "}
-                              {otherUser.name ?? otherUser.email}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(settlement.date).toLocaleDateString()}
-                            </p>
-                          </div>
-                          {/* Empty paid/share columns */}
-                          <div className="w-16 sm:w-24 hidden sm:block" />
-                          <div className="w-16 sm:w-24 hidden sm:block" />
-                          {/* Running Balance */}
-                          <div className="w-16 sm:w-24 text-right shrink-0">
-                            <span
-                              className={cn(
-                                "text-sm tabular-nums",
-                                tx.runningBalance > 0.005 && "text-green-600",
-                                tx.runningBalance < -0.005 && "text-red-600"
-                              )}
-                            >
-                              {tx.runningBalance > 0.005 && "+"}
-                              {formatCurrency(tx.runningBalance.toFixed(2), currency)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    return null;
-                  })}
-                </div>
+                        return null;
+                      })}
+                    </div>
+                  )}
+                </>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }

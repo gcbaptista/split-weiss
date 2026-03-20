@@ -26,3 +26,10 @@ export interface SettlementWithUsers extends Settlement {
   fromUser: User;
   toUser: User;
 }
+
+// Client-safe version with Decimal converted to string
+export interface SettlementWithUsersClient extends Omit<Settlement, 'amount'> {
+  amount: string;
+  fromUser: User;
+  toUser: User;
+}

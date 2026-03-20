@@ -49,10 +49,15 @@ export default async function SettlementsPage({ params }: PageProps) {
     amount: debt.amount.toString(),
   }));
 
+  const serializedSettlements = settlements.map((s) => ({
+    ...s,
+    amount: s.amount.toString(),
+  }));
+
   return (
     <SettlementPairs
       debts={debtsWithNames}
-      settlements={settlements}
+      settlements={serializedSettlements}
       groupId={groupId}
       currency={group.currency}
       members={group.members.map((member) => member.user)}

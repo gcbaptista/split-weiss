@@ -105,7 +105,7 @@ export default async function BalancesPage({ params }: PageProps) {
         balances={allBalances}
         members={members}
         expenses={expenses}
-        settlements={settlements}
+        settlements={settlements.map((s) => ({ ...s, amount: s.amount.toString() }))}
         memberSpend={memberSpend}
         grandTotal={grandTotal.toString()}
         currency={groupCurrency}
