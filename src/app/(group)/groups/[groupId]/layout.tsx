@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { GroupTabs } from "@/components/groups/group-tabs";
+import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
 import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
 import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
@@ -61,10 +62,14 @@ export default async function GroupLayout({
             />
           </div>
         </div>
-        <GroupTabs groupId={groupId} />
+        <div className="hidden md:block">
+          <GroupTabs groupId={groupId} />
+        </div>
       </div>
 
-      <div className="pt-4">{children}</div>
+      <div className="pt-4 pb-20 md:pb-4">{children}</div>
+
+      <MobileTabBar groupId={groupId} />
 
       <MobileExpenseFAB
         groupId={groupId}

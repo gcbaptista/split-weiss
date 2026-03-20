@@ -5,7 +5,7 @@ export const createGroupSchema = z.object({
   name: z.string().min(1).max(100),
   currency: z.string().length(3),
   emoji: z.string().optional(),
-  password: z.string().min(4).max(100).optional(),
+  password: z.preprocess((val) => (val === "" ? undefined : val), z.string().min(4).max(100).optional()),
 });
 
 export const updateGroupSchema = z.object({
