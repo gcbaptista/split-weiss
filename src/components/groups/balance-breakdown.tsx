@@ -233,12 +233,12 @@ export function BalanceBreakdown({
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(expense.date).toLocaleDateString()}
                                   {!isPayer && payerName && (
-                                    <span className="ml-1">· paid by {payerName}</span>
+                                    <span>{" · "}paid by {payerName}</span>
                                   )}
                                   {isPayer && (
-                                    <span className="ml-1">· paid {formatCurrency(expense.amount, expense.currency)}</span>
+                                    <span>{" · "}paid {formatCurrency(expense.amount, expense.currency)}</span>
                                   )}
-                                  <span className="ml-1">· share {formatCurrency(memberShare, expense.currency)}</span>
+                                  <span>{" · "}share {formatCurrency(memberShare, expense.currency)}</span>
                                 </p>
                               </div>
                               <span className={cn(
@@ -269,7 +269,7 @@ export function BalanceBreakdown({
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(settlement.date).toLocaleDateString()}
-                                  <span className="ml-1">· {formatCurrency(settlement.amount.toString(), settlement.currency)}</span>
+                                  <span>{" · "}{formatCurrency(settlement.amount.toString(), settlement.currency)}</span>
                                 </p>
                               </div>
                               <span className={cn(

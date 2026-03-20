@@ -1,11 +1,11 @@
 import { getGroupRequestAccess } from "@/lib/group-access";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { GroupTabs } from "@/components/groups/group-tabs";
 import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
 import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
 import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
+import { GroupNotFoundState } from "@/components/groups/group-not-found-state";
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
 import { MobileExpenseFAB } from "@/components/expenses/mobile-expense-fab";
 
@@ -21,14 +21,14 @@ export default async function GroupLayout({
   const { groupId } = await params;
   const access = await getGroupRequestAccess(groupId);
 
-  if (access.status === "not-found") notFound();
+  if (access.status === "not-found") return <GroupNotFoundState />;
   if (access.status === "locked") return <GroupUnlockPrompt groupId={groupId} />;
 
   const group = access.group;
   const members = group.members.map((member) => member.user);
   const defaultPayerId = members[0]?.id;
 
-  if (!defaultPayerId) notFound();
+  if (!defaultPayerId) return <GroupNotFoundState />;
 
   return (
     <div>

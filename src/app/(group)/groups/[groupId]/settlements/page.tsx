@@ -6,6 +6,7 @@ import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
 import { fetchRatesMap } from "@/lib/currency/frankfurter";
 import { SettlementPairs } from "@/components/settlements/settlement-pairs";
+import { EmptyState } from "@/components/shared/empty-state";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;
@@ -20,6 +21,16 @@ export default async function SettlementsPage({ params }: PageProps) {
   ]);
 
   if (!group) notFound();
+
+  if (group.members.length < 2) {
+    return (
+      <EmptyState
+        icon="🤝"
+        title="Settlements need at least 2 people"
+        description="Add another member before this group can show who should pay whom."
+      />
+    );
+  }
 
   const dates = [
     ...new Set(
