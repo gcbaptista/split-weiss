@@ -15,10 +15,9 @@ import { verifyPassword } from "@/lib/password";
 import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
 import type { GroupWithMembers } from "@/types/database";
 
-const userSelect = {
+const memberSelect = {
   id: true,
   name: true,
-  email: true,
 } as const;
 
 export type GroupRequestAccess =
@@ -69,10 +68,7 @@ export const getGroupRequestAccess = cache(async (
       currency: true,
       passwordHash: true,
       members: {
-        select: {
-          userId: true,
-          user: { select: userSelect },
-        },
+        select: memberSelect,
       },
     },
   });

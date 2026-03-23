@@ -17,10 +17,28 @@ export interface ExpenseStateSnapshot {
   splits: ExpenseSplitSnapshot[];
 }
 
+/** A single field change: what it was → what it became */
+export interface FieldChange<T = string> {
+  from: T;
+  to: T;
+}
+
+/** Delta for an UPDATE: only the fields that actually changed */
+export interface ExpenseDelta {
+  title?: FieldChange;
+  amount?: FieldChange;
+  currency?: FieldChange;
+  splitMode?: FieldChange;
+  date?: FieldChange;
+  payerName?: FieldChange;
+  /** If splits changed at all, store old and new arrays in full */
+  splits?: FieldChange<ExpenseSplitSnapshot[]>;
+}
+
 export type ExpenseSnapshot =
-  | { action: "CREATED"; after: ExpenseStateSnapshot }
-  | { action: "UPDATED"; before: ExpenseStateSnapshot; after: ExpenseStateSnapshot }
-  | { action: "DELETED"; before: ExpenseStateSnapshot };
+  | { action: "CREATED" }
+  | { action: "UPDATED"; delta: ExpenseDelta }
+  | { action: "DELETED"; state: ExpenseStateSnapshot };
 
 export interface ExpenseAuditLogEntry {
   id: string;
@@ -30,5 +48,5 @@ export interface ExpenseAuditLogEntry {
   action: "CREATED" | "UPDATED" | "DELETED";
   snapshot: ExpenseSnapshot;
   createdAt: Date;
-  actor: { id: string; name: string | null; email: string };
+  actor: { id: string; name: string };
 }

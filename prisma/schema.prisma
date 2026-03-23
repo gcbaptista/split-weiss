@@ -6,20 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id              String   @id @default(cuid())
-  name            String?
-  email           String   @unique
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  groupMembers    GroupMember[]
-  expenses        Expense[]
-  expenseSplits   ExpenseSplit[]
-  settlementsFrom Settlement[] @relation("SettlementFrom")
-  settlementsTo   Settlement[] @relation("SettlementTo")
-  auditLogs       ExpenseAuditLog[] @relation("AuditActor")
-}
-
 model Group {
   id            String        @id @default(cuid())
   name          String
@@ -36,18 +22,19 @@ model Group {
 }
 
 model GroupMember {
+  id       String   @id @default(cuid())
   groupId  String
-  userId   String
-  role     GroupRole @default(MEMBER)
-  joinedAt DateTime  @default(now())
-  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@unique([groupId, userId])
-}
+  name     String
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-enum GroupRole {
-  ADMIN
-  MEMBER
+  expenses        Expense[]
+  expenseSplits   ExpenseSplit[]
+  settlementsFrom Settlement[] @relation("SettlementFrom")
+  settlementsTo   Settlement[] @relation("SettlementTo")
+  auditLogs       ExpenseAuditLog[] @relation("AuditActor")
+
+  @@unique([groupId, id])
 }
 
 model Expense {
@@ -62,7 +49,7 @@ model Expense {
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   group     Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  payer     User           @relation(fields: [payerId], references: [id])
+  payer     GroupMember     @relation(fields: [payerId], references: [id])
   splits    ExpenseSplit[]
   auditLogs ExpenseAuditLog[]
 
@@ -92,7 +79,7 @@ model ExpenseAuditLog {
 
   expense           Expense?    @relation(fields: [expenseId], references: [id], onDelete: SetNull)
   group             Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  actor             User        @relation("AuditActor", fields: [actorId], references: [id])
+  actor             GroupMember  @relation("AuditActor", fields: [actorId], references: [id])
 
   @@index([originalExpenseId])
   @@index([originalExpenseId, createdAt])
@@ -107,7 +94,7 @@ model ExpenseSplit {
   percentage Decimal? @db.Decimal(7, 4)
   isLocked   Boolean  @default(false)
   expense    Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id])
+  user       GroupMember @relation(fields: [userId], references: [id])
   @@unique([expenseId, userId])
 }
 
@@ -122,8 +109,8 @@ model Settlement {
   note       String?
   createdAt  DateTime @default(now())
   group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  fromUser   User     @relation("SettlementFrom", fields: [fromUserId], references: [id])
-  toUser     User     @relation("SettlementTo", fields: [toUserId], references: [id])
+  fromUser   GroupMember @relation("SettlementFrom", fields: [fromUserId], references: [id])
+  toUser     GroupMember @relation("SettlementTo", fields: [toUserId], references: [id])
 
   @@index([groupId, date])
 }

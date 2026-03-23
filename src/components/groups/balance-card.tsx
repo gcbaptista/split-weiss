@@ -2,11 +2,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { NetBalance } from "@/lib/balances/calculator";
-import type { UserSummary } from "@/types/database";
+import type { MemberSummary } from "@/types/database";
 
 interface BalanceCardProps {
   balance: NetBalance;
-  user: UserSummary;
+  user: MemberSummary;
   currency: string;
   isCurrentUser?: boolean;
 }
@@ -31,7 +31,7 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
         </Avatar>
         <div>
           <p className="text-sm font-medium">
-            {isCurrentUser ? "You" : (user.name ?? user.email)}
+            {isCurrentUser ? "You" : user.name}
           </p>
           <p className={cn(
             "flex items-center gap-1 text-xs",

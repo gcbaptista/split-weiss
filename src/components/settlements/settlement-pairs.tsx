@@ -6,7 +6,7 @@ import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, cn } from "@/lib/utils";
 import Decimal from "decimal.js";
-import type { UserSummary, SettlementHistoryClient } from "@/types/database";
+import type { MemberSummary, SettlementHistoryClient } from "@/types/database";
 
 interface DebtItem {
   fromUserId: string;
@@ -31,7 +31,7 @@ interface SettlementPairsProps {
   settlements: SettlementHistoryClient[];
   groupId: string;
   currency: string;
-  members: UserSummary[];
+  members: MemberSummary[];
   highlightedUserId?: string;
 }
 
@@ -69,8 +69,8 @@ export function SettlementPairs({
         key,
         fromUserId: s.fromUserId,
         toUserId: s.toUserId,
-        fromName: fromUser?.name ?? fromUser?.email ?? "?",
-        toName: toUser?.name ?? toUser?.email ?? "?",
+        fromName: fromUser?.name ?? "?",
+        toName: toUser?.name ?? "?",
         debt: null,
         settlements: [s],
       });

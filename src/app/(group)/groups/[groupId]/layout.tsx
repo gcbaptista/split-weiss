@@ -25,7 +25,7 @@ export default async function GroupLayout({
   if (access.status === "locked") return <GroupUnlockPrompt groupId={groupId} />;
 
   const group = access.group;
-  const members = group.members.map((member) => member.user);
+  const members = group.members;
   const defaultPayerId = members[0]?.id;
 
   if (!defaultPayerId) return <GroupNotFoundState />;

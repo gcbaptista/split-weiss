@@ -16,7 +16,7 @@ import {
 } from "@/lib/validations/group.schema";
 import { hashPassword } from "@/lib/password";
 import { canAccessGroup, unlockGroupAccess } from "@/lib/group-access";
-import { buildParticipantData } from "@/lib/participants";
+
 import { rememberRecentGroup } from "@/lib/recent-groups";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
@@ -42,10 +42,7 @@ export async function createGroup(formData: unknown): Promise<ActionResult<Group
         passwordHash,
         members: {
           create: {
-            role: "MEMBER",
-            user: {
-              create: buildParticipantData(creatorName),
-            },
+            name: creatorName.trim(),
           },
         },
       },

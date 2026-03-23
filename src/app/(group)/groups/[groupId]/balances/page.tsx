@@ -26,7 +26,7 @@ export default async function BalancesPage({ params }: PageProps) {
   if (!group) notFound();
 
   const groupCurrency = group.currency;
-  const members = group.members.map((member) => member.user);
+  const members = group.members;
 
   if (expenses.length === 0) {
     return (

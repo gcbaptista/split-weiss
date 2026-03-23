@@ -16,7 +16,7 @@ export default async function GroupExpensesPage({ params }: PageProps) {
 
   if (!group) notFound();
 
-  const defaultPayerId = group.members[0]?.userId;
+  const defaultPayerId = group.members[0]?.id;
   if (!defaultPayerId) notFound();
 
   return (
@@ -24,7 +24,7 @@ export default async function GroupExpensesPage({ params }: PageProps) {
       expenses={expenses}
       defaultPayerId={defaultPayerId}
       groupId={groupId}
-      members={group.members.map((member) => member.user)}
+      members={group.members}
       groupCurrency={group.currency}
     />
   );

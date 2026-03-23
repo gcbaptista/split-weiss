@@ -1,7 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
 import { canAccessGroup } from "@/lib/group-access";
-import { buildParticipantData } from "@/lib/participants";
 import { addMemberSchema } from "@/lib/validations/group.schema";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
@@ -16,17 +15,10 @@ export async function addMember(formData: unknown): Promise<ActionResult> {
   }
 
   try {
-    await db.group.update({
-      where: { id: groupId },
+    await db.groupMember.create({
       data: {
-        members: {
-          create: {
-            role: "MEMBER",
-            user: {
-              create: buildParticipantData(name),
-            },
-          },
-        },
+        groupId,
+        name: name.trim(),
       },
     });
     revalidatePath(`/groups/${groupId}`);
@@ -42,7 +34,7 @@ export async function addMember(formData: unknown): Promise<ActionResult> {
 
 export async function removeMember(
   groupId: string,
-  userId: string
+  memberId: string
 ): Promise<ActionResult> {
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
@@ -56,15 +48,15 @@ export async function removeMember(
       }
 
       const [paidExpenseCount, splitCount, settlementCount, auditLogCount] = await Promise.all([
-        tx.expense.count({ where: { groupId, payerId: userId } }),
-        tx.expenseSplit.count({ where: { userId, expense: { groupId } } }),
+        tx.expense.count({ where: { groupId, payerId: memberId } }),
+        tx.expenseSplit.count({ where: { userId: memberId, expense: { groupId } } }),
         tx.settlement.count({
           where: {
             groupId,
-            OR: [{ fromUserId: userId }, { toUserId: userId }],
+            OR: [{ fromUserId: memberId }, { toUserId: memberId }],
           },
         }),
-        tx.expenseAuditLog.count({ where: { groupId, actorId: userId } }),
+        tx.expenseAuditLog.count({ where: { groupId, actorId: memberId } }),
       ]);
 
       if (paidExpenseCount > 0 || splitCount > 0 || settlementCount > 0 || auditLogCount > 0) {
@@ -75,27 +67,8 @@ export async function removeMember(
       }
 
       await tx.groupMember.delete({
-        where: { groupId_userId: { groupId, userId } },
+        where: { id: memberId },
       });
-
-      const [remainingMemberships, remainingExpenses, remainingSplits, remainingSettlements, remainingAuditLogs] =
-        await Promise.all([
-          tx.groupMember.count({ where: { userId } }),
-          tx.expense.count({ where: { payerId: userId } }),
-          tx.expenseSplit.count({ where: { userId } }),
-          tx.settlement.count({ where: { OR: [{ fromUserId: userId }, { toUserId: userId }] } }),
-          tx.expenseAuditLog.count({ where: { actorId: userId } }),
-        ]);
-
-      if (
-        remainingMemberships === 0 &&
-        remainingExpenses === 0 &&
-        remainingSplits === 0 &&
-        remainingSettlements === 0 &&
-        remainingAuditLogs === 0
-      ) {
-        await tx.user.delete({ where: { id: userId } });
-      }
 
       return { error: null } as const;
     });

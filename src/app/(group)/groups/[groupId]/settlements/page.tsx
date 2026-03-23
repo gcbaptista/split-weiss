@@ -41,13 +41,13 @@ export default async function SettlementsPage({ params }: PageProps) {
 
   const balances = calculateBalances(expenses, settlements, group.currency, ratesByDate);
   const debts = simplifyDebts(balances);
-  const userMap = new Map(group.members.map((member) => [member.userId, member.user]));
+  const userMap = new Map(group.members.map((member) => [member.id, member]));
 
   const debtsWithNames = debts.map((debt) => ({
     fromUserId: debt.fromUserId,
-    fromName: userMap.get(debt.fromUserId)?.name ?? userMap.get(debt.fromUserId)?.email ?? "?",
+    fromName: userMap.get(debt.fromUserId)?.name ?? "?",
     toUserId: debt.toUserId,
-    toName: userMap.get(debt.toUserId)?.name ?? userMap.get(debt.toUserId)?.email ?? "?",
+    toName: userMap.get(debt.toUserId)?.name ?? "?",
     amount: debt.amount.toString(),
   }));
 
@@ -62,7 +62,7 @@ export default async function SettlementsPage({ params }: PageProps) {
       settlements={serializedSettlements}
       groupId={groupId}
       currency={group.currency}
-      members={group.members.map((member) => member.user)}
+      members={group.members}
     />
   );
 }

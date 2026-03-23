@@ -5,7 +5,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { convert } from "@/lib/currency/converter";
 import type { ExchangeRates } from "@/types/currency";
 import type {
-  UserSummary,
+  MemberSummary,
   ExpenseBreakdownClient,
   SettlementBreakdownClient,
 } from "@/types/database";
@@ -23,7 +23,7 @@ interface SerializableNetBalance {
 
 interface BalanceBreakdownProps {
   balances: SerializableNetBalance[];
-  members: UserSummary[];
+  members: MemberSummary[];
   expenses: ExpenseBreakdownClient[];
   settlements: SettlementBreakdownClient[];
   memberSpend: MemberSpend[];
@@ -181,7 +181,7 @@ export function BalanceBreakdown({
               <div className="flex items-start justify-between gap-3 p-4">
                 <div className="min-w-0 flex-1">
                   <p className={cn("font-medium text-sm truncate", isHighlightedUser && "text-primary")}>
-                    {isHighlightedUser ? "You" : member.name ?? member.email}
+                    {isHighlightedUser ? "You" : member.name}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Paid {formatCurrency(spend?.paid ?? "0", currency)} · Share {formatCurrency(spend?.share ?? "0", currency)}
@@ -221,7 +221,7 @@ export function BalanceBreakdown({
                           const isPayer = expense.payerId === member.id;
                           const payerName = isPayer
                             ? null
-                            : expense.payer.name ?? expense.payer.email;
+                            : expense.payer.name;
 
                           return (
                             <div
@@ -265,7 +265,7 @@ export function BalanceBreakdown({
                             >
                               <div className="min-w-0">
                                 <p className="text-sm font-medium truncate">
-                                  Settlement {isPayer ? "to" : "from"} {otherUser.name ?? otherUser.email}
+                                  Settlement {isPayer ? "to" : "from"} {otherUser.name}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(settlement.date).toLocaleDateString()}

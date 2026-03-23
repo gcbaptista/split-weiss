@@ -1,0 +1,2677 @@
+{
+  "group_id": "01KBMW847E59M632MY58YTXA4M",
+  "items": [
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49792045,
+      "item_name": "Cerveja Hot Peppers",
+      "price": 7.76,
+      "price_jpy": 1422.96,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-18T21:21:02Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49788316,
+      "item_name": "Portagens mitsubisho vinda",
+      "price": 15.7,
+      "price_jpy": 2878.92,
+      "advance_payer_id": 17458801,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Martin",
+      "create_datetime": "2026-03-18T17:08:35Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49786284,
+      "item_name": "Gasóleo mitsubisho",
+      "price": 54.8,
+      "price_jpy": 10048.7,
+      "advance_payer_id": 17458801,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Martin",
+      "create_datetime": "2026-03-18T16:04:22Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49783474,
+      "item_name": "JP e autocolantes menino com incontinencia",
+      "price": 18.82,
+      "price_jpy": 3451.04,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-18T15:10:54Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49716571,
+      "item_name": "Gasoil",
+      "price": 54.21,
+      "price_jpy": 9940.54,
+      "advance_payer_id": 17459580,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Simons",
+      "create_datetime": "2026-03-18T02:22:05Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49716486,
+      "item_name": "Portagem",
+      "price": 15.75,
+      "price_jpy": 2888.09,
+      "advance_payer_id": 17459580,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Simons",
+      "create_datetime": "2026-03-18T02:20:48Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49710685,
+      "item_name": "Uber ",
+      "price": 8.14,
+      "price_jpy": 1492.64,
+      "advance_payer_id": 17459616,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Albuquerque",
+      "create_datetime": "2026-03-18T00:51:18Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49706908,
+      "item_name": "Bolt",
+      "price": 12.29,
+      "price_jpy": 2248.84,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-17T23:15:52Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49701752,
+      "item_name": "Sandes",
+      "price": 11.55,
+      "price_jpy": 2113.43,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-17T18:01:14Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49697494,
+      "item_name": "Metro Aeroporto",
+      "price": 16.94,
+      "price_jpy": 3099.7,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-17T15:42:51Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49693607,
+      "item_name": "McDonalds",
+      "price": 3.06,
+      "price_jpy": 559.922,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-17T14:41:02Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49679816,
+      "item_name": "Almoço last day",
+      "price": 188.0,
+      "price_jpy": 34400.4,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-17T12:14:01Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49679399,
+      "item_name": "Almoço Lokal Cash",
+      "price": 20.45,
+      "price_jpy": 3741.96,
+      "advance_payer_id": 17458801,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Martin",
+      "create_datetime": "2026-03-17T12:10:18Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49667931,
+      "item_name": "Industry pinga",
+      "price": 31.1,
+      "price_jpy": 5690.71,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-17T10:13:26Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49667680,
+      "item_name": "Jantar Eslovaco Lady Fingers",
+      "price": 286.93,
+      "price_jpy": 52502.7,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-17T10:10:57Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49667504,
+      "item_name": "Epic kebab e tráfico de naites",
+      "price": 18.6,
+      "price_jpy": 3403.45,
+      "advance_payer_id": 17458799,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Rui",
+      "create_datetime": "2026-03-17T10:09:29Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49667412,
+      "item_name": "Viagem até Praga do aeroporto ",
+      "price": 1.9,
+      "price_jpy": 347.664,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-17T10:08:36Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49667336,
+      "item_name": "Gin tonic ",
+      "price": 6.14,
+      "price_jpy": 1123.5,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-17T10:07:51Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49666786,
+      "item_name": "Álcool duplex",
+      "price": 4.0,
+      "price_jpy": 731.924,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-17T10:02:23Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49666565,
+      "item_name": "Weed",
+      "price": 24.0,
+      "price_jpy": 4391.54,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-17T10:00:28Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49664891,
+      "item_name": "Mala",
+      "price": 5.32,
+      "price_jpy": 973.459,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-17T09:42:55Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49664827,
+      "item_name": "Mala",
+      "price": 5.32,
+      "price_jpy": 973.459,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-17T09:42:20Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49664770,
+      "item_name": "Malas",
+      "price": 10.63,
+      "price_jpy": 1945.09,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-17T09:41:45Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49664437,
+      "item_name": "Absinto copo",
+      "price": 30.0,
+      "price_jpy": 5489.43,
+      "advance_payer_id": 17458799,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Rui",
+      "create_datetime": "2026-03-17T09:38:07Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49619316,
+      "item_name": "2 cocktails ",
+      "price": 50.36,
+      "price_jpy": 9214.92,
+      "advance_payer_id": 17458799,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Rui",
+      "create_datetime": "2026-03-17T00:13:51Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49608922,
+      "item_name": "Pinto acai e sumo laranja ",
+      "price": 12.02,
+      "price_jpy": 2193.25,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-16T16:33:12Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49513544,
+      "item_name": "Lidl noite domingo",
+      "price": 56.0,
+      "price_jpy": 10254.9,
+      "advance_payer_id": 17459616,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Albuquerque",
+      "create_datetime": "2026-03-15T20:47:36Z",
+      "update_datetime": "2026-03-15T22:17:59Z",
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49513539,
+      "item_name": "Cafe",
+      "price": 2.25,
+      "price_jpy": 412.029,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-15T20:47:21Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49513529,
+      "item_name": "Chimney Cake",
+      "price": 13.0,
+      "price_jpy": 2380.61,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-15T20:46:45Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49512976,
+      "item_name": "Jantar d4",
+      "price": 219.0,
+      "price_jpy": 40104.2,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-15T20:03:26Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49511173,
+      "item_name": "Comboio ",
+      "price": 14.7,
+      "price_jpy": 2691.92,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-15T18:08:55Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49511017,
+      "item_name": "Pinga x4 Hoquei",
+      "price": 14.72,
+      "price_jpy": 2695.59,
+      "advance_payer_id": 17460198,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Tiago",
+      "create_datetime": "2026-03-15T18:03:16Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49510884,
+      "item_name": "Gold maco",
+      "price": 7.3,
+      "price_jpy": 1336.81,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-15T17:57:34Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49510870,
+      "item_name": "Gold maço ",
+      "price": 7.3,
+      "price_jpy": 1336.81,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-15T17:56:33Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49500432,
+      "item_name": "Cerveja O2",
+      "price": 14.7,
+      "price_jpy": 2691.92,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-15T14:39:51Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49500304,
+      "item_name": "Comboio",
+      "price": 14.7,
+      "price_jpy": 2691.92,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2026-03-15T14:38:35Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49493903,
+      "item_name": "Bar dog",
+      "price": 170.0,
+      "price_jpy": 31131.1,
+      "advance_payer_id": 17459616,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Albuquerque",
+      "create_datetime": "2026-03-15T13:46:04Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49379470,
+      "item_name": "Jantar d3",
+      "price": 20.0,
+      "price_jpy": 3662.48,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": true,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-15T00:48:58Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49379425,
+      "item_name": "Jantar d3",
+      "price": 340.0,
+      "price_jpy": 62262.2,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-15T00:48:29Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49373114,
+      "item_name": "Dinheiro emprestado ao leitão para restaurante",
+      "price": 81.81,
+      "price_jpy": 14987.9,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-14T22:56:59Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49373070,
+      "item_name": "Smoothie",
+      "price": 6.14,
+      "price_jpy": 1124.87,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-14T22:55:40Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49373007,
+      "item_name": "Barco",
+      "price": 42.87,
+      "price_jpy": 7853.96,
+      "advance_payer_id": 17460198,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Tiago",
+      "create_datetime": "2026-03-14T22:53:57Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49365738,
+      "item_name": "Lanche",
+      "price": 21.06,
+      "price_jpy": 3858.28,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-14T17:13:44Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49350985,
+      "item_name": "Almoço Cachorros",
+      "price": 51.29,
+      "price_jpy": 9396.53,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-14T13:58:32Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49247981,
+      "item_name": "Almoço no underground",
+      "price": 224.68,
+      "price_jpy": 41218.9,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-13T21:41:43Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49247930,
+      "item_name": "Compras Lidl (cerveja + pequeno almoço d2)",
+      "price": 59.0,
+      "price_jpy": 10823.9,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-13T21:38:03Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49246838,
+      "item_name": "Hóquei x4",
+      "price": 83.01,
+      "price_jpy": 15221.6,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-13T20:35:10Z",
+      "update_datetime": "2026-03-18T17:27:52Z",
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49246794,
+      "item_name": "Hóquei Bilhetes",
+      "price": 124.52,
+      "price_jpy": 22843.9,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-13T20:32:21Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49229044,
+      "item_name": "Jola na shop weed",
+      "price": 14.0,
+      "price_jpy": 2568.38,
+      "advance_payer_id": 17460198,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Tiago",
+      "create_datetime": "2026-03-13T13:32:00Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49225582,
+      "item_name": "Compras pequeno almoço d1",
+      "price": 51.6,
+      "price_jpy": 9466.33,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-13T12:55:34Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49224556,
+      "item_name": "Cerveja - 1o dia",
+      "price": 31.5,
+      "price_jpy": 5778.86,
+      "advance_payer_id": 17460198,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Tiago",
+      "create_datetime": "2026-03-13T12:44:11Z",
+      "update_datetime": "2026-03-13T12:44:32Z",
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49212185,
+      "item_name": "The Dubliner Irish Pub 1o dia",
+      "price": 124.61,
+      "price_jpy": 22860.5,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-13T10:23:30Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        },
+        {
+          "debtor_id": 19884807,
+          "debtor_name": "Pinto"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49212091,
+      "item_name": "Market + Cheese 1o dia",
+      "price": 20.36,
+      "price_jpy": 3735.16,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-13T10:22:22Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49211951,
+      "item_name": "Uber Aeroporto",
+      "price": 9.88,
+      "price_jpy": 1812.55,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2026-03-13T10:20:43Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49203497,
+      "item_name": "Pinga Avião",
+      "price": 52.5,
+      "price_jpy": 9631.44,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-13T08:42:58Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49203288,
+      "item_name": "Uber aero",
+      "price": 6.08,
+      "price_jpy": 1115.41,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2026-03-13T08:40:36Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 49157900,
+      "item_name": "KFC",
+      "price": 42.0,
+      "price_jpy": 7712.54,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2026-03-12T19:19:43Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42502504,
+      "item_name": "voo Martin",
+      "price": 162.48,
+      "price_jpy": 29665.4,
+      "advance_payer_id": 17458801,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Martin",
+      "create_datetime": "2025-12-12T12:08:29Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42502497,
+      "item_name": "voo Leitão",
+      "price": 162.48,
+      "price_jpy": 29665.4,
+      "advance_payer_id": 17458797,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Leitão",
+      "create_datetime": "2025-12-12T12:08:15Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42502482,
+      "item_name": "voo Toni",
+      "price": 162.48,
+      "price_jpy": 29665.4,
+      "advance_payer_id": 17458798,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Toni",
+      "create_datetime": "2025-12-12T12:07:44Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42502455,
+      "item_name": "voo Rui",
+      "price": 162.48,
+      "price_jpy": 29665.4,
+      "advance_payer_id": 17458799,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Rui",
+      "create_datetime": "2025-12-12T12:07:12Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42502447,
+      "item_name": "voo Gonçalo",
+      "price": 162.48,
+      "price_jpy": 29665.4,
+      "advance_payer_id": 17458796,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Gonçalo",
+      "create_datetime": "2025-12-12T12:06:55Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42094040,
+      "item_name": "Voo Picado",
+      "price": 150.98,
+      "price_jpy": 27321.9,
+      "advance_payer_id": 17458800,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Picado",
+      "create_datetime": "2025-12-04T18:16:28Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42093738,
+      "item_name": "voo Albuquerque",
+      "price": 186.98,
+      "price_jpy": 33836.6,
+      "advance_payer_id": 17459616,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Albuquerque",
+      "create_datetime": "2025-12-04T17:45:42Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42093736,
+      "item_name": "voo Tiago",
+      "price": 186.98,
+      "price_jpy": 33836.6,
+      "advance_payer_id": 17460198,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Tiago",
+      "create_datetime": "2025-12-04T17:45:29Z",
+      "update_datetime": null,
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    },
+    {
+      "group_id": "01KBMW847E59M632MY58YTXA4M",
+      "payment_id": 42091796,
+      "item_name": "voo Simons",
+      "price": 186.98,
+      "price_jpy": 33836.6,
+      "advance_payer_id": 17459580,
+      "currency_code": "EUR",
+      "is_extended_input": false,
+      "currency_symbol": "€",
+      "advance_payer_name": "Simons",
+      "create_datetime": "2025-12-04T15:29:52Z",
+      "update_datetime": "2025-12-04T17:45:17Z",
+      "debtors": [
+        {
+          "debtor_id": 17458796,
+          "debtor_name": "Gonçalo"
+        },
+        {
+          "debtor_id": 17458797,
+          "debtor_name": "Leitão"
+        },
+        {
+          "debtor_id": 17458798,
+          "debtor_name": "Toni"
+        },
+        {
+          "debtor_id": 17458799,
+          "debtor_name": "Rui"
+        },
+        {
+          "debtor_id": 17458800,
+          "debtor_name": "Picado"
+        },
+        {
+          "debtor_id": 17458801,
+          "debtor_name": "Martin"
+        },
+        {
+          "debtor_id": 17459580,
+          "debtor_name": "Simons"
+        },
+        {
+          "debtor_id": 17459616,
+          "debtor_name": "Albuquerque"
+        },
+        {
+          "debtor_id": 17460198,
+          "debtor_name": "Tiago"
+        }
+      ]
+    }
+  ]
+}

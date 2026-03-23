@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { addMember, removeMember } from "@/app/actions/member.actions";
 import { toast } from "sonner";
 import { useState } from "react";
-import type { GroupMemberWithUser } from "@/types/database";
+import type { MemberSummary } from "@/types/database";
 
 interface MemberListProps {
-  members: GroupMemberWithUser[];
+  members: MemberSummary[];
   groupId: string;
 }
 
@@ -31,8 +31,8 @@ export function MemberList({
     setName("");
   }
 
-  async function handleRemove(userId: string) {
-    const result = await removeMember(groupId, userId);
+  async function handleRemove(memberId: string) {
+    const result = await removeMember(groupId, memberId);
     if (result.error) {
       toast.error(result.error);
       return;
@@ -45,21 +45,21 @@ export function MemberList({
       <ul className="space-y-2">
         {members.map((m) => (
           <li
-            key={m.userId}
+            key={m.id}
             className="flex items-center gap-4 rounded-lg border p-4"
           >
             <Avatar className="h-10 w-10 shrink-0">
               <AvatarFallback>
-                {m.user.name?.[0]?.toUpperCase() ?? "?"}
+                {m.name[0]?.toUpperCase() ?? "?"}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium truncate">{m.user.name}</p>
+              <p className="text-sm font-medium truncate">{m.name}</p>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleRemove(m.userId)}
+              onClick={() => handleRemove(m.id)}
               className="shrink-0"
             >
               Remove

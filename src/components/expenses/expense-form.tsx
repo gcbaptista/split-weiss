@@ -35,7 +35,7 @@ import {
   calculateLock,
 } from "@/lib/splitting";
 import Decimal from "decimal.js";
-import type { UserSummary, ExpenseWithSplitsClient } from "@/types/database";
+import type { MemberSummary, ExpenseWithSplitsClient } from "@/types/database";
 import type { SplitMode } from "@/hooks/use-split-calculator";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import { AlertCircle, Lock, LockOpen } from "lucide-react";
@@ -70,7 +70,7 @@ function SplitPreviewBar({
 
 interface ExpenseFormProps {
   groupId: string;
-  members: UserSummary[];
+  members: MemberSummary[];
   groupCurrency: string;
   defaultPayerId: string;
   onSuccess?: () => void;
@@ -231,16 +231,14 @@ export function ExpenseForm({
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue>
-                      {members.find((m) => m.id === field.value)?.name ??
-                        members.find((m) => m.id === field.value)?.email ??
-                        "Select member"}
+                      {members.find((m) => m.id === field.value)?.name ?? "Select member"}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {members.map((m) => (
                     <SelectItem key={m.id} value={m.id}>
-                      {m.name ?? m.email}
+                      {m.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -280,7 +278,7 @@ export function ExpenseForm({
                       htmlFor={`pct-include-${m.id}`}
                       className="min-w-0 flex-1 truncate text-sm font-medium cursor-pointer"
                     >
-                      {m.name ?? m.email}
+                      {m.name}
                     </label>
                     <Switch
                       id={`pct-include-${m.id}`}
@@ -370,7 +368,7 @@ export function ExpenseForm({
                       htmlFor={`include-${m.id}`}
                       className="min-w-0 flex-1 truncate text-sm font-medium cursor-pointer"
                     >
-                      {m.name ?? m.email}
+                      {m.name}
                     </label>
                     <Switch
                       id={`include-${m.id}`}

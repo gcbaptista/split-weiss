@@ -9,10 +9,9 @@ import type {
   SettlementBreakdownClient,
 } from "@/types/database";
 
-const userSelect = {
+const memberSelect = {
   id: true,
   name: true,
-  email: true,
 } as const;
 
 export async function createSettlement(
@@ -46,8 +45,8 @@ export async function getGroupSettlements(groupId: string) {
   return db.settlement.findMany({
     where: { groupId },
     include: {
-      fromUser: { select: userSelect },
-      toUser: { select: userSelect },
+      fromUser: { select: memberSelect },
+      toUser: { select: memberSelect },
     },
     orderBy: { date: "desc" },
   });
@@ -89,8 +88,8 @@ export async function getGroupSettlementsForBreakdown(
       amount: true,
       currency: true,
       date: true,
-      fromUser: { select: userSelect },
-      toUser: { select: userSelect },
+      fromUser: { select: memberSelect },
+      toUser: { select: memberSelect },
     },
     orderBy: { date: "desc" },
   });

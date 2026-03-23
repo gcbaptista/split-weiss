@@ -7,17 +7,16 @@ import {
   calculatePercentage,
   calculateLock,
 } from "@/lib/splitting";
-import { buildStateSnapshot } from "@/lib/audit/snapshot";
+import { buildStateSnapshot, buildDelta } from "@/lib/audit/snapshot";
 import Decimal from "decimal.js";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 import type { Expense, ExpenseBreakdownClient, ExpenseWithSplitsClient } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 
-const userSelect = {
+const memberSelect = {
   id: true,
   name: true,
-  email: true,
 } as const;
 
 function serializeExpenseForResult(expense: Expense): Expense {
@@ -70,8 +69,8 @@ export async function createExpense(
           },
         },
         include: {
-          splits: { include: { user: { select: userSelect } } },
-          payer: { select: userSelect },
+          splits: { include: { user: { select: memberSelect } } },
+          payer: { select: memberSelect },
         },
       });
       await tx.expenseAuditLog.create({
@@ -81,7 +80,7 @@ export async function createExpense(
           groupId: created.groupId,
           actorId: rest.payerId,
           action: "CREATED",
-          snapshot: { action: "CREATED", after: buildStateSnapshot(created, created.splits) } as unknown as Prisma.InputJsonValue,
+          snapshot: { action: "CREATED" } as unknown as Prisma.InputJsonValue,
         },
       });
       return created;
@@ -105,8 +104,8 @@ export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSpli
   const expenses = await db.expense.findMany({
     where: { groupId },
     include: {
-      splits: { include: { user: { select: userSelect } } },
-      payer: { select: userSelect },
+      splits: { include: { user: { select: memberSelect } } },
+      payer: { select: memberSelect },
     },
     orderBy: { date: "desc" },
   });
@@ -162,7 +161,7 @@ export async function getGroupExpensesForBreakdown(
       currency: true,
       date: true,
       amount: true,
-      payer: { select: userSelect },
+      payer: { select: memberSelect },
       splits: {
         select: {
           userId: true,
@@ -192,8 +191,8 @@ export async function updateExpense(
   const existing = await db.expense.findUnique({
     where: { id: expenseId },
     include: {
-      splits: { include: { user: { select: userSelect } } },
-      payer: { select: userSelect },
+      splits: { include: { user: { select: memberSelect } } },
+      payer: { select: memberSelect },
     },
   });
   if (!existing) return { error: "Expense not found" };
@@ -227,8 +226,8 @@ export async function updateExpense(
           },
         },
         include: {
-          splits: { include: { user: { select: userSelect } } },
-          payer: { select: userSelect },
+          splits: { include: { user: { select: memberSelect } } },
+          payer: { select: memberSelect },
         },
       });
       await tx.expenseAuditLog.create({
@@ -240,8 +239,7 @@ export async function updateExpense(
           action: "UPDATED",
           snapshot: {
             action: "UPDATED",
-            before: buildStateSnapshot(existing, existing.splits),
-            after: buildStateSnapshot(updated, updated.splits),
+            delta: buildDelta(existing, existing.splits, updated, updated.splits),
           } as unknown as Prisma.InputJsonValue,
         },
       });
@@ -272,8 +270,8 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
       const full = await tx.expense.findUnique({
         where: { id: expenseId },
         include: {
-          splits: { include: { user: { select: userSelect } } },
-          payer: { select: userSelect },
+          splits: { include: { user: { select: memberSelect } } },
+          payer: { select: memberSelect },
         },
       });
       if (!full) throw new Error("Expense not found");
@@ -284,7 +282,7 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
           groupId: expense.groupId,
           actorId: expense.payerId,
           action: "DELETED",
-          snapshot: { action: "DELETED", before: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
+          snapshot: { action: "DELETED", state: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
         },
       });
       await tx.expense.delete({ where: { id: expenseId } });
@@ -313,7 +311,7 @@ export async function getExpenseAuditLog(
 
   const logs = await db.expenseAuditLog.findMany({
     where: { originalExpenseId: expenseId },
-    include: { actor: { select: { id: true, name: true, email: true } } },
+    include: { actor: { select: { id: true, name: true } } },
     orderBy: { createdAt: "asc" },
   });
   return { data: logs as unknown as ExpenseAuditLogEntry[] };

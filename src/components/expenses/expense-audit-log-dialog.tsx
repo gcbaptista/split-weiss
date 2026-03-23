@@ -10,7 +10,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
-import type { ExpenseAuditLogEntry, ExpenseStateSnapshot } from "@/types/audit";
+import type { ExpenseAuditLogEntry, ExpenseStateSnapshot, ExpenseDelta } from "@/types/audit";
 
 interface Props {
   expenseId: string | null;
@@ -49,47 +49,51 @@ function SnapshotSummary({ state }: { state: ExpenseStateSnapshot }) {
   );
 }
 
-function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
-  const { snapshot } = entry;
-  if (snapshot.action === "CREATED") {
-    return <SnapshotSummary state={snapshot.after} />;
-  }
-  if (snapshot.action === "DELETED") {
-    return <SnapshotSummary state={snapshot.before} />;
-  }
-  const { before, after } = snapshot;
-  const splitsBefore = splitsSummary(before.splits);
-  const splitsAfter = splitsSummary(after.splits);
-  const hasDiffs =
-    before.title !== after.title ||
-    before.amount !== after.amount ||
-    before.currency !== after.currency ||
-    before.payerName !== after.payerName ||
-    before.splitMode !== after.splitMode ||
-    before.date !== after.date ||
-    splitsBefore !== splitsAfter;
+function DeltaContent({ delta }: { delta: ExpenseDelta }) {
+  const hasChanges = delta.title || delta.amount || delta.currency ||
+    delta.payerName || delta.splitMode || delta.date || delta.splits;
 
-  if (!hasDiffs) {
+  if (!hasChanges) {
     return <p className="text-sm text-muted-foreground">No visible changes.</p>;
   }
+
   return (
     <div className="space-y-1">
-      <DiffRow label="Description" before={before.title} after={after.title} />
-      <DiffRow
-        label="Amount"
-        before={formatCurrency(before.amount, before.currency)}
-        after={formatCurrency(after.amount, after.currency)}
-      />
-      <DiffRow label="Paid by" before={before.payerName} after={after.payerName} />
-      <DiffRow label="Split mode" before={before.splitMode} after={after.splitMode} />
-      <DiffRow
-        label="Date"
-        before={new Date(before.date).toLocaleDateString()}
-        after={new Date(after.date).toLocaleDateString()}
-      />
-      <DiffRow label="Splits" before={splitsBefore} after={splitsAfter} />
+      {delta.title && <DiffRow label="Description" before={delta.title.from} after={delta.title.to} />}
+      {delta.amount && <DiffRow label="Amount" before={delta.amount.from} after={delta.amount.to} />}
+      {delta.currency && <DiffRow label="Currency" before={delta.currency.from} after={delta.currency.to} />}
+      {delta.payerName && <DiffRow label="Paid by" before={delta.payerName.from} after={delta.payerName.to} />}
+      {delta.splitMode && <DiffRow label="Split mode" before={delta.splitMode.from} after={delta.splitMode.to} />}
+      {delta.date && (
+        <DiffRow
+          label="Date"
+          before={new Date(delta.date.from).toLocaleDateString()}
+          after={new Date(delta.date.to).toLocaleDateString()}
+        />
+      )}
+      {delta.splits && (
+        <DiffRow
+          label="Splits"
+          before={splitsSummary(delta.splits.from)}
+          after={splitsSummary(delta.splits.to)}
+        />
+      )}
     </div>
   );
+}
+
+function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
+  const snapshot = entry.snapshot;
+
+  if (snapshot.action === "CREATED") {
+    return <p className="text-sm text-muted-foreground">Expense created.</p>;
+  }
+
+  if (snapshot.action === "DELETED") {
+    return <SnapshotSummary state={snapshot.state} />;
+  }
+
+  return <DeltaContent delta={snapshot.delta} />;
 }
 
 function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
@@ -140,7 +144,7 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
-                  {entry.actor.name ?? entry.actor.email}
+                  {entry.actor.name}
                 </span>
                 <Badge className={badge.className}>{badge.label}</Badge>
               </div>

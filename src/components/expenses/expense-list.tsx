@@ -19,13 +19,13 @@ import { AddExpenseDialog } from "./add-expense-dialog";
 import { ExpenseAuditLogDialog } from "./expense-audit-log-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { UserSummary, ExpenseWithSplitsClient } from "@/types/database";
+import type { MemberSummary, ExpenseWithSplitsClient } from "@/types/database";
 
 interface ExpenseListProps {
   expenses: ExpenseWithSplitsClient[];
   defaultPayerId: string;
   groupId: string;
-  members: UserSummary[];
+  members: MemberSummary[];
   groupCurrency: string;
 }
 
@@ -138,14 +138,14 @@ export function ExpenseList({
         <Select value={payerFilter} onValueChange={(value) => setPayerFilter(value ?? "all")}>
           <SelectTrigger className="h-10 w-full sm:w-56" aria-label="Filter expenses by payer">
             <SelectValue>
-              {selectedPayer?.name ?? selectedPayer?.email ?? "All payers"}
+              {selectedPayer?.name ?? "All payers"}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All payers</SelectItem>
             {members.map((member) => (
               <SelectItem key={member.id} value={member.id}>
-                {member.name ?? member.email}
+                {member.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -177,7 +177,7 @@ export function ExpenseList({
 
               {/* Row 2: Payer and Date */}
               <p className="text-xs text-muted-foreground">
-                {e.payer.name ?? e.payer.email} paid · {new Date(e.date).toLocaleDateString()}
+                {e.payer.name} paid · {new Date(e.date).toLocaleDateString()}
               </p>
 
               {/* Row 3: Users Involved */}
@@ -192,7 +192,7 @@ export function ExpenseList({
                       </Avatar>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{split.user.name ?? split.user.email}</p>
+                      <p>{split.user.name}</p>
                     </TooltipContent>
                   </Tooltip>
                 ))}
