@@ -7,8 +7,8 @@
  * - Drop the User table and all its FK constraints
  * - Re-add FK constraints pointing to GroupMember.id
  */
-import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
@@ -54,18 +54,28 @@ async function main() {
   await prisma.$executeRawUnsafe(`ALTER TABLE "GroupMember" ALTER COLUMN "name" SET NOT NULL`);
 
   // Drop old composite primary key / unique constraint
-  await prisma.$executeRawUnsafe(`ALTER TABLE "GroupMember" DROP CONSTRAINT IF EXISTS "GroupMember_pkey"`);
-  await prisma.$executeRawUnsafe(`ALTER TABLE "GroupMember" DROP CONSTRAINT IF EXISTS "GroupMember_groupId_userId_key"`);
+  await prisma.$executeRawUnsafe(
+    `ALTER TABLE "GroupMember" DROP CONSTRAINT IF EXISTS "GroupMember_pkey"`
+  );
+  await prisma.$executeRawUnsafe(
+    `ALTER TABLE "GroupMember" DROP CONSTRAINT IF EXISTS "GroupMember_groupId_userId_key"`
+  );
 
   // Add new primary key on id (skip if already exists)
   try {
     await prisma.$executeRawUnsafe(`ALTER TABLE "GroupMember" ADD PRIMARY KEY ("id")`);
-  } catch { console.log("  (primary key already exists)"); }
+  } catch {
+    console.log("  (primary key already exists)");
+  }
 
   // Add unique constraint (skip if already exists)
   try {
-    await prisma.$executeRawUnsafe(`ALTER TABLE "GroupMember" ADD CONSTRAINT "GroupMember_groupId_id_key" UNIQUE ("groupId", "id")`);
-  } catch { console.log("  (unique constraint already exists)"); }
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "GroupMember" ADD CONSTRAINT "GroupMember_groupId_id_key" UNIQUE ("groupId", "id")`
+    );
+  } catch {
+    console.log("  (unique constraint already exists)");
+  }
 
   console.log("✓ GroupMember now has id as primary key");
 
@@ -80,7 +90,9 @@ async function main() {
     { table: "ExpenseAuditLog", constraint: "ExpenseAuditLog_actorId_fkey" },
   ];
   for (const { table, constraint } of oldFKs) {
-    await prisma.$executeRawUnsafe(`ALTER TABLE "${table}" DROP CONSTRAINT IF EXISTS "${constraint}"`);
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "${table}" DROP CONSTRAINT IF EXISTS "${constraint}"`
+    );
     console.log(`  Dropped ${table}.${constraint}`);
   }
 
@@ -127,4 +139,3 @@ main()
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());
-

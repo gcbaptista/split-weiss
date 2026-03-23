@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Plus } from "lucide-react";
-import { AddExpenseDialog } from "./add-expense-dialog";
+import { useState } from "react";
+
 import type { MemberSummary } from "@/types/database";
+
+import { AddExpenseDialog } from "./add-expense-dialog";
 
 interface MobileExpenseFABProps {
   groupId: string;

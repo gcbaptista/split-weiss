@@ -17,4 +17,3 @@ export async function setDeviceTokenCookie(token: string): Promise<void> {
     maxAge: 60 * 60 * 24 * 365,
   });
 }
-

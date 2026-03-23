@@ -10,10 +10,7 @@ export const splitEntrySchema = z.object({
 export const createExpenseSchema = z.object({
   groupId: z.string(),
   title: z.string().min(1).max(200),
-  amount: z.string().refine(
-    (v) => !isNaN(parseFloat(v)) && parseFloat(v) > 0,
-    "Must be positive"
-  ),
+  amount: z.string().refine((v) => !isNaN(parseFloat(v)) && parseFloat(v) > 0, "Must be positive"),
   currency: z.string().length(3),
   splitMode: z.enum(["PERCENTAGE", "LOCK"]),
   payerId: z.string(),

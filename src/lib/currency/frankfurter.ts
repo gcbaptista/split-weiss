@@ -8,11 +8,7 @@ function isCacheFresh(cached: { fetchedAt: Date }, date: string): boolean {
   return date !== "latest" || Date.now() - cached.fetchedAt.getTime() < CACHE_TTL_MS;
 }
 
-function toExchangeRates(
-  base: string,
-  date: string,
-  rates: unknown
-): ExchangeRates {
+function toExchangeRates(base: string, date: string, rates: unknown): ExchangeRates {
   return {
     base,
     date,
@@ -20,14 +16,9 @@ function toExchangeRates(
   };
 }
 
-async function fetchAndCacheRates(
-  base: string,
-  date: string
-): Promise<ExchangeRates> {
+async function fetchAndCacheRates(base: string, date: string): Promise<ExchangeRates> {
   const url =
-    date === "latest"
-      ? `${BASE_URL}/latest?from=${base}`
-      : `${BASE_URL}/${date}?from=${base}`;
+    date === "latest" ? `${BASE_URL}/latest?from=${base}` : `${BASE_URL}/${date}?from=${base}`;
   const res = await fetch(url, { next: { revalidate: CACHE_TTL_MS / 1000 } });
   if (!res.ok) throw new Error(`Frankfurter API error: ${res.status}`);
 
@@ -83,10 +74,7 @@ async function fetchAndCacheRates(
   return toExchangeRates(base, date, data.rates);
 }
 
-export async function fetchRates(
-  base: string,
-  date: string = "latest"
-): Promise<ExchangeRates> {
+export async function fetchRates(base: string, date: string = "latest"): Promise<ExchangeRates> {
   const cached = await db.exchangeRateCache.findUnique({
     where: { baseCurrency_date: { baseCurrency: base, date } },
     select: { date: true, rates: true, fetchedAt: true },

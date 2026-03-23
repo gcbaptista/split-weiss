@@ -1,9 +1,10 @@
-import { getRecentAccessibleGroups } from "@/lib/group-access";
-import { GroupCard } from "@/components/groups/group-card";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/shared/empty-state";
-import Link from "next/link";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+
+import { GroupCard } from "@/components/groups/group-card";
+import { EmptyState } from "@/components/shared/empty-state";
+import { Button } from "@/components/ui/button";
+import { getRecentAccessibleGroups } from "@/lib/group-access";
 
 export default async function GroupsPage() {
   const groups = await getRecentAccessibleGroups();
@@ -27,11 +28,7 @@ export default async function GroupsPage() {
           icon="👥"
           title="No groups yet"
           description="Create a group or open a group link to see it here."
-          action={
-            <Button render={<Link href="/groups/new" />}>
-              Create your first group
-            </Button>
-          }
+          action={<Button render={<Link href="/groups/new" />}>Create your first group</Button>}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaClient } from "@prisma/client";
 import Decimal from "decimal.js";
-import fs from "fs";
 import dotenv from "dotenv";
+import fs from "fs";
 
 dotenv.config({ path: ".env.local" });
 if (!process.env.DATABASE_URL) dotenv.config();
@@ -108,4 +108,3 @@ main()
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());
-

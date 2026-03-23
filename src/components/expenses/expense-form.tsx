@@ -1,12 +1,15 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Decimal from "decimal.js";
+import { AlertCircle, Lock, LockOpen } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createExpenseSchema,
-  type CreateExpenseInput,
-} from "@/lib/validations/expense.schema";
+import { toast } from "sonner";
+
 import { createExpense, updateExpense } from "@/app/actions/expense.actions";
+import { AmountInput } from "@/components/shared/amount-input";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,9 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { AmountInput } from "@/components/shared/amount-input";
-import { SplitModeSelector } from "./split-mode-selector";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -27,29 +28,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import {
-  calculatePercentage,
-  calculateLock,
-} from "@/lib/splitting";
-import Decimal from "decimal.js";
-import type { MemberSummary, ExpenseWithSplitsClient } from "@/types/database";
-import type { SplitMode } from "@/types/database";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
-import { AlertCircle, Lock, LockOpen } from "lucide-react";
+import { calculateLock, calculatePercentage } from "@/lib/splitting";
+import { type CreateExpenseInput, createExpenseSchema } from "@/lib/validations/expense.schema";
+import type { ExpenseWithSplitsClient, MemberSummary } from "@/types/database";
+import type { SplitMode } from "@/types/database";
+
+import { SplitModeSelector } from "./split-mode-selector";
 
 const BAR_COLORS = [
-  "bg-blue-400", "bg-emerald-400", "bg-amber-400", "bg-rose-400",
-  "bg-violet-400", "bg-cyan-400", "bg-orange-400", "bg-pink-400",
+  "bg-blue-400",
+  "bg-emerald-400",
+  "bg-amber-400",
+  "bg-rose-400",
+  "bg-violet-400",
+  "bg-cyan-400",
+  "bg-orange-400",
+  "bg-pink-400",
 ];
 
-function SplitPreviewBar({
-  splits,
-}: {
-  splits: { userId: string; amount: Decimal }[];
-}) {
+function SplitPreviewBar({ splits }: { splits: { userId: string; amount: Decimal }[] }) {
   const total = splits.reduce((s, m) => s.plus(m.amount), new Decimal(0));
   if (total.lte(0)) return null;
   return (
@@ -155,13 +153,15 @@ export function ExpenseForm({
         const includedInputs = splitInputs
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, percentage: s.percentage, isLocked: s.isLocked }));
-        if (includedInputs.length === 0) return { splits: null, splitError: "Include at least one person" };
+        if (includedInputs.length === 0)
+          return { splits: null, splitError: "Include at least one person" };
         result = calculatePercentage(total, includedInputs);
       } else {
         const includedInputs = splitInputs
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, amount: s.amount, isLocked: s.isLocked }));
-        if (includedInputs.length === 0) return { splits: null, splitError: "Include at least one person" };
+        if (includedInputs.length === 0)
+          return { splits: null, splitError: "Include at least one person" };
         result = calculateLock(total, includedInputs);
       }
       return { splits: result, splitError: null };
@@ -270,7 +270,9 @@ export function ExpenseForm({
                       checked={isIncluded}
                       onCheckedChange={(v) =>
                         setSplitInputs((prev) =>
-                          prev.map((s, j) => (j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s))
+                          prev.map((s, j) =>
+                            j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s
+                          )
                         )
                       }
                     />
@@ -294,11 +296,20 @@ export function ExpenseForm({
                                 const p = s.percentage?.trim();
                                 return sum.plus(new Decimal(p && !isNaN(Number(p)) ? p : "0"));
                               }, new Decimal(0));
-                            const unlockedIncluded = updated.filter((s) => s.isIncluded && !s.isLocked);
+                            const unlockedIncluded = updated.filter(
+                              (s) => s.isIncluded && !s.isLocked
+                            );
                             if (unlockedIncluded.length > 0) {
-                              const remaining = Decimal.max(new Decimal(0), new Decimal(100).minus(lockedSum));
-                              const each = remaining.div(unlockedIncluded.length).toDecimalPlaces(2, Decimal.ROUND_DOWN);
-                              const lastAdj = remaining.minus(each.times(unlockedIncluded.length - 1));
+                              const remaining = Decimal.max(
+                                new Decimal(0),
+                                new Decimal(100).minus(lockedSum)
+                              );
+                              const each = remaining
+                                .div(unlockedIncluded.length)
+                                .toDecimalPlaces(2, Decimal.ROUND_DOWN);
+                              const lastAdj = remaining.minus(
+                                each.times(unlockedIncluded.length - 1)
+                              );
                               let idx = 0;
                               return updated.map((s) => {
                                 if (s.isIncluded && !s.isLocked) {
@@ -358,7 +369,9 @@ export function ExpenseForm({
                       checked={isIncluded}
                       onCheckedChange={(v) =>
                         setSplitInputs((prev) =>
-                          prev.map((s, j) => (j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s))
+                          prev.map((s, j) =>
+                            j === i ? { ...s, isIncluded: v, isLocked: v ? s.isLocked : false } : s
+                          )
                         )
                       }
                     />
@@ -368,7 +381,9 @@ export function ExpenseForm({
                         inputMode="decimal"
                         placeholder="0.00"
                         disabled={!isIncluded}
-                        value={isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")}
+                        value={
+                          isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")
+                        }
                         onChange={(e) =>
                           setSplitInputs((prev) =>
                             prev.map((s, j) =>
@@ -378,7 +393,9 @@ export function ExpenseForm({
                         }
                         className="w-20 text-right"
                       />
-                      <span className="text-sm text-muted-foreground shrink-0">{CURRENCY_SYMBOLS[currency] ?? currency}</span>
+                      <span className="text-sm text-muted-foreground shrink-0">
+                        {CURRENCY_SYMBOLS[currency] ?? currency}
+                      </span>
                     </div>
                     <button
                       type="button"
@@ -399,9 +416,7 @@ export function ExpenseForm({
             </div>
           )}
 
-          {splits && watchAmount && (
-            <SplitPreviewBar splits={splits} />
-          )}
+          {splits && watchAmount && <SplitPreviewBar splits={splits} />}
           {splitError && (
             <p className="flex items-center gap-1 text-sm text-destructive">
               <AlertCircle className="h-4 w-4" />
@@ -409,14 +424,14 @@ export function ExpenseForm({
             </p>
           )}
         </div>
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="w-full"
-        >
+        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
           {form.formState.isSubmitting
-            ? expenseId ? "Saving..." : "Adding..."
-            : expenseId ? "Save changes" : "Add expense"}
+            ? expenseId
+              ? "Saving..."
+              : "Adding..."
+            : expenseId
+              ? "Save changes"
+              : "Add expense"}
         </Button>
       </form>
     </Form>

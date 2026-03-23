@@ -1,12 +1,13 @@
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
+import { notFound } from "next/navigation";
+
 import { getGroupExpensesForCalculation } from "@/app/actions/expense.actions";
 import { getGroupSettlementHistory } from "@/app/actions/settlement.actions";
-import { notFound } from "next/navigation";
+import { SettlementPairs } from "@/components/settlements/settlement-pairs";
+import { EmptyState } from "@/components/shared/empty-state";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
 import { fetchRatesMap } from "@/lib/currency/frankfurter";
-import { SettlementPairs } from "@/components/settlements/settlement-pairs";
-import { EmptyState } from "@/components/shared/empty-state";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;
@@ -34,9 +35,7 @@ export default async function SettlementsPage({ params }: PageProps) {
   }
 
   const dates = [
-    ...new Set(
-      [...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])
-    ),
+    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])),
   ];
   const { ratesByDate } = await fetchRatesMap(group.currency, [...dates, "latest"]);
 

@@ -43,5 +43,5 @@ export function seededShuffle(indices: number[], seed: string): number[] {
   return arr;
 }
 
-export { calculatePercentage } from "./percentage";
 export { calculateLock } from "./lock";
+export { calculatePercentage } from "./percentage";

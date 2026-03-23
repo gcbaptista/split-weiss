@@ -24,10 +24,7 @@ export async function getRecentGroupIds(): Promise<string[]> {
 export async function rememberRecentGroup(groupId: string): Promise<void> {
   const cookieStore = await cookies();
   const current = await getRecentGroupIds();
-  const next = [groupId, ...current.filter((id) => id !== groupId)].slice(
-    0,
-    MAX_RECENT_GROUPS
-  );
+  const next = [groupId, ...current.filter((id) => id !== groupId)].slice(0, MAX_RECENT_GROUPS);
 
   cookieStore.set(RECENT_GROUPS_COOKIE, JSON.stringify(next), {
     httpOnly: true,
@@ -37,4 +34,3 @@ export async function rememberRecentGroup(groupId: string): Promise<void> {
     maxAge: 60 * 60 * 24 * 365,
   });
 }
-

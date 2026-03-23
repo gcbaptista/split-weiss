@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+
 import { convert } from "@/lib/currency/converter";
 import type { ExchangeRates } from "@/types/currency";
 interface ExpenseInput {
@@ -58,9 +59,9 @@ export function calculateBalances(
       groupCurrency,
       rates
     );
-    getOrCreate(expense.payerId).netAmount = getOrCreate(
-      expense.payerId
-    ).netAmount.plus(paidConverted);
+    getOrCreate(expense.payerId).netAmount = getOrCreate(expense.payerId).netAmount.plus(
+      paidConverted
+    );
 
     // Each split member owes their share → debit them
     for (const split of expense.splits) {
@@ -70,9 +71,9 @@ export function calculateBalances(
         groupCurrency,
         rates
       );
-      getOrCreate(split.userId).netAmount = getOrCreate(
-        split.userId
-      ).netAmount.minus(owedConverted);
+      getOrCreate(split.userId).netAmount = getOrCreate(split.userId).netAmount.minus(
+        owedConverted
+      );
     }
   }
 
@@ -89,9 +90,9 @@ export function calculateBalances(
       settlement.fromUserId
     ).netAmount.plus(amtConverted);
     // toUser received → debit them
-    getOrCreate(settlement.toUserId).netAmount = getOrCreate(
-      settlement.toUserId
-    ).netAmount.minus(amtConverted);
+    getOrCreate(settlement.toUserId).netAmount = getOrCreate(settlement.toUserId).netAmount.minus(
+      amtConverted
+    );
   }
 
   return balances;

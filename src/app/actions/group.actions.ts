@@ -1,24 +1,18 @@
 "use server";
+import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
-import {
-  getDeviceTokenFromCookies,
-  setDeviceTokenCookie,
-} from "@/lib/device-token-server";
-import {
-  generateDeviceToken,
-  registerDeviceAccess,
-} from "@/lib/device-token";
+import { generateDeviceToken, registerDeviceAccess } from "@/lib/device-token";
+import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
+import { canAccessGroup, getCurrentMemberId, unlockGroupAccess } from "@/lib/group-access";
+import { hashPassword } from "@/lib/password";
+import { rememberRecentGroup } from "@/lib/recent-groups";
 import {
   createGroupSchema,
+  updateGroupPasswordSchema,
   updateGroupSchema,
   verifyGroupPasswordSchema,
-  updateGroupPasswordSchema,
 } from "@/lib/validations/group.schema";
-import { hashPassword } from "@/lib/password";
-import { canAccessGroup, unlockGroupAccess, getCurrentMemberId } from "@/lib/group-access";
-
-import { rememberRecentGroup } from "@/lib/recent-groups";
-import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 import type { Group } from "@/types/database";
 
@@ -95,7 +89,10 @@ export async function updateGroup(
       data.emoji = typeof raw === "string" && raw.trim() ? raw.trim() : null;
     }
 
-    const old = await db.group.findUnique({ where: { id: groupId }, select: { name: true, emoji: true } });
+    const old = await db.group.findUnique({
+      where: { id: groupId },
+      select: { name: true, emoji: true },
+    });
     const group = await db.group.update({
       where: { id: groupId },
       data,
@@ -106,7 +103,10 @@ export async function updateGroup(
         groupId,
         actorId,
         action: "GROUP_UPDATED",
-        details: { from: { name: old?.name, emoji: old?.emoji }, to: { name: group.name, emoji: group.emoji } },
+        details: {
+          from: { name: old?.name, emoji: old?.emoji },
+          to: { name: group.name, emoji: group.emoji },
+        },
       },
     });
     revalidatePath(`/groups/${groupId}`);
@@ -133,9 +133,7 @@ export async function deleteGroup(groupId: string): Promise<ActionResult> {
   }
 }
 
-export async function unlockGroup(
-  formData: unknown
-): Promise<ActionResult<{ success: boolean }>> {
+export async function unlockGroup(formData: unknown): Promise<ActionResult<{ success: boolean }>> {
   const parsed = verifyGroupPasswordSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -211,10 +209,7 @@ export async function updateGroupPassword(
   }
 }
 
-export async function identifyAsMember(
-  groupId: string,
-  memberId: string
-): Promise<ActionResult> {
+export async function identifyAsMember(groupId: string, memberId: string): Promise<ActionResult> {
   // Verify the member belongs to this group
   const member = await db.groupMember.findFirst({
     where: { id: memberId, groupId },
@@ -235,10 +230,7 @@ export async function identifyAsMember(
   return { data: undefined };
 }
 
-export async function addAndIdentifyAsMember(
-  groupId: string,
-  name: string
-): Promise<ActionResult> {
+export async function addAndIdentifyAsMember(groupId: string, name: string): Promise<ActionResult> {
   const trimmed = name.trim();
   if (!trimmed || trimmed.length > 100) return { error: "Name must be 1-100 characters" };
 

@@ -1,20 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { identifyAsMember, addAndIdentifyAsMember } from "@/app/actions/group.actions";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { addAndIdentifyAsMember, identifyAsMember } from "@/app/actions/group.actions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import type { MemberSummary } from "@/types/database";
 
 interface GroupIdentityPickerProps {
@@ -67,9 +62,7 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Who are you?</CardTitle>
-          <CardDescription>
-            Pick your name so we can highlight your balances.
-          </CardDescription>
+          <CardDescription>Pick your name so we can highlight your balances.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -98,10 +91,7 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
                   disabled={isSubmitting}
                   onKeyDown={(e) => e.key === "Enter" && handleAddNew()}
                 />
-                <Button
-                  disabled={isSubmitting || !newName.trim()}
-                  onClick={handleAddNew}
-                >
+                <Button disabled={isSubmitting || !newName.trim()} onClick={handleAddNew}>
                   Join
                 </Button>
               </div>
@@ -121,4 +111,3 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
     </div>
   );
 }
-

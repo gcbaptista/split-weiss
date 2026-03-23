@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+
 import type { NetBalance } from "./calculator";
 
 export interface SimplifiedDebt {
@@ -10,9 +11,7 @@ export interface SimplifiedDebt {
 /**
  * Greedy min/max algorithm that reduces N*(N-1)/2 debts to ≤ N-1 transactions.
  */
-export function simplifyDebts(
-  balances: Map<string, NetBalance>
-): SimplifiedDebt[] {
+export function simplifyDebts(balances: Map<string, NetBalance>): SimplifiedDebt[] {
   const creditors: { userId: string; amount: Decimal }[] = [];
   const debtors: { userId: string; amount: Decimal }[] = [];
 

@@ -1,20 +1,16 @@
 "use client";
+import { Undo2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import { getExpenseAuditLog, revertExpense } from "@/app/actions/expense.actions";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Undo2 } from "lucide-react";
-import type { ExpenseAuditLogEntry, ExpenseStateSnapshot, ExpenseDelta } from "@/types/audit";
+import type { ExpenseAuditLogEntry, ExpenseDelta, ExpenseStateSnapshot } from "@/types/audit";
 
 interface Props {
   expenseId: string | null;
@@ -23,10 +19,19 @@ interface Props {
 }
 
 const ACTION_BADGE: Record<string, { label: string; className: string }> = {
-  CREATED: { label: "Created", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
-  UPDATED: { label: "Updated", className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
+  CREATED: {
+    label: "Created",
+    className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  },
+  UPDATED: {
+    label: "Updated",
+    className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  },
   DELETED: { label: "Deleted", className: "bg-destructive/10 text-destructive" },
-  REVERTED: { label: "Reverted", className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
+  REVERTED: {
+    label: "Reverted",
+    className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
+  },
 };
 
 function DiffRow({ label, before, after }: { label: string; before: string; after: string }) {
@@ -43,7 +48,7 @@ function DiffRow({ label, before, after }: { label: string; before: string; afte
 }
 
 function splitsSummary(splits: ExpenseStateSnapshot["splits"]) {
-  return splits.map(s => `${s.userName}: ${s.amount}`).join(", ");
+  return splits.map((s) => `${s.userName}: ${s.amount}`).join(", ");
 }
 
 function SnapshotSummary({ state }: { state: ExpenseStateSnapshot }) {
@@ -55,8 +60,14 @@ function SnapshotSummary({ state }: { state: ExpenseStateSnapshot }) {
 }
 
 function DeltaContent({ delta }: { delta: ExpenseDelta }) {
-  const hasChanges = delta.title || delta.amount || delta.currency ||
-    delta.payerName || delta.splitMode || delta.date || delta.splits;
+  const hasChanges =
+    delta.title ||
+    delta.amount ||
+    delta.currency ||
+    delta.payerName ||
+    delta.splitMode ||
+    delta.date ||
+    delta.splits;
 
   if (!hasChanges) {
     return <p className="text-sm text-muted-foreground">No visible changes.</p>;
@@ -64,11 +75,21 @@ function DeltaContent({ delta }: { delta: ExpenseDelta }) {
 
   return (
     <div className="space-y-1">
-      {delta.title && <DiffRow label="Description" before={delta.title.from} after={delta.title.to} />}
-      {delta.amount && <DiffRow label="Amount" before={delta.amount.from} after={delta.amount.to} />}
-      {delta.currency && <DiffRow label="Currency" before={delta.currency.from} after={delta.currency.to} />}
-      {delta.payerName && <DiffRow label="Paid by" before={delta.payerName.from} after={delta.payerName.to} />}
-      {delta.splitMode && <DiffRow label="Split mode" before={delta.splitMode.from} after={delta.splitMode.to} />}
+      {delta.title && (
+        <DiffRow label="Description" before={delta.title.from} after={delta.title.to} />
+      )}
+      {delta.amount && (
+        <DiffRow label="Amount" before={delta.amount.from} after={delta.amount.to} />
+      )}
+      {delta.currency && (
+        <DiffRow label="Currency" before={delta.currency.from} after={delta.currency.to} />
+      )}
+      {delta.payerName && (
+        <DiffRow label="Paid by" before={delta.payerName.from} after={delta.payerName.to} />
+      )}
+      {delta.splitMode && (
+        <DiffRow label="Split mode" before={delta.splitMode.from} after={delta.splitMode.to} />
+      )}
       {delta.date && (
         <DiffRow
           label="Date"
@@ -100,8 +121,14 @@ function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
 
   if (snapshot.action === "REVERTED") {
     const delta = snapshot.delta;
-    const hasChanges = delta.title || delta.amount || delta.currency ||
-      delta.payerName || delta.splitMode || delta.date || delta.splits;
+    const hasChanges =
+      delta.title ||
+      delta.amount ||
+      delta.currency ||
+      delta.payerName ||
+      delta.splitMode ||
+      delta.date ||
+      delta.splits;
     if (!hasChanges) {
       return <p className="text-sm text-muted-foreground">Reverted to previous state.</p>;
     }
@@ -165,43 +192,41 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
       {logs && logs.length === 0 && (
         <p className="text-sm text-muted-foreground">No history found.</p>
       )}
-      {logs && logs.map((entry) => {
-        const badge = ACTION_BADGE[entry.action];
-        return (
-          <div key={entry.id} className="rounded-lg border p-3 space-y-2">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2">
-                {entry.actor && (
-                  <span className="text-sm font-medium">{entry.actor.name}</span>
-                )}
-                <Badge className={badge.className}>{badge.label}</Badge>
+      {logs &&
+        logs.map((entry) => {
+          const badge = ACTION_BADGE[entry.action];
+          return (
+            <div key={entry.id} className="rounded-lg border p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  {entry.actor && <span className="text-sm font-medium">{entry.actor.name}</span>}
+                  <Badge className={badge.className}>{badge.label}</Badge>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(entry.createdAt).toLocaleString()}
+                </span>
               </div>
-              <span className="text-xs text-muted-foreground">
-                {new Date(entry.createdAt).toLocaleString()}
-              </span>
+              <EntryContent entry={entry} />
+              {canRevert(entry) && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  disabled={reverting !== null}
+                  onClick={() => handleRevert(entry.id)}
+                  aria-label="Revert this change"
+                >
+                  <Undo2 className={`h-4 w-4 ${reverting === entry.id ? "animate-spin" : ""}`} />
+                </Button>
+              )}
             </div>
-            <EntryContent entry={entry} />
-            {canRevert(entry) && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                disabled={reverting !== null}
-                onClick={() => handleRevert(entry.id)}
-                aria-label="Revert this change"
-              >
-                <Undo2 className={`h-4 w-4 ${reverting === entry.id ? "animate-spin" : ""}`} />
-              </Button>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 }
 
 export function ExpenseAuditLogDialog({ expenseId, expenseTitle, onOpenChange }: Props) {
-
   return (
     <Sheet open={!!expenseId} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">

@@ -11,8 +11,12 @@ export function SplitModeSelector({ value, onChange }: SplitModeSelectorProps) {
   return (
     <Tabs value={value} onValueChange={(v) => onChange(v as SplitMode)}>
       <TabsList className="flex w-full">
-        <TabsTrigger value="LOCK" className="flex-1 text-xs sm:text-sm">Amount</TabsTrigger>
-        <TabsTrigger value="PERCENTAGE" className="flex-1 text-xs sm:text-sm">%</TabsTrigger>
+        <TabsTrigger value="LOCK" className="flex-1 text-xs sm:text-sm">
+          Amount
+        </TabsTrigger>
+        <TabsTrigger value="PERCENTAGE" className="flex-1 text-xs sm:text-sm">
+          %
+        </TabsTrigger>
       </TabsList>
     </Tabs>
   );

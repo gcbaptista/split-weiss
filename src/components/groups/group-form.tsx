@@ -1,11 +1,12 @@
 "use client";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createGroupSchema,
-  type CreateGroupInput,
-} from "@/lib/validations/group.schema";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
 import { createGroup } from "@/app/actions/group.actions";
+import { CurrencySelect } from "@/components/shared/currency-select";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,10 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { CurrencySelect } from "@/components/shared/currency-select";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { type CreateGroupInput, createGroupSchema } from "@/lib/validations/group.schema";
 
 export function GroupForm() {
   const router = useRouter();
@@ -92,10 +90,7 @@ export function GroupForm() {
             <FormItem>
               <FormLabel>Default currency</FormLabel>
               <FormControl>
-                <CurrencySelect
-                  value={field.value}
-                  onChange={field.onChange}
-                />
+                <CurrencySelect value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,11 +117,7 @@ export function GroupForm() {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="w-full"
-        >
+        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
           {form.formState.isSubmitting ? "Creating..." : "Create group"}
         </Button>
       </form>

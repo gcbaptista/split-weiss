@@ -1,18 +1,16 @@
 "use server";
-import { db } from "@/lib/db";
-import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
 import type { Prisma } from "@prisma/client";
-import { createExpenseSchema } from "@/lib/validations/expense.schema";
-import {
-  calculatePercentage,
-  calculateLock,
-} from "@/lib/splitting";
-import { buildStateSnapshot, buildDelta } from "@/lib/audit/snapshot";
 import Decimal from "decimal.js";
 import { revalidatePath } from "next/cache";
+
+import { buildDelta, buildStateSnapshot } from "@/lib/audit/snapshot";
+import { db } from "@/lib/db";
+import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
+import { calculateLock, calculatePercentage } from "@/lib/splitting";
+import { createExpenseSchema } from "@/lib/validations/expense.schema";
 import type { ActionResult } from "@/types/api";
-import type { Expense, ExpenseBreakdownClient, ExpenseWithSplitsClient } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
+import type { Expense, ExpenseBreakdownClient, ExpenseWithSplitsClient } from "@/types/database";
 
 const memberSelect = {
   id: true,
@@ -34,13 +32,10 @@ function serializeExpenseForResult(expense: Expense): Expense {
   } as unknown as Expense;
 }
 
-export async function createExpense(
-  formData: unknown
-): Promise<ActionResult<Expense>> {
+export async function createExpense(formData: unknown): Promise<ActionResult<Expense>> {
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
-  const { groupId, splits: splitInputs, splitMode, amount, ...rest } =
-    parsed.data;
+  const { groupId, splits: splitInputs, splitMode, amount, ...rest } = parsed.data;
 
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
@@ -49,10 +44,11 @@ export async function createExpense(
   try {
     const total = new Decimal(amount);
     const actorId = await getCurrentMemberId(groupId);
-    const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
-    const splitResults = splitMode === "PERCENTAGE"
-      ? calculatePercentage(total, mappedInputs)
-      : calculateLock(total, mappedInputs);
+    const mappedInputs = splitInputs.map((s) => ({ ...s, isLocked: s.isLocked ?? false }));
+    const splitResults =
+      splitMode === "PERCENTAGE"
+        ? calculatePercentage(total, mappedInputs)
+        : calculateLock(total, mappedInputs);
     const expense = await db.$transaction(async (tx) => {
       const created = await tx.expense.create({
         data: {
@@ -112,10 +108,10 @@ export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSpli
   });
 
   // Convert Decimal to string for Client Components
-  return expenses.map(e => ({
+  return expenses.map((e) => ({
     ...e,
     amount: e.amount.toString(),
-    splits: e.splits.map(s => ({
+    splits: e.splits.map((s) => ({
       ...s,
       amount: s.amount.toString(),
       percentage: s.percentage?.toString() ?? null,
@@ -206,10 +202,11 @@ export async function updateExpense(
   try {
     const total = new Decimal(amount);
     const actorId = await getCurrentMemberId(existing.groupId);
-    const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
-    const splitResults = splitMode === "PERCENTAGE"
-      ? calculatePercentage(total, mappedInputs)
-      : calculateLock(total, mappedInputs);
+    const mappedInputs = splitInputs.map((s) => ({ ...s, isLocked: s.isLocked ?? false }));
+    const splitResults =
+      splitMode === "PERCENTAGE"
+        ? calculatePercentage(total, mappedInputs)
+        : calculateLock(total, mappedInputs);
     const expense = await db.$transaction(async (tx) => {
       await tx.expenseSplit.deleteMany({ where: { expenseId } });
       const updated = await tx.expense.update({
@@ -255,7 +252,9 @@ export async function updateExpense(
   }
 }
 
-export async function deleteExpense(expenseId: string): Promise<ActionResult<{ auditLogId: string }>> {
+export async function deleteExpense(
+  expenseId: string
+): Promise<ActionResult<{ auditLogId: string }>> {
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     select: { groupId: true, payerId: true },
@@ -284,7 +283,10 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult<{ a
           groupId: expense.groupId,
           actorId,
           action: "DELETED",
-          snapshot: { action: "DELETED", state: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
+          snapshot: {
+            action: "DELETED",
+            state: buildStateSnapshot(full, full.splits),
+          } as unknown as Prisma.InputJsonValue,
         },
       });
       await tx.expense.delete({ where: { id: expenseId } });
@@ -341,10 +343,7 @@ export async function getMemberAuditLog(
   return { data: logs as unknown as ExpenseAuditLogEntry[] };
 }
 
-
-export async function revertExpense(
-  auditLogId: string
-): Promise<ActionResult<Expense>> {
+export async function revertExpense(auditLogId: string): Promise<ActionResult<Expense>> {
   const logEntry = await db.expenseAuditLog.findUnique({
     where: { id: auditLogId },
   });

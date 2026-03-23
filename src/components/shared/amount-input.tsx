@@ -1,7 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { CurrencySelect } from "./currency-select";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
+
+import { CurrencySelect } from "./currency-select";
 
 interface AmountInputProps {
   value: string;

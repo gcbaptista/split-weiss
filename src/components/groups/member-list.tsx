@@ -1,23 +1,19 @@
 "use client";
+import { Check, History, Pencil, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+
+import { getMemberAuditLog } from "@/app/actions/expense.actions";
+import { addMember, removeMember, renameMember } from "@/app/actions/member.actions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { addMember, removeMember, renameMember } from "@/app/actions/member.actions";
-import { getMemberAuditLog } from "@/app/actions/expense.actions";
-import { toast } from "sonner";
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Pencil, Check, X, Trash2, History } from "lucide-react";
-import type { MemberSummary } from "@/types/database";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
+import type { MemberSummary } from "@/types/database";
 
 interface MemberListProps {
   members: MemberSummary[];
@@ -25,11 +21,7 @@ interface MemberListProps {
   currentMemberId?: string;
 }
 
-export function MemberList({
-  members,
-  groupId,
-  currentMemberId,
-}: MemberListProps) {
+export function MemberList({ members, groupId, currentMemberId }: MemberListProps) {
   const [name, setName] = useState("");
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -84,10 +76,7 @@ export function MemberList({
     <div className="space-y-4">
       <ul className="space-y-2">
         {members.map((m) => (
-          <li
-            key={m.id}
-            className="flex items-center gap-4 rounded-lg border p-4"
-          >
+          <li key={m.id} className="flex items-center gap-4 rounded-lg border p-4">
             <Avatar className="h-10 w-10 shrink-0">
               <AvatarFallback>
                 {(editingId === m.id ? editName : m.name)[0]?.toUpperCase() ?? "?"}
@@ -108,7 +97,9 @@ export function MemberList({
               ) : (
                 <p className="text-sm font-medium truncate">
                   {m.name}
-                  {currentMemberId === m.id && <span className="text-muted-foreground font-normal"> (you)</span>}
+                  {currentMemberId === m.id && (
+                    <span className="text-muted-foreground font-normal"> (you)</span>
+                  )}
                 </p>
               )}
             </div>
@@ -182,7 +173,9 @@ export function MemberList({
         <MemberAuditSheet
           groupId={groupId}
           member={auditMember}
-          onOpenChange={(open) => { if (!open) setAuditMember(null); }}
+          onOpenChange={(open) => {
+            if (!open) setAuditMember(null);
+          }}
         />
       )}
     </div>
@@ -190,10 +183,19 @@ export function MemberList({
 }
 
 const ACTION_BADGE: Record<string, { label: string; className: string }> = {
-  CREATED: { label: "Created", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
-  UPDATED: { label: "Updated", className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
+  CREATED: {
+    label: "Created",
+    className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  },
+  UPDATED: {
+    label: "Updated",
+    className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  },
   DELETED: { label: "Deleted", className: "bg-destructive/10 text-destructive" },
-  REVERTED: { label: "Reverted", className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
+  REVERTED: {
+    label: "Reverted",
+    className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
+  },
 };
 
 function MemberAuditSheet({
@@ -211,7 +213,10 @@ function MemberAuditSheet({
   useEffect(() => {
     void getMemberAuditLog(groupId, member.id)
       .then((result) => {
-        if (result.error) { setError(result.error); return; }
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
         setLogs(result.data ?? []);
       })
       .catch(() => setError("Failed to load history"));

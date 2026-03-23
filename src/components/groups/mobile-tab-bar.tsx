@@ -1,13 +1,28 @@
 "use client";
+import { ArrowLeftRight, Receipt, Scale, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Receipt, Scale, ArrowLeftRight, Settings } from "lucide-react";
 
 const tabs = [
   { value: "expenses", label: "Expenses", icon: Receipt, href: (id: string) => `/groups/${id}` },
-  { value: "balances", label: "Balances", icon: Scale, href: (id: string) => `/groups/${id}/balances` },
-  { value: "settlements", label: "Settle", icon: ArrowLeftRight, href: (id: string) => `/groups/${id}/settlements` },
-  { value: "settings", label: "Settings", icon: Settings, href: (id: string) => `/groups/${id}/settings` },
+  {
+    value: "balances",
+    label: "Balances",
+    icon: Scale,
+    href: (id: string) => `/groups/${id}/balances`,
+  },
+  {
+    value: "settlements",
+    label: "Settle",
+    icon: ArrowLeftRight,
+    href: (id: string) => `/groups/${id}/settlements`,
+  },
+  {
+    value: "settings",
+    label: "Settings",
+    icon: Settings,
+    href: (id: string) => `/groups/${id}/settings`,
+  },
 ];
 
 function getActiveTab(pathname: string, groupId: string) {

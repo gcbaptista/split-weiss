@@ -1,11 +1,5 @@
 import { GroupForm } from "@/components/groups/group-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function NewGroupPage() {
   return (
@@ -13,9 +7,7 @@ export default function NewGroupPage() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Create a group</CardTitle>
-          <CardDescription>
-            Start a group and add people by name
-          </CardDescription>
+          <CardDescription>Start a group and add people by name</CardDescription>
         </CardHeader>
         <CardContent>
           <GroupForm />

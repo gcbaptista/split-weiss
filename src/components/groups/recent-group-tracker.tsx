@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+
 import { rememberRecentGroupVisit } from "@/app/actions/group.actions";
 
 export function RecentGroupTracker({ groupId }: { groupId: string }) {
@@ -15,4 +16,3 @@ export function RecentGroupTracker({ groupId }: { groupId: string }) {
 
   return null;
 }
-

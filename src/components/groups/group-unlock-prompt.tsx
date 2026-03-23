@@ -1,19 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
 import { unlockGroup } from "@/app/actions/group.actions";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const passwordSchema = z.object({
   password: z.string().min(1, "Password is required"),
@@ -64,9 +59,7 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Enter password</CardTitle>
-          <CardDescription>
-            This group is locked on new devices.
-          </CardDescription>
+          <CardDescription>This group is locked on new devices.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -101,4 +94,3 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
     </div>
   );
 }
-

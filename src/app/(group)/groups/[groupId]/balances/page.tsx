@@ -1,14 +1,15 @@
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
+import Decimal from "decimal.js";
+import { AlertTriangle } from "lucide-react";
+import { notFound } from "next/navigation";
+
 import { getGroupExpensesForBreakdown } from "@/app/actions/expense.actions";
 import { getGroupSettlementsForBreakdown } from "@/app/actions/settlement.actions";
-import { notFound } from "next/navigation";
-import { calculateBalances } from "@/lib/balances/calculator";
-import { fetchRatesMap } from "@/lib/currency/frankfurter";
-import { convert } from "@/lib/currency/converter";
 import { BalanceBreakdown } from "@/components/groups/balance-breakdown";
 import { EmptyState } from "@/components/shared/empty-state";
-import { AlertTriangle } from "lucide-react";
-import Decimal from "decimal.js";
+import { calculateBalances } from "@/lib/balances/calculator";
+import { convert } from "@/lib/currency/converter";
+import { fetchRatesMap } from "@/lib/currency/frankfurter";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 import type { ExchangeRates } from "@/types/currency";
 
 interface PageProps {
@@ -31,20 +32,25 @@ export default async function BalancesPage({ params }: PageProps) {
 
   if (expenses.length === 0) {
     return (
-      <EmptyState icon="⚖️" title="No expenses yet" description="Add expenses to see balances and spending." />
+      <EmptyState
+        icon="⚖️"
+        title="No expenses yet"
+        description="Add expenses to see balances and spending."
+      />
     );
   }
 
   const dates = [
-    ...new Set(
-      [...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])
-    ),
+    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])),
   ];
   const { ratesByDate, staleDates } = await fetchRatesMap(groupCurrency, [...dates, "latest"]);
 
   function getRates(date: Date): ExchangeRates {
     const day = date.toISOString().split("T")[0];
-    return ratesByDate.get(day) ?? ratesByDate.get("latest") ?? { base: groupCurrency, date: "latest", rates: {} };
+    return (
+      ratesByDate.get(day) ??
+      ratesByDate.get("latest") ?? { base: groupCurrency, date: "latest", rates: {} }
+    );
   }
 
   // Calculate spending totals
@@ -54,13 +60,29 @@ export default async function BalancesPage({ params }: PageProps) {
 
   for (const expense of expenses) {
     const rates = getRates(expense.date);
-    const convertedAmount = convert(expense.amount.toString(), expense.currency, groupCurrency, rates);
+    const convertedAmount = convert(
+      expense.amount.toString(),
+      expense.currency,
+      groupCurrency,
+      rates
+    );
     grandTotal = grandTotal.plus(convertedAmount);
-    paidMap.set(expense.payerId, (paidMap.get(expense.payerId) ?? new Decimal(0)).plus(convertedAmount));
+    paidMap.set(
+      expense.payerId,
+      (paidMap.get(expense.payerId) ?? new Decimal(0)).plus(convertedAmount)
+    );
 
     for (const split of expense.splits) {
-      const convertedShare = convert(split.amount.toString(), expense.currency, groupCurrency, rates);
-      shareMap.set(split.userId, (shareMap.get(split.userId) ?? new Decimal(0)).plus(convertedShare));
+      const convertedShare = convert(
+        split.amount.toString(),
+        expense.currency,
+        groupCurrency,
+        rates
+      );
+      shareMap.set(
+        split.userId,
+        (shareMap.get(split.userId) ?? new Decimal(0)).plus(convertedShare)
+      );
     }
   }
 

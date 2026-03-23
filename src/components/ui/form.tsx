@@ -1,14 +1,15 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import {
   Controller,
-  FormProvider,
-  useFormContext,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
+  FormProvider,
+  useFormContext,
 } from "react-hook-form";
+
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -21,9 +22,7 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
-);
+const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
 
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
@@ -47,50 +46,21 @@ function useFormField() {
   };
 }
 
-function FormItem({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="form-item"
-      className={cn("grid gap-2", className)}
-      {...props}
-    />
-  );
+function FormItem({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="form-item" className={cn("grid gap-2", className)} {...props} />;
 }
 
-function FormLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof Label>) {
+function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
   const { error, name } = useFormField();
-  return (
-    <Label
-      className={cn(error && "text-destructive", className)}
-      htmlFor={name}
-      {...props}
-    />
-  );
+  return <Label className={cn(error && "text-destructive", className)} htmlFor={name} {...props} />;
 }
 
-function FormControl({
-  ...props
-}: React.ComponentProps<"div">) {
+function FormControl({ ...props }: React.ComponentProps<"div">) {
   const { error } = useFormField();
-  return (
-    <div
-      data-slot="form-control"
-      data-invalid={error ? "true" : undefined}
-      {...props}
-    />
-  );
+  return <div data-slot="form-control" data-invalid={error ? "true" : undefined} {...props} />;
 }
 
-function FormMessage({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error } = useFormField();
   const body = error?.message;
   if (!body) return null;
@@ -105,12 +75,4 @@ function FormMessage({
   );
 }
 
-export {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useFormField,
-};
+export { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useFormField };

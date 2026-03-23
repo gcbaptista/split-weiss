@@ -1,16 +1,10 @@
 import "server-only";
 
 import { cache } from "react";
+
 import { db } from "@/lib/db";
-import {
-  getDeviceTokenFromCookies,
-  setDeviceTokenCookie,
-} from "@/lib/device-token-server";
-import {
-  generateDeviceToken,
-  registerDeviceAccess,
-  verifyDeviceAccess,
-} from "@/lib/device-token";
+import { generateDeviceToken, registerDeviceAccess, verifyDeviceAccess } from "@/lib/device-token";
+import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
 import { verifyPassword } from "@/lib/password";
 import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
 import type { GroupWithMembers } from "@/types/database";
@@ -28,35 +22,33 @@ export type GroupRequestAccess =
 
 type GroupAccessStatus = "not-found" | "locked" | "needs-identity" | "authorized";
 
-const getGroupAccessStatus = cache(
-  async (groupId: string): Promise<GroupAccessStatus> => {
-    const group = await db.group.findUnique({
-      where: { id: groupId },
-      select: { id: true, passwordHash: true },
-    });
+const getGroupAccessStatus = cache(async (groupId: string): Promise<GroupAccessStatus> => {
+  const group = await db.group.findUnique({
+    where: { id: groupId },
+    select: { id: true, passwordHash: true },
+  });
 
-    if (!group) return "not-found";
+  if (!group) return "not-found";
 
-    const deviceToken = await getDeviceTokenFromCookies();
+  const deviceToken = await getDeviceTokenFromCookies();
 
-    // If password-protected, verify device has access
-    if (group.passwordHash) {
-      if (!deviceToken) return "locked";
-      if (!(await verifyDeviceAccess(groupId, deviceToken))) return "locked";
-    }
-
-    // Check if device has identified as a member
-    if (deviceToken) {
-      const access = await db.deviceAccess.findUnique({
-        where: { groupId_deviceToken: { groupId, deviceToken } },
-        select: { memberId: true },
-      });
-      if (access?.memberId) return "authorized";
-    }
-
-    return "needs-identity";
+  // If password-protected, verify device has access
+  if (group.passwordHash) {
+    if (!deviceToken) return "locked";
+    if (!(await verifyDeviceAccess(groupId, deviceToken))) return "locked";
   }
-);
+
+  // Check if device has identified as a member
+  if (deviceToken) {
+    const access = await db.deviceAccess.findUnique({
+      where: { groupId_deviceToken: { groupId, deviceToken } },
+      select: { memberId: true },
+    });
+    if (access?.memberId) return "authorized";
+  }
+
+  return "needs-identity";
+});
 
 export const canAccessGroup = cache(async (groupId: string): Promise<boolean> => {
   const status = await getGroupAccessStatus(groupId);
@@ -74,9 +66,7 @@ export const getCurrentMemberId = cache(async (groupId: string): Promise<string 
   return access?.memberId ?? null;
 });
 
-export const getGroupRequestAccess = cache(async (
-  groupId: string
-): Promise<GroupRequestAccess> => {
+export const getGroupRequestAccess = cache(async (groupId: string): Promise<GroupRequestAccess> => {
   const status = await getGroupAccessStatus(groupId);
 
   if (status === "not-found") return { status };
@@ -133,9 +123,7 @@ export async function getRecentAccessibleGroups() {
     },
   });
 
-  const groupMap = new Map(
-    groups.map((group) => [group.id, group])
-  );
+  const groupMap = new Map(groups.map((group) => [group.id, group]));
 
   return recentGroupIds
     .map((groupId) => groupMap.get(groupId))

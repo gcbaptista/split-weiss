@@ -1,30 +1,29 @@
-import { getGroupRequestAccess } from "@/lib/group-access";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { GroupTabs } from "@/components/groups/group-tabs";
-import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
-import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
-import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
-import { GroupIdentityPicker } from "@/components/groups/group-identity-picker";
-import { GroupNotFoundState } from "@/components/groups/group-not-found-state";
+import Link from "next/link";
+
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
 import { MobileExpenseFAB } from "@/components/expenses/mobile-expense-fab";
+import { GroupIdentityPicker } from "@/components/groups/group-identity-picker";
+import { GroupNotFoundState } from "@/components/groups/group-not-found-state";
+import { GroupTabs } from "@/components/groups/group-tabs";
+import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
+import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
+import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
+import { getGroupRequestAccess } from "@/lib/group-access";
 
 interface GroupLayoutProps {
   children: React.ReactNode;
   params: Promise<{ groupId: string }>;
 }
 
-export default async function GroupLayout({
-  children,
-  params,
-}: GroupLayoutProps) {
+export default async function GroupLayout({ children, params }: GroupLayoutProps) {
   const { groupId } = await params;
   const access = await getGroupRequestAccess(groupId);
 
   if (access.status === "not-found") return <GroupNotFoundState />;
   if (access.status === "locked") return <GroupUnlockPrompt groupId={groupId} />;
-  if (access.status === "needs-identity") return <GroupIdentityPicker groupId={groupId} members={access.group.members} />;
+  if (access.status === "needs-identity")
+    return <GroupIdentityPicker groupId={groupId} members={access.group.members} />;
 
   const group = access.group;
   const members = group.members;
@@ -82,4 +81,3 @@ export default async function GroupLayout({
     </div>
   );
 }
-

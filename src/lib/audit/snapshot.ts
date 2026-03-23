@@ -1,4 +1,4 @@
-import type { ExpenseStateSnapshot, ExpenseDelta, ExpenseSplitSnapshot } from "@/types/audit";
+import type { ExpenseDelta, ExpenseSplitSnapshot, ExpenseStateSnapshot } from "@/types/audit";
 
 interface ExpenseInput {
   title: string;
@@ -62,8 +62,7 @@ export function buildDelta(
 ): ExpenseDelta {
   const delta: ExpenseDelta = {};
 
-  if (before.title !== after.title)
-    delta.title = { from: before.title, to: after.title };
+  if (before.title !== after.title) delta.title = { from: before.title, to: after.title };
   if (before.amount.toString() !== after.amount.toString())
     delta.amount = { from: before.amount.toString(), to: after.amount.toString() };
   if (before.currency !== after.currency)
@@ -79,8 +78,7 @@ export function buildDelta(
 
   const oldSplits = toSplitSnapshots(beforeSplits);
   const newSplits = toSplitSnapshots(afterSplits);
-  if (!splitsEqual(oldSplits, newSplits))
-    delta.splits = { from: oldSplits, to: newSplits };
+  if (!splitsEqual(oldSplits, newSplits)) delta.splits = { from: oldSplits, to: newSplits };
 
   return delta;
 }

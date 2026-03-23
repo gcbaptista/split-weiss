@@ -1,19 +1,15 @@
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createSettlement } from "@/app/actions/settlement.actions";
-import { toast } from "sonner";
+import Decimal from "decimal.js";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+
+import { createSettlement } from "@/app/actions/settlement.actions";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
-import Decimal from "decimal.js";
 
 interface DebtForDialog {
   fromUserId: string;
@@ -75,8 +71,7 @@ export function SettleUpDialog({
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            <strong>{debt.fromName}</strong> pays{" "}
-            <strong>{debt.toName}</strong>{" "}
+            <strong>{debt.fromName}</strong> pays <strong>{debt.toName}</strong>{" "}
             {formatCurrency(debt.amount.toString(), currency)}
           </p>
           <div className="space-y-1">
@@ -87,11 +82,7 @@ export function SettleUpDialog({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
-          <Button
-            onClick={handleSettle}
-            disabled={submitting}
-            className="w-full"
-          >
+          <Button onClick={handleSettle} disabled={submitting} className="w-full">
             {submitting ? "Recording..." : "Mark as settled"}
           </Button>
         </div>

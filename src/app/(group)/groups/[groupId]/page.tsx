@@ -1,7 +1,8 @@
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
-import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { notFound } from "next/navigation";
+
+import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { ExpenseList } from "@/components/expenses/expense-list";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;

@@ -22,7 +22,10 @@ export default function BalancesLoading() {
         {/* Member rows */}
         <div className="divide-y">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-3 px-4 py-3">
+            <div
+              key={i}
+              className="grid grid-cols-[auto_1fr_auto_auto_auto] items-center gap-3 px-4 py-3"
+            >
               <Skeleton className="h-4 w-4" />
               <div className="space-y-1.5">
                 <Skeleton className="h-4 w-24" />

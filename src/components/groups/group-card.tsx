@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
+import Link from "next/link";
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface GroupCardProps {
   group: {
@@ -23,14 +24,10 @@ export function GroupCard({ group }: GroupCardProps) {
               {group.emoji && <span className="text-2xl">{group.emoji}</span>}
               <div>
                 <h3 className="font-semibold leading-none">{group.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {group.currency}
-                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{group.currency}</p>
               </div>
             </div>
-            <Badge variant="secondary">
-              {group._count.expenses} expenses
-            </Badge>
+            <Badge variant="secondary">{group._count.expenses} expenses</Badge>
           </div>
         </CardHeader>
         <CardContent>

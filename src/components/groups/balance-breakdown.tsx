@@ -1,12 +1,13 @@
 "use client";
-import { useState } from "react";
-import { formatCurrency, cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
+
 import { convert } from "@/lib/currency/converter";
+import { cn, formatCurrency } from "@/lib/utils";
 import type { ExchangeRates } from "@/types/currency";
 import type {
-  MemberSummary,
   ExpenseBreakdownClient,
+  MemberSummary,
   SettlementBreakdownClient,
 } from "@/types/database";
 
@@ -75,7 +76,9 @@ export function BalanceBreakdown({
 
   function getRates(date: Date): ExchangeRates {
     const dateStr = date.toISOString().split("T")[0];
-    return ratesByDate[dateStr] ?? ratesByDate["latest"] ?? { base: currency, date: "latest", rates: {} };
+    return (
+      ratesByDate[dateStr] ?? ratesByDate["latest"] ?? { base: currency, date: "latest", rates: {} }
+    );
   }
 
   function buildMemberTransactions(memberId: string): MemberTransaction[] {
@@ -180,19 +183,28 @@ export function BalanceBreakdown({
               {/* Card header: name + paid/share + balance */}
               <div className="flex items-start justify-between gap-3 p-4">
                 <div className="min-w-0 flex-1">
-                  <p className={cn("font-medium text-sm truncate", isHighlightedUser && "text-primary")}>
+                  <p
+                    className={cn(
+                      "font-medium text-sm truncate",
+                      isHighlightedUser && "text-primary"
+                    )}
+                  >
                     {isHighlightedUser ? "You" : member.name}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Paid {formatCurrency(spend?.paid ?? "0", currency)} · Share {formatCurrency(spend?.share ?? "0", currency)}
+                    Paid {formatCurrency(spend?.paid ?? "0", currency)} · Share{" "}
+                    {formatCurrency(spend?.share ?? "0", currency)}
                   </p>
                 </div>
-                <span className={cn(
-                  "text-base font-semibold tabular-nums shrink-0",
-                  netValue > 0 && "text-green-600",
-                  netValue < 0 && "text-red-600"
-                )}>
-                  {netValue > 0 && "+"}{formatCurrency(netAmount, currency)}
+                <span
+                  className={cn(
+                    "text-base font-semibold tabular-nums shrink-0",
+                    netValue > 0 && "text-green-600",
+                    netValue < 0 && "text-red-600"
+                  )}
+                >
+                  {netValue > 0 && "+"}
+                  {formatCurrency(netAmount, currency)}
                 </span>
               </div>
 
@@ -219,9 +231,7 @@ export function BalanceBreakdown({
                           const memberSplit = expense.splits.find((s) => s.userId === member.id);
                           const memberShare = memberSplit?.amount ?? "0";
                           const isPayer = expense.payerId === member.id;
-                          const payerName = isPayer
-                            ? null
-                            : expense.payer.name;
+                          const payerName = isPayer ? null : expense.payer.name;
 
                           return (
                             <div
@@ -233,19 +243,27 @@ export function BalanceBreakdown({
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(expense.date).toLocaleDateString()}
                                   {!isPayer && payerName && (
-                                    <span>{" · "}paid by {payerName}</span>
+                                    <span>
+                                      {" · "}paid by {payerName}
+                                    </span>
                                   )}
                                   {isPayer && (
-                                    <span>{" · "}paid {formatCurrency(expense.amount, expense.currency)}</span>
+                                    <span>
+                                      {" · "}paid {formatCurrency(expense.amount, expense.currency)}
+                                    </span>
                                   )}
-                                  <span>{" · "}share {formatCurrency(memberShare, expense.currency)}</span>
+                                  <span>
+                                    {" · "}share {formatCurrency(memberShare, expense.currency)}
+                                  </span>
                                 </p>
                               </div>
-                              <span className={cn(
-                                "text-sm font-medium tabular-nums shrink-0",
-                                tx.runningBalance > 0.005 && "text-green-600",
-                                tx.runningBalance < -0.005 && "text-red-600"
-                              )}>
+                              <span
+                                className={cn(
+                                  "text-sm font-medium tabular-nums shrink-0",
+                                  tx.runningBalance > 0.005 && "text-green-600",
+                                  tx.runningBalance < -0.005 && "text-red-600"
+                                )}
+                              >
                                 {tx.runningBalance > 0.005 && "+"}
                                 {formatCurrency(tx.runningBalance.toFixed(2), currency)}
                               </span>
@@ -269,14 +287,22 @@ export function BalanceBreakdown({
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(settlement.date).toLocaleDateString()}
-                                  <span>{" · "}{formatCurrency(settlement.amount.toString(), settlement.currency)}</span>
+                                  <span>
+                                    {" · "}
+                                    {formatCurrency(
+                                      settlement.amount.toString(),
+                                      settlement.currency
+                                    )}
+                                  </span>
                                 </p>
                               </div>
-                              <span className={cn(
-                                "text-sm font-medium tabular-nums shrink-0",
-                                tx.runningBalance > 0.005 && "text-green-600",
-                                tx.runningBalance < -0.005 && "text-red-600"
-                              )}>
+                              <span
+                                className={cn(
+                                  "text-sm font-medium tabular-nums shrink-0",
+                                  tx.runningBalance > 0.005 && "text-green-600",
+                                  tx.runningBalance < -0.005 && "text-red-600"
+                                )}
+                              >
                                 {tx.runningBalance > 0.005 && "+"}
                                 {formatCurrency(tx.runningBalance.toFixed(2), currency)}
                               </span>

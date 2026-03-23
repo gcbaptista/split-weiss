@@ -34,6 +34,7 @@ npx prisma studio         # Open Prisma Studio GUI
 ### Route Structure
 
 Two route groups:
+
 - `(app)/` — public landing and group list (`/groups`)
 - `(group)/` — group-scoped routes; layout handles access (password → identity picker → authorized)
 
@@ -42,6 +43,7 @@ Group routes: `/groups/[groupId]` (expenses), `/groups/[groupId]/balances`, `/gr
 ### Server Actions
 
 All mutations go through server actions in `src/app/actions/`. Each action:
+
 1. Calls `canAccessGroup()` to verify device access
 2. Validates input with a Zod schema from `src/lib/validations/`
 3. Performs the DB operation via Prisma
@@ -51,16 +53,19 @@ All mutations go through server actions in `src/app/actions/`. Each action:
 ### Financial Logic
 
 **Splitting** (`src/lib/splitting/`) — two modes:
+
 - `PERCENTAGE` — splits by percentage (must sum to 100)
 - `LOCK` — fixed amounts, remainder distributed equally among unlocked members
 
 Remainder pennies are distributed deterministically using a seeded xorshift32 PRNG (seeded by total + member IDs).
 
 **Balance calculation** (`src/lib/balances/`):
+
 - `calculator.ts` — aggregates all expenses and settlements in a group, converting to the group's base currency using cached exchange rates, producing a net balance map per user
 - `simplifier.ts` — reduces the balance map to a minimal set of transactions using a greedy debt-simplification algorithm
 
 **Currency** (`src/lib/currency/`):
+
 - Exchange rates fetched from the Frankfurter API and cached in the `ExchangeRateCache` table (keyed by base currency + date)
 - `converter.ts` handles triangulation when direct pairs aren't available
 
@@ -73,6 +78,7 @@ Remainder pennies are distributed deterministically using a seeded xorshift32 PR
 ### Database
 
 Schema key points:
+
 - `Expense.splitMode` — enum: `PERCENTAGE | LOCK`
 - `Expense` and `ExpenseSplit` amounts use `Decimal(12,2)` for precision
 - `ExpenseAuditLog` tracks expense mutations with delta-based snapshots

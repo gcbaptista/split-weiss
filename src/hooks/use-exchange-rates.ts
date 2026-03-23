@@ -1,5 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
+
 import type { ExchangeRates } from "@/types/currency";
 
 async function fetchRates(base: string): Promise<ExchangeRates> {

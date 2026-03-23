@@ -1,16 +1,35 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
+
+import { updateGroup } from "@/app/actions/group.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateGroup } from "@/app/actions/group.actions";
 
 const EMOJI_OPTIONS = [
-  "💰", "🍕", "✈️", "🏠", "🎉", "🛒", "🍻", "🎬", "⚽", "🏖️",
-  "🚗", "🎸", "🍜", "🏔️", "💊", "📚", "🎮", "🐾", "🌍", "💼",
+  "💰",
+  "🍕",
+  "✈️",
+  "🏠",
+  "🎉",
+  "🛒",
+  "🍻",
+  "🎬",
+  "⚽",
+  "🏖️",
+  "🚗",
+  "🎸",
+  "🍜",
+  "🏔️",
+  "💊",
+  "📚",
+  "🎮",
+  "🐾",
+  "🌍",
+  "💼",
 ];
 
 interface GroupSettingsFormProps {
@@ -19,11 +38,7 @@ interface GroupSettingsFormProps {
   initialEmoji: string | null;
 }
 
-export function GroupSettingsForm({
-  groupId,
-  initialName,
-  initialEmoji,
-}: GroupSettingsFormProps) {
+export function GroupSettingsForm({ groupId, initialName, initialEmoji }: GroupSettingsFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [emoji, setEmoji] = useState<string | null>(initialEmoji);
@@ -79,9 +94,7 @@ export function GroupSettingsForm({
               type="button"
               onClick={() => setEmoji(e)}
               className={`flex h-9 w-9 items-center justify-center rounded-lg border text-lg transition-colors hover:bg-muted ${
-                emoji === e
-                  ? "border-primary bg-primary/10 ring-1 ring-primary"
-                  : "border-border"
+                emoji === e ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border"
               }`}
               aria-label={`Set emoji to ${e}`}
             >
@@ -92,11 +105,7 @@ export function GroupSettingsForm({
       </div>
 
       <div className="flex gap-2">
-        <Button
-          onClick={handleSave}
-          disabled={!isDirty || saving || !name.trim()}
-          size="sm"
-        >
+        <Button onClick={handleSave} disabled={!isDirty || saving || !name.trim()} size="sm">
           {saving ? "Saving..." : "Save changes"}
         </Button>
 

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Eye, EyeOff, Lock, LockOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
+
+import { updateGroupPassword } from "@/app/actions/group.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateGroupPassword } from "@/app/actions/group.actions";
-import { Eye, EyeOff, Lock, LockOpen } from "lucide-react";
 
 interface GroupPasswordSettingsProps {
   groupId: string;
@@ -76,9 +77,7 @@ export function GroupPasswordSettings({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="group-password">
-          {hasPassword ? "Change password" : "Add password"}
-        </Label>
+        <Label htmlFor="group-password">{hasPassword ? "Change password" : "Add password"}</Label>
         <div className="relative">
           <Input
             id="group-password"
@@ -94,11 +93,7 @@ export function GroupPasswordSettings({
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -118,12 +113,7 @@ export function GroupPasswordSettings({
         </Button>
 
         {hasPassword && (
-          <Button
-            onClick={handleRemovePassword}
-            disabled={saving}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={handleRemovePassword} disabled={saving} variant="outline" size="sm">
             Remove password
           </Button>
         )}
@@ -131,4 +121,3 @@ export function GroupPasswordSettings({
     </div>
   );
 }
-

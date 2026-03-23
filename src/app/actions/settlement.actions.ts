@@ -1,22 +1,18 @@
 "use server";
+import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
 import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
 import { createSettlementSchema } from "@/lib/validations/settlement.schema";
-import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
-import type {
-  Settlement,
-  SettlementBreakdownClient,
-} from "@/types/database";
+import type { Settlement, SettlementBreakdownClient } from "@/types/database";
 
 const memberSelect = {
   id: true,
   name: true,
 } as const;
 
-export async function createSettlement(
-  formData: unknown
-): Promise<ActionResult<Settlement>> {
+export async function createSettlement(formData: unknown): Promise<ActionResult<Settlement>> {
   const parsed = createSettlementSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { groupId, date, ...rest } = parsed.data;

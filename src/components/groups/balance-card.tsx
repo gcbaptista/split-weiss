@@ -1,7 +1,8 @@
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn, formatCurrency } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { NetBalance } from "@/lib/balances/calculator";
+import { cn, formatCurrency } from "@/lib/utils";
 import type { MemberSummary } from "@/types/database";
 
 interface BalanceCardProps {
@@ -30,22 +31,26 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-sm font-medium">
-            {isCurrentUser ? "You" : user.name}
-          </p>
-          <p className={cn(
-            "flex items-center gap-1 text-xs",
-            isPositive && "text-green-600",
-            isNegative && "text-red-500",
-            !isPositive && !isNegative && "text-muted-foreground"
-          )}>
+          <p className="text-sm font-medium">{isCurrentUser ? "You" : user.name}</p>
+          <p
+            className={cn(
+              "flex items-center gap-1 text-xs",
+              isPositive && "text-green-600",
+              isNegative && "text-red-500",
+              !isPositive && !isNegative && "text-muted-foreground"
+            )}
+          >
             {isPositive && <TrendingUp className="h-3 w-3" aria-hidden />}
             {isNegative && <TrendingDown className="h-3 w-3" aria-hidden />}
             {!isPositive && !isNegative && <Minus className="h-3 w-3" aria-hidden />}
             {isPositive
-              ? isCurrentUser ? "you are owed" : "is owed"
+              ? isCurrentUser
+                ? "you are owed"
+                : "is owed"
               : isNegative
-                ? isCurrentUser ? "you owe" : "owes"
+                ? isCurrentUser
+                  ? "you owe"
+                  : "owes"
                 : "settled up"}
           </p>
         </div>

@@ -1,8 +1,9 @@
 "use server";
+import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/db";
 import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
 import { addMemberSchema } from "@/lib/validations/group.schema";
-import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
 
 export async function addMember(formData: unknown): Promise<ActionResult> {
@@ -68,7 +69,10 @@ export async function renameMember(
 
   try {
     const actorId = await getCurrentMemberId(groupId);
-    const old = await db.groupMember.findUnique({ where: { id: memberId }, select: { name: true } });
+    const old = await db.groupMember.findUnique({
+      where: { id: memberId },
+      select: { name: true },
+    });
     await db.groupMember.update({
       where: { id: memberId },
       data: { name: trimmed },
@@ -92,10 +96,7 @@ export async function renameMember(
   }
 }
 
-export async function removeMember(
-  groupId: string,
-  memberId: string
-): Promise<ActionResult> {
+export async function removeMember(groupId: string, memberId: string): Promise<ActionResult> {
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
   }
@@ -125,7 +126,10 @@ export async function removeMember(
         } as const;
       }
 
-      const member = await tx.groupMember.findUnique({ where: { id: memberId }, select: { name: true } });
+      const member = await tx.groupMember.findUnique({
+        where: { id: memberId },
+        select: { name: true },
+      });
       await tx.groupMember.delete({
         where: { id: memberId },
       });

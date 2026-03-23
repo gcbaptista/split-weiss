@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { getRecentAccessibleGroups } from "@/lib/group-access";
+
 import { GroupCard } from "@/components/groups/group-card";
-import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/navbar";
+import { Button } from "@/components/ui/button";
+import { getRecentAccessibleGroups } from "@/lib/group-access";
 
 const features = [
   {
@@ -29,7 +30,6 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-muted/10">
       <Navbar />
       <main className="container mx-auto max-w-5xl px-4 md:px-6">
-
         {recentGroups.length > 0 ? (
           <section className="pt-10 pb-6 space-y-4">
             <div className="flex items-center justify-between">
@@ -72,7 +72,6 @@ export default async function LandingPage() {
             ))}
           </div>
         </section>
-
       </main>
     </div>
   );

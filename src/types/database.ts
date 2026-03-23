@@ -1,6 +1,14 @@
-import type { Group, GroupMember, Expense, ExpenseSplit, Settlement, ExchangeRateCache, SplitMode } from "@prisma/client";
+import type {
+  ExchangeRateCache,
+  Expense,
+  ExpenseSplit,
+  Group,
+  GroupMember,
+  Settlement,
+  SplitMode,
+} from "@prisma/client";
 
-export type { Group, GroupMember, Expense, ExpenseSplit, Settlement, ExchangeRateCache, SplitMode };
+export type { ExchangeRateCache, Expense, ExpenseSplit, Group, GroupMember, Settlement, SplitMode };
 
 export type MemberSummary = Pick<GroupMember, "id" | "name">;
 
@@ -17,9 +25,9 @@ export interface ExpenseWithSplits extends Expense {
 }
 
 // Client-safe version with Decimal converted to string
-export interface ExpenseWithSplitsClient extends Omit<Expense, 'amount'> {
+export interface ExpenseWithSplitsClient extends Omit<Expense, "amount"> {
   amount: string;
-  splits: (Omit<ExpenseSplit, 'amount' | 'percentage'> & {
+  splits: (Omit<ExpenseSplit, "amount" | "percentage"> & {
     amount: string;
     percentage: string | null;
     user: MemberSummary;
@@ -33,19 +41,23 @@ export interface SettlementWithUsers extends Settlement {
 }
 
 // Client-safe version with Decimal converted to string
-export interface SettlementWithUsersClient extends Omit<Settlement, 'amount'> {
+export interface SettlementWithUsersClient extends Omit<Settlement, "amount"> {
   amount: string;
   fromUser: MemberSummary;
   toUser: MemberSummary;
 }
 
-export interface SettlementHistoryClient
-  extends Pick<Settlement, "id" | "currency" | "date" | "fromUserId" | "toUserId" | "note"> {
+export interface SettlementHistoryClient extends Pick<
+  Settlement,
+  "id" | "currency" | "date" | "fromUserId" | "toUserId" | "note"
+> {
   amount: string;
 }
 
-export interface ExpenseBreakdownClient
-  extends Pick<Expense, "id" | "title" | "currency" | "date" | "payerId"> {
+export interface ExpenseBreakdownClient extends Pick<
+  Expense,
+  "id" | "title" | "currency" | "date" | "payerId"
+> {
   amount: string;
   payer: MemberSummary;
   splits: Array<
@@ -55,8 +67,10 @@ export interface ExpenseBreakdownClient
   >;
 }
 
-export interface SettlementBreakdownClient
-  extends Pick<Settlement, "id" | "currency" | "date" | "fromUserId" | "toUserId"> {
+export interface SettlementBreakdownClient extends Pick<
+  Settlement,
+  "id" | "currency" | "date" | "fromUserId" | "toUserId"
+> {
   amount: string;
   fromUser: MemberSummary;
   toUser: MemberSummary;
