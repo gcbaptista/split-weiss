@@ -203,7 +203,7 @@ export function ExpenseForm({
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input autoFocus placeholder="Dinner, taxi, hotel..." {...field} />
+                <Input placeholder="Dinner, taxi, hotel..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
