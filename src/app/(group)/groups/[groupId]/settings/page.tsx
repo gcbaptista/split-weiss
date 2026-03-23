@@ -1,7 +1,9 @@
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { GroupPasswordSettings } from "@/components/groups/group-password-settings";
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
+import { GroupShare } from "@/components/groups/group-share";
 import { MemberList } from "@/components/groups/member-list";
 import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 
@@ -11,6 +13,11 @@ interface PageProps {
 
 export default async function GroupSettingsPage({ params }: PageProps) {
   const { groupId } = await params;
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const proto = headersList.get("x-forwarded-proto") ?? "https";
+  const groupUrl = `${proto}://${host}/groups/${groupId}`;
+
   const [group, currentMemberId] = await Promise.all([
     getAuthorizedGroup(groupId),
     getCurrentMemberId(groupId),
@@ -20,6 +27,19 @@ export default async function GroupSettingsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h2 className="mb-1 font-semibold">Share group</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Invite others by sharing the link or scanning the QR code.
+        </p>
+        <GroupShare
+          groupId={groupId}
+          groupName={group.name}
+          groupUrl={groupUrl}
+          hasPassword={!!group.passwordHash}
+        />
+      </div>
+
       <div>
         <h2 className="mb-4 font-semibold">Group details</h2>
         <p className="mb-4 text-sm text-muted-foreground">Anyone in the group can edit these.</p>

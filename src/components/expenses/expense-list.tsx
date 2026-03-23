@@ -195,39 +195,71 @@ export function ExpenseList({
                   {e.payer.name} paid · {new Date(e.date).toLocaleDateString()}
                 </p>
 
-                {/* Row 3: Users Involved */}
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {e.splits.slice(0, 6).map((split) => (
-                    <Tooltip key={split.userId}>
-                      <TooltipTrigger>
-                        <Avatar size="sm">
-                          <AvatarFallback>
-                            {split.user.name?.[0]?.toUpperCase() ?? "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{split.user.name}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-                  {e.splits.length > 6 && (
-                    <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs text-muted-foreground">
-                      +{e.splits.length - 6}
-                    </div>
-                  )}
+                {/* Row 3: Users Involved + Actions (mobile) */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {e.splits.slice(0, 6).map((split) => (
+                      <Tooltip key={split.userId}>
+                        <TooltipTrigger>
+                          <Avatar size="sm">
+                            <AvatarFallback>
+                              {split.user.name?.[0]?.toUpperCase() ?? "?"}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{split.user.name}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                    {e.splits.length > 6 && (
+                      <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs text-muted-foreground">
+                        +{e.splits.length - 6}
+                      </div>
+                    )}
+                  </div>
+                  {/* Action buttons — inline on mobile */}
+                  <div className="flex items-center gap-0.5 shrink-0 sm:hidden">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      onClick={() => setEditingExpense(e)}
+                      aria-label="Edit expense"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                      onClick={() => handleDelete(e)}
+                      aria-label="Delete expense"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      onClick={() => {
+                        setHistoryExpenseId(e.id);
+                        setHistoryExpenseTitle(e.title);
+                      }}
+                      aria-label="View history"
+                    >
+                      <History className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              {/* Right side: Amount (desktop) and Actions */}
-              <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0">
-                {/* Amount - desktop only */}
-                <span className="hidden sm:inline text-base font-semibold tabular-nums">
+              {/* Right side: Amount and Actions (desktop only) */}
+              <div className="hidden sm:flex items-center gap-3 shrink-0">
+                <span className="text-base font-semibold tabular-nums">
                   {formatCurrency(e.amount, e.currency)}
                 </span>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"

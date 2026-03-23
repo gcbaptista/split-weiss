@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { GroupCard } from "@/components/groups/group-card";
+import { JoinGroupForm } from "@/components/groups/join-group-form";
+import { QrScannerButton } from "@/components/groups/qr-scanner";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { getRecentAccessibleGroups } from "@/lib/group-access";
@@ -46,6 +48,12 @@ export default async function LandingPage() {
                 <GroupCard key={group.id} group={group} />
               ))}
             </div>
+            <div className="flex items-center gap-2 pt-2">
+              <div className="flex-1">
+                <JoinGroupForm />
+              </div>
+              <QrScannerButton />
+            </div>
           </section>
         ) : (
           <section className="py-24 text-center space-y-6 max-w-2xl mx-auto">
@@ -55,9 +63,18 @@ export default async function LandingPage() {
             <p className="text-muted-foreground text-lg">
               Split expenses with friends. Multi-currency. Free forever.
             </p>
-            <Button render={<Link href="/groups/new" />} size="lg">
-              Create a group
-            </Button>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Button render={<Link href="/groups/new" />} size="lg">
+                Create a group
+              </Button>
+            </div>
+            <div className="mx-auto w-full max-w-sm pt-2 space-y-3">
+              <p className="text-sm text-muted-foreground">Have a group link?</p>
+              <JoinGroupForm />
+              <div className="flex justify-center">
+                <QrScannerButton />
+              </div>
+            </div>
           </section>
         )}
 
