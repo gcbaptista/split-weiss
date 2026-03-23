@@ -55,9 +55,7 @@ export function BalanceBreakdown({
   ratesByDate,
   highlightedUserId,
 }: BalanceBreakdownProps) {
-  const [expandedMembers, setExpandedMembers] = useState<Set<string>>(
-    new Set(highlightedUserId ? [highlightedUserId] : [])
-  );
+  const [expandedMembers, setExpandedMembers] = useState<Set<string>>(new Set());
 
   const toggleMember = (userId: string) => {
     setExpandedMembers((prev) => {

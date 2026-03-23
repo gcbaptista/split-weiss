@@ -9,6 +9,7 @@ import { GroupTabs } from "@/components/groups/group-tabs";
 import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
 import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
 import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
+import { IosInstallPrompt } from "@/components/layout/ios-install-prompt";
 import { getGroupRequestAccess } from "@/lib/group-access";
 
 interface GroupLayoutProps {
@@ -67,6 +68,8 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
           <GroupTabs groupId={groupId} />
         </div>
       </div>
+
+      <IosInstallPrompt />
 
       <div className="pt-4 pb-20 md:pb-4">{children}</div>
 

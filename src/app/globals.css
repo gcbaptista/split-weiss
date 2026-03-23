@@ -126,4 +126,13 @@
   html {
     @apply font-sans;
   }
+  /* Hide scrollbars on mobile only (coarse pointer = touch device) */
+  @media (pointer: coarse) {
+    html {
+      scrollbar-width: none;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }

@@ -12,13 +12,27 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "split-weiss",
-  description: "Split expenses with friends",
+  title: "SplitWeiss",
+  description: "Don't split wise. Split Weiss.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SplitWeiss",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
+        <meta name="theme-color" content="#ffffff" />
+      </head>
       <body className={`${inter.className} ${spaceGrotesk.variable}`}>
         <Providers>{children}</Providers>
       </body>
