@@ -48,7 +48,8 @@ export function buildStateSnapshot(
 function splitsEqual(a: ExpenseSplitSnapshot[], b: ExpenseSplitSnapshot[]): boolean {
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
-    if (a[i].userId !== b[i].userId || a[i].amount !== b[i].amount) return false;
+    // Non-null: i is bounded by a.length (checked above) and a.length === b.length
+    if (a[i]!.userId !== b[i]!.userId || a[i]!.amount !== b[i]!.amount) return false;
   }
   return true;
 }

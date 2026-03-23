@@ -39,7 +39,7 @@ export function calculateBalances(
   }
 
   function getRates(date: Date): ExchangeRates {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().slice(0, 10);
     return (
       ratesByDate.get(dateStr) ??
       ratesByDate.get("latest") ?? {

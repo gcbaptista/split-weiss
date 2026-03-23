@@ -35,7 +35,7 @@ export default async function SettlementsPage({ params }: PageProps) {
   }
 
   const dates = [
-    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])),
+    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().slice(0, 10))),
   ];
   const { ratesByDate } = await fetchRatesMap(group.currency, [...dates, "latest"]);
 

@@ -37,7 +37,7 @@ async function trustCurrentDeviceForGroup(groupId: string, memberId?: string) {
 
 export async function createGroup(formData: unknown): Promise<ActionResult<Group>> {
   const parsed = createGroupSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
   try {
     const { creatorName, password, emoji, ...groupData } = parsed.data;
     const passwordHash = password ? await hashPassword(password) : null;
@@ -75,14 +75,15 @@ export async function updateGroup(
   formData: unknown
 ): Promise<ActionResult<Group>> {
   const parsed = updateGroupSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
 
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
   }
 
   try {
-    const data: Record<string, unknown> = {};
+    type GroupUpdatePayload = { name?: string; emoji?: string | null };
+    const data: GroupUpdatePayload = {};
     if (parsed.data.name !== undefined) data.name = parsed.data.name;
     if ("emoji" in parsed.data) {
       const raw = parsed.data.emoji;
@@ -135,7 +136,7 @@ export async function deleteGroup(groupId: string): Promise<ActionResult> {
 
 export async function unlockGroup(formData: unknown): Promise<ActionResult<{ success: boolean }>> {
   const parsed = verifyGroupPasswordSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
 
   const { groupId, password } = parsed.data;
 
@@ -170,7 +171,7 @@ export async function updateGroupPassword(
   formData: unknown
 ): Promise<ActionResult<{ success: boolean }>> {
   const parsed = updateGroupPasswordSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
 
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
@@ -209,6 +210,11 @@ export async function updateGroupPassword(
   }
 }
 
+// TODO(security): This action has no canAccessGroup() check because it is shown to devices
+// that are not yet identified (the identity picker appears before group membership is set).
+// A device with a known groupId can call this directly to claim any member identity, bypassing
+// password protection. Full fix: require a short-lived nonce issued after unlockGroup succeeds,
+// and validate that nonce here before allowing identity assignment.
 export async function identifyAsMember(groupId: string, memberId: string): Promise<ActionResult> {
   // Verify the member belongs to this group
   const member = await db.groupMember.findFirst({
@@ -230,6 +236,9 @@ export async function identifyAsMember(groupId: string, memberId: string): Promi
   return { data: undefined };
 }
 
+// TODO(security): Same gap as identifyAsMember above — no canAccessGroup() check. Any device
+// with a known groupId can add a new member to any group (including password-protected ones)
+// by calling this action directly. Mitigation requires the same nonce-based two-phase flow.
 export async function addAndIdentifyAsMember(groupId: string, name: string): Promise<ActionResult> {
   const trimmed = name.trim();
   if (!trimmed || trimmed.length > 100) return { error: "Name must be 1-100 characters" };

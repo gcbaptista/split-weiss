@@ -14,7 +14,7 @@ const memberSelect = {
 
 export async function createSettlement(formData: unknown): Promise<ActionResult<Settlement>> {
   const parsed = createSettlementSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
   const { groupId, date, ...rest } = parsed.data;
 
   if (!(await canAccessGroup(groupId))) {

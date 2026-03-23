@@ -38,7 +38,8 @@ export function seededShuffle(indices: number[], seed: string): number[] {
     h ^= h >> 17;
     h ^= h << 5;
     const j = (h >>> 0) % (i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    // Non-null: i and j are always valid indices within arr (Fisher-Yates guarantee)
+    [arr[i], arr[j]] = [arr[j]!, arr[i]!];
   }
   return arr;
 }

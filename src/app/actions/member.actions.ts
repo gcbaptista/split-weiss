@@ -8,7 +8,7 @@ import type { ActionResult } from "@/types/api";
 
 export async function addMember(formData: unknown): Promise<ActionResult> {
   const parsed = addMemberSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
   const { groupId, name } = parsed.data;
 
   if (!(await canAccessGroup(groupId))) {

@@ -252,8 +252,8 @@ export function ExpenseForm({
           {splitMode === "PERCENTAGE" && (
             <div className="space-y-2">
               {members.map((m, i) => {
-                const isIncluded = splitInputs[i].isIncluded;
-                const isLocked = splitInputs[i].isLocked;
+                const isIncluded = splitInputs[i]!.isIncluded;
+                const isLocked = splitInputs[i]!.isLocked;
                 return (
                   <div
                     key={m.id}
@@ -282,7 +282,7 @@ export function ExpenseForm({
                         inputMode="decimal"
                         placeholder="0"
                         disabled={!isIncluded}
-                        value={splitInputs[i].percentage}
+                        value={splitInputs[i]!.percentage}
                         onChange={(e) =>
                           setSplitInputs((prev) => {
                             const val = e.target.value;
@@ -350,8 +350,8 @@ export function ExpenseForm({
           {splitMode === "LOCK" && (
             <div className="space-y-2">
               {members.map((m, i) => {
-                const isIncluded = splitInputs[i].isIncluded;
-                const isLocked = splitInputs[i].isLocked;
+                const isIncluded = splitInputs[i]!.isIncluded;
+                const isLocked = splitInputs[i]!.isLocked;
                 const computedAmount = splits?.find((s) => s.userId === m.id)?.amount;
                 return (
                   <div
@@ -382,7 +382,7 @@ export function ExpenseForm({
                         placeholder="0.00"
                         disabled={!isIncluded}
                         value={
-                          isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")
+                          isLocked ? splitInputs[i]!.amount : (computedAmount?.toFixed(2) ?? "")
                         }
                         onChange={(e) =>
                           setSplitInputs((prev) =>

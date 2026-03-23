@@ -34,7 +34,7 @@ function serializeExpenseForResult(expense: Expense): Expense {
 
 export async function createExpense(formData: unknown): Promise<ActionResult<Expense>> {
   const parsed = createExpenseSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
   const { groupId, splits: splitInputs, splitMode, amount, ...rest } = parsed.data;
 
   if (!(await canAccessGroup(groupId))) {
@@ -184,7 +184,7 @@ export async function updateExpense(
   formData: unknown
 ): Promise<ActionResult<Expense>> {
   const parsed = createExpenseSchema.safeParse(formData);
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
   const existing = await db.expense.findUnique({
     where: { id: expenseId },
     include: {

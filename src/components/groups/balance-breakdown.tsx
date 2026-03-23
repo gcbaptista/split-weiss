@@ -75,7 +75,7 @@ export function BalanceBreakdown({
   const spendMap = new Map(memberSpend.map((s) => [s.userId, s]));
 
   function getRates(date: Date): ExchangeRates {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().slice(0, 10);
     return (
       ratesByDate[dateStr] ?? ratesByDate["latest"] ?? { base: currency, date: "latest", rates: {} }
     );

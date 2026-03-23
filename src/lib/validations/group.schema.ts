@@ -31,7 +31,7 @@ export type AddMemberInput = z.infer<typeof addMemberSchema>;
 
 export const verifyGroupPasswordSchema = z.object({
   groupId: z.string(),
-  password: z.string(),
+  password: z.string().min(1),
 });
 
 export const updateGroupPasswordSchema = z.object({

@@ -32,8 +32,9 @@ export function simplifyDebts(balances: Map<string, NetBalance>): SimplifiedDebt
   let di = 0;
 
   while (ci < creditors.length && di < debtors.length) {
-    const c = creditors[ci];
-    const d = debtors[di];
+    // Non-null: loop condition guarantees these indices are in-bounds
+    const c = creditors[ci]!;
+    const d = debtors[di]!;
     const amt = Decimal.min(c.amount, d.amount);
 
     debts.push({ fromUserId: d.userId, toUserId: c.userId, amount: amt });

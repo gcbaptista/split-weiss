@@ -23,8 +23,9 @@ export function calculatePercentage(total: Decimal | string, inputs: SplitInput[
     seed
   );
   for (let i = 0; i < pennies; i++) {
-    results[shuffled[i % shuffled.length]].amount =
-      results[shuffled[i % shuffled.length]].amount.plus("0.01");
+    // Non-null: modulo guarantees index is in-bounds; results and shuffled have the same length
+    const idx = shuffled[i % shuffled.length]!;
+    results[idx]!.amount = results[idx]!.amount.plus("0.01");
   }
   return results;
 }

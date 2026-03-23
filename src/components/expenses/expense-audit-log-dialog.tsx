@@ -194,7 +194,7 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
       )}
       {logs &&
         logs.map((entry) => {
-          const badge = ACTION_BADGE[entry.action];
+          const badge = ACTION_BADGE[entry.action] ?? { label: entry.action, className: "" };
           return (
             <div key={entry.id} className="rounded-lg border p-3 space-y-2">
               <div className="flex items-center justify-between gap-2 flex-wrap">

@@ -41,12 +41,12 @@ export default async function BalancesPage({ params }: PageProps) {
   }
 
   const dates = [
-    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().split("T")[0])),
+    ...new Set([...expenses, ...settlements].map((item) => item.date.toISOString().slice(0, 10))),
   ];
   const { ratesByDate, staleDates } = await fetchRatesMap(groupCurrency, [...dates, "latest"]);
 
   function getRates(date: Date): ExchangeRates {
-    const day = date.toISOString().split("T")[0];
+    const day = date.toISOString().slice(0, 10);
     return (
       ratesByDate.get(day) ??
       ratesByDate.get("latest") ?? { base: groupCurrency, date: "latest", rates: {} }

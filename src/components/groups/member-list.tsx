@@ -241,7 +241,10 @@ function MemberAuditSheet({
             <p className="text-sm text-muted-foreground">No history found.</p>
           )}
           {logs?.map((entry) => {
-            const badge = ACTION_BADGE[entry.action] ?? ACTION_BADGE.UPDATED;
+            const badge = ACTION_BADGE[entry.action] ?? {
+              label: "Updated",
+              className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+            };
             const title = entry.expense?.title ?? "Deleted expense";
             return (
               <div key={entry.id} className="rounded-lg border p-3 space-y-1">

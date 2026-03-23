@@ -1,7 +1,7 @@
 "use client";
 import { History, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { deleteExpense, revertExpense } from "@/app/actions/expense.actions";
@@ -41,17 +41,17 @@ export function ExpenseList({
   currentMemberId,
 }: ExpenseListProps) {
   const router = useRouter();
-  const [localExpenses, setLocalExpenses] = useState(expenses);
+  const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [payerFilter, setPayerFilter] = useState("all");
   const [editingExpense, setEditingExpense] = useState<ExpenseWithSplitsClient | null>(null);
   const [historyExpenseId, setHistoryExpenseId] = useState<string | null>(null);
   const [historyExpenseTitle, setHistoryExpenseTitle] = useState<string>("");
 
-  // Sync when server re-renders with fresh data
-  useEffect(() => {
-    setLocalExpenses(expenses);
-  }, [expenses]);
+  const localExpenses = useMemo(
+    () => expenses.filter((e) => !pendingDeleteIds.has(e.id)),
+    [expenses, pendingDeleteIds]
+  );
 
   const filteredExpenses = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -70,7 +70,7 @@ export function ExpenseList({
 
   const selectedPayer = members.find((member) => member.id === payerFilter);
 
-  if (localExpenses.length === 0) {
+  if (expenses.length === 0) {
     return (
       <EmptyState
         icon="🧾"
@@ -82,18 +82,16 @@ export function ExpenseList({
 
   async function handleDelete(expense: ExpenseWithSplitsClient) {
     // Optimistically remove from UI
-    setLocalExpenses((prev) => prev.filter((e) => e.id !== expense.id));
+    setPendingDeleteIds((prev) => new Set(prev).add(expense.id));
 
     const result = await deleteExpense(expense.id);
     if (result.error) {
       toast.error(result.error);
       // Rollback on failure
-      setLocalExpenses((prev) => {
-        const next = [...prev, expense];
-        return next.sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime() || b.id.localeCompare(a.id)
-        );
+      setPendingDeleteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(expense.id);
+        return next;
       });
       return;
     }
@@ -106,6 +104,11 @@ export function ExpenseList({
           if (undoResult.error) {
             toast.error(undoResult.error);
           } else {
+            setPendingDeleteIds((prev) => {
+              const next = new Set(prev);
+              next.delete(expense.id);
+              return next;
+            });
             toast.success("Restored");
             router.refresh();
           }
