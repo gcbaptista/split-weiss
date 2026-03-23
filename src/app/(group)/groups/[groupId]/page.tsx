@@ -1,4 +1,4 @@
-import { getAuthorizedGroup } from "@/lib/group-access";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { notFound } from "next/navigation";
 import { ExpenseList } from "@/components/expenses/expense-list";
@@ -9,9 +9,10 @@ interface PageProps {
 
 export default async function GroupExpensesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses] = await Promise.all([
+  const [group, expenses, currentMemberId] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpenses(groupId),
+    getCurrentMemberId(groupId),
   ]);
 
   if (!group) notFound();
@@ -26,6 +27,7 @@ export default async function GroupExpensesPage({ params }: PageProps) {
       groupId={groupId}
       members={group.members}
       groupCurrency={group.currency}
+      currentMemberId={currentMemberId ?? undefined}
     />
   );
 }

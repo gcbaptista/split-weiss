@@ -1,4 +1,4 @@
-import { getAuthorizedGroup } from "@/lib/group-access";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 import { getGroupExpensesForCalculation } from "@/app/actions/expense.actions";
 import { getGroupSettlementHistory } from "@/app/actions/settlement.actions";
 import { notFound } from "next/navigation";
@@ -14,10 +14,11 @@ interface PageProps {
 
 export default async function SettlementsPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements] = await Promise.all([
+  const [group, expenses, settlements, currentMemberId] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForCalculation(groupId),
     getGroupSettlementHistory(groupId),
+    getCurrentMemberId(groupId),
   ]);
 
   if (!group) notFound();
@@ -63,6 +64,7 @@ export default async function SettlementsPage({ params }: PageProps) {
       groupId={groupId}
       currency={group.currency}
       members={group.members}
+      highlightedUserId={currentMemberId ?? undefined}
     />
   );
 }

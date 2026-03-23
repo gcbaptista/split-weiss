@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
 import type { SplitInput, SplitResult } from "./index";
+import { seededShuffle } from "./index";
 
 /**
  * MBway-style lock algorithm:
@@ -22,7 +23,7 @@ export function calculateLock(
 
   if (lockedSum.greaterThan(t)) {
     throw new Error(
-      `Locked amounts (${lockedSum.toFixed(4)}) exceed total (${t.toFixed(4)})`
+      `Locked amounts (${lockedSum.toFixed(2)}) exceed total (${t.toFixed(2)})`
     );
   }
 
@@ -35,7 +36,7 @@ export function calculateLock(
   }));
 
   if (unlocked.length === 0) {
-    if (!remaining.toDecimalPlaces(4).isZero()) {
+    if (!remaining.toDecimalPlaces(2).isZero()) {
       throw new Error("No unlocked participants to distribute remainder");
     }
     return lockedResults;
@@ -43,13 +44,18 @@ export function calculateLock(
 
   const base = remaining
     .div(unlocked.length)
-    .toDecimalPlaces(4, Decimal.ROUND_DOWN);
+    .toDecimalPlaces(2, Decimal.ROUND_DOWN);
   const rem = remaining.minus(base.mul(unlocked.length));
-  const pennies = rem.div("0.0001").toDecimalPlaces(0).toNumber();
+  const pennies = rem.div("0.01").toDecimalPlaces(0).toNumber();
+
+  // Deterministically pick which unlocked members get the extra penny
+  const seed = `${t.toString()}:${unlocked.map(i => i.userId).join(",")}`;
+  const shuffled = seededShuffle(unlocked.map((_, i) => i), seed);
+  const luckySet = new Set(shuffled.slice(0, pennies));
 
   const unlockedResults: SplitResult[] = unlocked.map((inp, i) => ({
     userId: inp.userId,
-    amount: i < pennies ? base.plus("0.0001") : base,
+    amount: luckySet.has(i) ? base.plus("0.01") : base,
     isLocked: false,
   }));
 

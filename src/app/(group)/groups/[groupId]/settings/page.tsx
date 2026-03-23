@@ -1,4 +1,4 @@
-import { getAuthorizedGroup } from "@/lib/group-access";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 import { notFound } from "next/navigation";
 import { MemberList } from "@/components/groups/member-list";
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
@@ -10,7 +10,10 @@ interface PageProps {
 
 export default async function GroupSettingsPage({ params }: PageProps) {
   const { groupId } = await params;
-  const group = await getAuthorizedGroup(groupId);
+  const [group, currentMemberId] = await Promise.all([
+    getAuthorizedGroup(groupId),
+    getCurrentMemberId(groupId),
+  ]);
 
   if (!group) notFound();
 
@@ -41,6 +44,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
         <MemberList
           members={group.members}
           groupId={groupId}
+          currentMemberId={currentMemberId ?? undefined}
         />
       </div>
     </div>

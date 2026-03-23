@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
 import type { SplitInput, SplitResult } from "./index";
+import { seededShuffle } from "./index";
 
 export function calculatePercentage(
   total: Decimal | string,
@@ -10,22 +11,18 @@ export function calculatePercentage(
     userId: inp.userId,
     amount: t
       .mul(new Decimal(inp.percentage ?? "0").div(100))
-      .toDecimalPlaces(4, Decimal.ROUND_DOWN),
+      .toDecimalPlaces(2, Decimal.ROUND_DOWN),
     isLocked: false,
   }));
   const sum = results.reduce((s, r) => s.plus(r.amount), new Decimal(0));
   const remainder = t.minus(sum);
-  const pennies = remainder
-    .div("0.0001")
-    .toDecimalPlaces(0)
-    .toNumber();
-  for (let i = 0; i < Math.abs(pennies); i++) {
-    const idx = i % results.length;
-    if (pennies > 0) {
-      results[idx].amount = results[idx].amount.plus("0.0001");
-    } else {
-      results[idx].amount = results[idx].amount.minus("0.0001");
-    }
+  const pennies = remainder.div("0.01").toDecimalPlaces(0).toNumber();
+
+  // Deterministically distribute remainder pennies
+  const seed = `${t.toString()}:${inputs.map(i => `${i.userId}:${i.percentage}`).join(",")}`;
+  const shuffled = seededShuffle(results.map((_, i) => i), seed);
+  for (let i = 0; i < pennies; i++) {
+    results[shuffled[i % shuffled.length]].amount = results[shuffled[i % shuffled.length]].amount.plus("0.01");
   }
   return results;
 }

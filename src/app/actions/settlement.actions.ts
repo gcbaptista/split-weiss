@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
-import { canAccessGroup } from "@/lib/group-access";
+import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
 import { createSettlementSchema } from "@/lib/validations/settlement.schema";
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/types/api";
@@ -26,13 +26,29 @@ export async function createSettlement(
   }
 
   try {
+    const actorId = await getCurrentMemberId(groupId);
     const settlement = await db.settlement.create({
       data: { ...rest, groupId, date: new Date(date) },
+    });
+    await db.groupAuditLog.create({
+      data: {
+        groupId,
+        actorId,
+        action: "SETTLEMENT_CREATED",
+        details: {
+          settlementId: settlement.id,
+          fromUserId: rest.fromUserId,
+          toUserId: rest.toUserId,
+          amount: rest.amount,
+          currency: rest.currency,
+        },
+      },
     });
     revalidatePath(`/groups/${groupId}/balances`);
     revalidatePath(`/groups/${groupId}/settlements`);
     return { data: settlement };
-  } catch {
+  } catch (e) {
+    console.error("createSettlement failed", e);
     return { error: "Failed to record settlement" };
   }
 }

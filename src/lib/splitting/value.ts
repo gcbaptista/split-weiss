@@ -12,9 +12,9 @@ export function calculateValue(
     isLocked: false,
   }));
   const sum = results.reduce((s, r) => s.plus(r.amount), new Decimal(0));
-  if (!sum.toDecimalPlaces(4).equals(t.toDecimalPlaces(4))) {
+  if (!sum.toDecimalPlaces(2).equals(t.toDecimalPlaces(2))) {
     throw new Error(
-      `Split amounts (${sum.toFixed(4)}) do not equal total (${t.toFixed(4)})`
+      `Split amounts (${sum.toFixed(2)}) do not equal total (${t.toFixed(2)})`
     );
   }
   return results;

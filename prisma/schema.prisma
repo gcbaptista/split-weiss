@@ -17,8 +17,9 @@ model Group {
   members       GroupMember[]
   expenses      Expense[]
   settlements   Settlement[]
-  auditLogs     ExpenseAuditLog[]
-  deviceAccess  DeviceAccess[]
+  auditLogs      ExpenseAuditLog[]
+  groupAuditLogs GroupAuditLog[]
+  deviceAccess   DeviceAccess[]
 }
 
 model GroupMember {
@@ -32,9 +33,12 @@ model GroupMember {
   expenseSplits   ExpenseSplit[]
   settlementsFrom Settlement[] @relation("SettlementFrom")
   settlementsTo   Settlement[] @relation("SettlementTo")
-  auditLogs       ExpenseAuditLog[] @relation("AuditActor")
+  deviceAccess  DeviceAccess[]
+  auditLogs      ExpenseAuditLog[] @relation("AuditActor")
+  groupAuditLogs GroupAuditLog[]  @relation("GroupAuditActor")
 
   @@unique([groupId, id])
+  @@unique([groupId, name])
 }
 
 model Expense {
@@ -42,7 +46,7 @@ model Expense {
   groupId   String
   payerId   String
   title     String
-  amount    Decimal        @db.Decimal(12, 4)
+  amount    Decimal        @db.Decimal(12, 2)
   currency  String
   splitMode SplitMode
   date      DateTime
@@ -65,6 +69,7 @@ enum AuditAction {
   CREATED
   UPDATED
   DELETED
+  REVERTED
 }
 
 model ExpenseAuditLog {
@@ -72,14 +77,14 @@ model ExpenseAuditLog {
   originalExpenseId String
   expenseId         String?
   groupId           String
-  actorId           String
+  actorId           String?
   action            AuditAction
   snapshot          Json
   createdAt         DateTime    @default(now())
 
   expense           Expense?    @relation(fields: [expenseId], references: [id], onDelete: SetNull)
   group             Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  actor             GroupMember  @relation("AuditActor", fields: [actorId], references: [id])
+  actor             GroupMember? @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([originalExpenseId])
   @@index([originalExpenseId, createdAt])
@@ -90,8 +95,8 @@ model ExpenseSplit {
   id         String   @id @default(cuid())
   expenseId  String
   userId     String
-  amount     Decimal  @db.Decimal(12, 4)
-  percentage Decimal? @db.Decimal(7, 4)
+  amount     Decimal  @db.Decimal(12, 2)
+  percentage Decimal? @db.Decimal(7, 2)
   isLocked   Boolean  @default(false)
   expense    Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
   user       GroupMember @relation(fields: [userId], references: [id])
@@ -103,7 +108,7 @@ model Settlement {
   groupId    String
   fromUserId String
   toUserId   String
-  amount     Decimal  @db.Decimal(12, 4)
+  amount     Decimal  @db.Decimal(12, 2)
   currency   String
   date       DateTime
   note       String?
@@ -113,6 +118,21 @@ model Settlement {
   toUser     GroupMember @relation("SettlementTo", fields: [toUserId], references: [id])
 
   @@index([groupId, date])
+}
+
+model GroupAuditLog {
+  id        String       @id @default(cuid())
+  groupId   String
+  actorId   String?
+  action    String       // e.g. MEMBER_ADDED, MEMBER_RENAMED, MEMBER_REMOVED, SETTLEMENT_CREATED, GROUP_UPDATED, GROUP_PASSWORD_CHANGED
+  details   Json
+  createdAt DateTime     @default(now())
+
+  group Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  actor GroupMember?  @relation("GroupAuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([groupId])
+  @@index([groupId, actorId])
 }
 
 model ExchangeRateCache {
@@ -126,13 +146,15 @@ model ExchangeRateCache {
 
 
 model DeviceAccess {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   groupId     String
   deviceToken String
-  createdAt   DateTime @default(now())
-  lastUsedAt  DateTime @updatedAt
+  memberId    String?
+  createdAt   DateTime     @default(now())
+  lastUsedAt  DateTime     @updatedAt
 
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group  Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  member GroupMember?  @relation(fields: [memberId], references: [id], onDelete: SetNull)
 
   @@unique([groupId, deviceToken])
   @@index([deviceToken])

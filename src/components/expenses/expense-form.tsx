@@ -36,7 +36,7 @@ import {
 } from "@/lib/splitting";
 import Decimal from "decimal.js";
 import type { MemberSummary, ExpenseWithSplitsClient } from "@/types/database";
-import type { SplitMode } from "@/hooks/use-split-calculator";
+import type { SplitMode } from "@/types/database";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import { AlertCircle, Lock, LockOpen } from "lucide-react";
 
@@ -120,9 +120,6 @@ export function ExpenseForm({
       amount: initialExpense?.amount ?? "",
       currency,
       splitMode: (initialExpense?.splitMode as SplitMode) ?? "LOCK",
-      date: initialExpense
-        ? new Date(initialExpense.date).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0],
       payerId: initialExpense?.payerId ?? defaultPayerId,
       splits: [],
     },
@@ -246,19 +243,7 @@ export function ExpenseForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <div className="space-y-3">
           <Label>Split</Label>
           <SplitModeSelector value={splitMode} onChange={handleModeChange} />
@@ -291,10 +276,8 @@ export function ExpenseForm({
                     />
                     <div className="flex items-center gap-1">
                       <Input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
+                        type="text"
+                        inputMode="decimal"
                         placeholder="0"
                         disabled={!isIncluded}
                         value={splitInputs[i].percentage}
@@ -381,9 +364,8 @@ export function ExpenseForm({
                     />
                     <div className="flex items-center gap-1">
                       <Input
-                        type="number"
-                        min="0"
-                        step="0.1"
+                        type="text"
+                        inputMode="decimal"
                         placeholder="0.00"
                         disabled={!isIncluded}
                         value={isLocked ? splitInputs[i].amount : (computedAmount?.toFixed(2) ?? "")}

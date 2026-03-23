@@ -16,7 +16,6 @@ export const createExpenseSchema = z.object({
   ),
   currency: z.string().length(3),
   splitMode: z.enum(["PERCENTAGE", "LOCK"]),
-  date: z.string(),
   payerId: z.string(),
   splits: z.array(splitEntrySchema),
 });

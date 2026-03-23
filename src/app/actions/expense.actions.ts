@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
-import { canAccessGroup } from "@/lib/group-access";
+import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
 import type { Prisma } from "@prisma/client";
 import { createExpenseSchema } from "@/lib/validations/expense.schema";
 import {
@@ -39,7 +39,7 @@ export async function createExpense(
 ): Promise<ActionResult<Expense>> {
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
-  const { groupId, splits: splitInputs, splitMode, amount, date, ...rest } =
+  const { groupId, splits: splitInputs, splitMode, amount, ...rest } =
     parsed.data;
 
   if (!(await canAccessGroup(groupId))) {
@@ -48,6 +48,7 @@ export async function createExpense(
 
   try {
     const total = new Decimal(amount);
+    const actorId = await getCurrentMemberId(groupId);
     const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
     const splitResults = splitMode === "PERCENTAGE"
       ? calculatePercentage(total, mappedInputs)
@@ -59,7 +60,7 @@ export async function createExpense(
           groupId,
           amount,
           splitMode,
-          date: new Date(date),
+          date: new Date(),
           splits: {
             create: splitResults.map((s) => ({
               userId: s.userId,
@@ -78,7 +79,7 @@ export async function createExpense(
           originalExpenseId: created.id,
           expenseId: created.id,
           groupId: created.groupId,
-          actorId: rest.payerId,
+          actorId,
           action: "CREATED",
           snapshot: { action: "CREATED" } as unknown as Prisma.InputJsonValue,
         },
@@ -107,7 +108,7 @@ export async function getGroupExpenses(groupId: string): Promise<ExpenseWithSpli
       splits: { include: { user: { select: memberSelect } } },
       payer: { select: memberSelect },
     },
-    orderBy: { date: "desc" },
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }, { id: "desc" }],
   });
 
   // Convert Decimal to string for Client Components
@@ -141,7 +142,7 @@ export async function getGroupExpensesForCalculation(groupId: string) {
         },
       },
     },
-    orderBy: { date: "desc" },
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }, { id: "desc" }],
   });
 }
 
@@ -169,7 +170,7 @@ export async function getGroupExpensesForBreakdown(
         },
       },
     },
-    orderBy: { date: "desc" },
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }, { id: "desc" }],
   });
 
   return expenses.map((expense) => ({
@@ -201,9 +202,10 @@ export async function updateExpense(
     return { error: "Can't access this group" };
   }
 
-  const { splits: splitInputs, splitMode, amount, date, ...rest } = parsed.data;
+  const { splits: splitInputs, splitMode, amount, ...rest } = parsed.data;
   try {
     const total = new Decimal(amount);
+    const actorId = await getCurrentMemberId(existing.groupId);
     const mappedInputs = splitInputs.map(s => ({ ...s, isLocked: s.isLocked ?? false }));
     const splitResults = splitMode === "PERCENTAGE"
       ? calculatePercentage(total, mappedInputs)
@@ -216,7 +218,6 @@ export async function updateExpense(
           ...rest,
           amount,
           splitMode,
-          date: new Date(date),
           splits: {
             create: splitResults.map((s) => ({
               userId: s.userId,
@@ -235,7 +236,7 @@ export async function updateExpense(
           originalExpenseId: expenseId,
           expenseId,
           groupId: existing.groupId,
-          actorId: rest.payerId,
+          actorId,
           action: "UPDATED",
           snapshot: {
             action: "UPDATED",
@@ -254,7 +255,7 @@ export async function updateExpense(
   }
 }
 
-export async function deleteExpense(expenseId: string): Promise<ActionResult> {
+export async function deleteExpense(expenseId: string): Promise<ActionResult<{ auditLogId: string }>> {
   const expense = await db.expense.findUnique({
     where: { id: expenseId },
     select: { groupId: true, payerId: true },
@@ -266,7 +267,8 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
   }
 
   try {
-    await db.$transaction(async (tx) => {
+    const actorId = await getCurrentMemberId(expense.groupId);
+    const auditLogId = await db.$transaction(async (tx) => {
       const full = await tx.expense.findUnique({
         where: { id: expenseId },
         include: {
@@ -275,23 +277,25 @@ export async function deleteExpense(expenseId: string): Promise<ActionResult> {
         },
       });
       if (!full) throw new Error("Expense not found");
-      await tx.expenseAuditLog.create({
+      const auditLog = await tx.expenseAuditLog.create({
         data: {
           originalExpenseId: expenseId,
           expenseId,
           groupId: expense.groupId,
-          actorId: expense.payerId,
+          actorId,
           action: "DELETED",
           snapshot: { action: "DELETED", state: buildStateSnapshot(full, full.splits) } as unknown as Prisma.InputJsonValue,
         },
       });
       await tx.expense.delete({ where: { id: expenseId } });
+      return auditLog.id;
     });
     revalidatePath(`/groups/${expense.groupId}`);
     revalidatePath(`/groups/${expense.groupId}/balances`);
     revalidatePath(`/groups/${expense.groupId}/settlements`);
-    return { data: undefined };
-  } catch {
+    return { data: { auditLogId } };
+  } catch (e) {
+    console.error("deleteExpense failed", e);
     return { error: "Failed to delete expense" };
   }
 }
@@ -312,7 +316,165 @@ export async function getExpenseAuditLog(
   const logs = await db.expenseAuditLog.findMany({
     where: { originalExpenseId: expenseId },
     include: { actor: { select: { id: true, name: true } } },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
   });
   return { data: logs as unknown as ExpenseAuditLogEntry[] };
+}
+
+export async function getMemberAuditLog(
+  groupId: string,
+  memberId: string
+): Promise<ActionResult<ExpenseAuditLogEntry[]>> {
+  if (!(await canAccessGroup(groupId))) {
+    return { error: "Can't access this group" };
+  }
+
+  const logs = await db.expenseAuditLog.findMany({
+    where: { groupId, actorId: memberId },
+    include: {
+      actor: { select: { id: true, name: true } },
+      expense: { select: { title: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return { data: logs as unknown as ExpenseAuditLogEntry[] };
+}
+
+
+export async function revertExpense(
+  auditLogId: string
+): Promise<ActionResult<Expense>> {
+  const logEntry = await db.expenseAuditLog.findUnique({
+    where: { id: auditLogId },
+  });
+  if (!logEntry) return { error: "Audit entry not found" };
+
+  if (!(await canAccessGroup(logEntry.groupId))) {
+    return { error: "Can't access this group" };
+  }
+
+  const snapshot = logEntry.snapshot as unknown as
+    | { action: "UPDATED"; delta: import("@/types/audit").ExpenseDelta }
+    | { action: "DELETED"; state: import("@/types/audit").ExpenseStateSnapshot };
+
+  if (snapshot.action !== "UPDATED" && snapshot.action !== "DELETED") {
+    return { error: "Can only revert updates or deletions" };
+  }
+
+  try {
+    const actorId = await getCurrentMemberId(logEntry.groupId);
+
+    if (snapshot.action === "DELETED") {
+      const state = snapshot.state;
+      const expense = await db.$transaction(async (tx) => {
+        const created = await tx.expense.create({
+          data: {
+            groupId: logEntry.groupId,
+            payerId: state.payerId,
+            title: state.title,
+            amount: state.amount,
+            currency: state.currency,
+            splitMode: state.splitMode as "PERCENTAGE" | "LOCK",
+            date: new Date(state.date),
+            splits: {
+              create: state.splits.map((s) => ({
+                userId: s.userId,
+                amount: s.amount,
+                isLocked: s.isLocked,
+              })),
+            },
+          },
+          include: {
+            splits: { include: { user: { select: memberSelect } } },
+            payer: { select: memberSelect },
+          },
+        });
+        // Link old audit entries to the new expense
+        await tx.expenseAuditLog.updateMany({
+          where: { originalExpenseId: logEntry.originalExpenseId },
+          data: { expenseId: created.id },
+        });
+        await tx.expenseAuditLog.create({
+          data: {
+            originalExpenseId: logEntry.originalExpenseId,
+            expenseId: created.id,
+            groupId: logEntry.groupId,
+            actorId,
+            action: "REVERTED",
+            snapshot: { action: "REVERTED", delta: {} } as unknown as Prisma.InputJsonValue,
+          },
+        });
+        return created;
+      });
+      revalidatePath(`/groups/${logEntry.groupId}`);
+      revalidatePath(`/groups/${logEntry.groupId}/balances`);
+      revalidatePath(`/groups/${logEntry.groupId}/settlements`);
+      return { data: serializeExpenseForResult(expense) };
+    }
+
+    // UPDATED — apply the `from` side of the delta
+    const delta = snapshot.delta;
+    const existing = await db.expense.findUnique({
+      where: { id: logEntry.originalExpenseId },
+      include: {
+        splits: { include: { user: { select: memberSelect } } },
+        payer: { select: memberSelect },
+      },
+    });
+    if (!existing) return { error: "Expense no longer exists" };
+
+    const expense = await db.$transaction(async (tx) => {
+      const updateData: Record<string, unknown> = {};
+      if (delta.title) updateData.title = delta.title.from;
+      if (delta.amount) updateData.amount = delta.amount.from;
+      if (delta.currency) updateData.currency = delta.currency.from;
+      if (delta.splitMode) updateData.splitMode = delta.splitMode.from;
+      if (delta.payerId) {
+        updateData.payerId = delta.payerId.from;
+      }
+
+      if (delta.splits) {
+        await tx.expenseSplit.deleteMany({ where: { expenseId: existing.id } });
+        updateData.splits = {
+          create: delta.splits.from.map((s) => ({
+            userId: s.userId,
+            amount: s.amount,
+            isLocked: s.isLocked,
+          })),
+        };
+      }
+
+      const updated = await tx.expense.update({
+        where: { id: existing.id },
+        data: updateData,
+        include: {
+          splits: { include: { user: { select: memberSelect } } },
+          payer: { select: memberSelect },
+        },
+      });
+
+      await tx.expenseAuditLog.create({
+        data: {
+          originalExpenseId: existing.id,
+          expenseId: existing.id,
+          groupId: logEntry.groupId,
+          actorId,
+          action: "REVERTED",
+          snapshot: {
+            action: "REVERTED",
+            delta: buildDelta(existing, existing.splits, updated, updated.splits),
+          } as unknown as Prisma.InputJsonValue,
+        },
+      });
+      return updated;
+    });
+
+    revalidatePath(`/groups/${logEntry.groupId}`);
+    revalidatePath(`/groups/${logEntry.groupId}/balances`);
+    revalidatePath(`/groups/${logEntry.groupId}/settlements`);
+    return { data: serializeExpenseForResult(expense) };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Failed to revert expense" };
+  }
 }

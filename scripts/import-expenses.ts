@@ -66,16 +66,16 @@ async function main() {
     const debtorCount = item.debtors.length;
 
     // Calculate equal split
-    const base = total.div(debtorCount).toDecimalPlaces(4, Decimal.ROUND_DOWN);
+    const base = total.div(debtorCount).toDecimalPlaces(2, Decimal.ROUND_DOWN);
     const remainder = total.minus(base.mul(debtorCount));
-    const pennies = remainder.div("0.0001").toDecimalPlaces(0).toNumber();
+    const pennies = remainder.div("0.01").toDecimalPlaces(0).toNumber();
 
     const splits = item.debtors.map((d, i) => {
       const userId = externalIdToMemberId.get(d.debtor_id)!;
-      const amount = i < pennies ? base.plus("0.0001") : base;
+      const amount = i < pennies ? base.plus("0.01") : base;
       return {
         userId,
-        amount: amount.toFixed(4),
+        amount: amount.toFixed(2),
         isLocked: false,
       };
     });
@@ -85,7 +85,7 @@ async function main() {
         groupId: group.id,
         payerId,
         title: item.item_name.trim(),
-        amount: total.toFixed(4),
+        amount: total.toFixed(2),
         currency: item.currency_code,
         splitMode: "LOCK",
         date: new Date(item.create_datetime),

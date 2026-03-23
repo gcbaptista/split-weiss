@@ -5,6 +5,7 @@ import { GroupTabs } from "@/components/groups/group-tabs";
 import { MobileTabBar } from "@/components/groups/mobile-tab-bar";
 import { RecentGroupTracker } from "@/components/groups/recent-group-tracker";
 import { GroupUnlockPrompt } from "@/components/groups/group-unlock-prompt";
+import { GroupIdentityPicker } from "@/components/groups/group-identity-picker";
 import { GroupNotFoundState } from "@/components/groups/group-not-found-state";
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
 import { MobileExpenseFAB } from "@/components/expenses/mobile-expense-fab";
@@ -23,6 +24,7 @@ export default async function GroupLayout({
 
   if (access.status === "not-found") return <GroupNotFoundState />;
   if (access.status === "locked") return <GroupUnlockPrompt groupId={groupId} />;
+  if (access.status === "needs-identity") return <GroupIdentityPicker groupId={groupId} members={access.group.members} />;
 
   const group = access.group;
   const members = group.members;

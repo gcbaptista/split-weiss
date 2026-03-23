@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getExpenseAuditLog } from "@/app/actions/expense.actions";
+import { getExpenseAuditLog, revertExpense } from "@/app/actions/expense.actions";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Undo2 } from "lucide-react";
 import type { ExpenseAuditLogEntry, ExpenseStateSnapshot, ExpenseDelta } from "@/types/audit";
 
 interface Props {
@@ -22,6 +26,7 @@ const ACTION_BADGE: Record<string, { label: string; className: string }> = {
   CREATED: { label: "Created", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
   UPDATED: { label: "Updated", className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
   DELETED: { label: "Deleted", className: "bg-destructive/10 text-destructive" },
+  REVERTED: { label: "Reverted", className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200" },
 };
 
 function DiffRow({ label, before, after }: { label: string; before: string; after: string }) {
@@ -93,36 +98,59 @@ function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
     return <SnapshotSummary state={snapshot.state} />;
   }
 
+  if (snapshot.action === "REVERTED") {
+    const delta = snapshot.delta;
+    const hasChanges = delta.title || delta.amount || delta.currency ||
+      delta.payerName || delta.splitMode || delta.date || delta.splits;
+    if (!hasChanges) {
+      return <p className="text-sm text-muted-foreground">Reverted to previous state.</p>;
+    }
+    return <DeltaContent delta={delta} />;
+  }
+
   return <DeltaContent delta={snapshot.delta} />;
 }
 
 function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
   const [logs, setLogs] = useState<ExpenseAuditLogEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reverting, setReverting] = useState<string | null>(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    let cancelled = false;
-
+  function loadLogs() {
     void getExpenseAuditLog(expenseId)
       .then((result) => {
-        if (cancelled) return;
-
         if (result.error) {
           setError(result.error);
           return;
         }
-
         setLogs(result.data ?? []);
       })
       .catch(() => {
-        if (cancelled) return;
         setError("Failed to load history");
       });
+  }
 
-    return () => {
-      cancelled = true;
-    };
+  useEffect(() => {
+    loadLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expenseId]);
+
+  async function handleRevert(entryId: string) {
+    setReverting(entryId);
+    const result = await revertExpense(entryId);
+    setReverting(null);
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success("Reverted");
+    router.refresh();
+    loadLogs();
+  }
+
+  const canRevert = (entry: ExpenseAuditLogEntry) =>
+    entry.action === "UPDATED" || entry.action === "DELETED";
 
   return (
     <div className="px-4 pb-4 space-y-4">
@@ -143,9 +171,9 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
           <div key={entry.id} className="rounded-lg border p-3 space-y-2">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">
-                  {entry.actor.name}
-                </span>
+                {entry.actor && (
+                  <span className="text-sm font-medium">{entry.actor.name}</span>
+                )}
                 <Badge className={badge.className}>{badge.label}</Badge>
               </div>
               <span className="text-xs text-muted-foreground">
@@ -153,6 +181,18 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
               </span>
             </div>
             <EntryContent entry={entry} />
+            {canRevert(entry) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                disabled={reverting !== null}
+                onClick={() => handleRevert(entry.id)}
+                aria-label="Revert this change"
+              >
+                <Undo2 className={`h-4 w-4 ${reverting === entry.id ? "animate-spin" : ""}`} />
+              </Button>
+            )}
           </div>
         );
       })}

@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { formatCurrency } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
+import { formatCurrency, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Pencil, Trash2, History } from "lucide-react";
-import { deleteExpense } from "@/app/actions/expense.actions";
+import { deleteExpense, revertExpense } from "@/app/actions/expense.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -27,6 +27,7 @@ interface ExpenseListProps {
   groupId: string;
   members: MemberSummary[];
   groupCurrency: string;
+  currentMemberId?: string;
 }
 
 export function ExpenseList({
@@ -35,6 +36,7 @@ export function ExpenseList({
   groupId,
   members,
   groupCurrency,
+  currentMemberId,
 }: ExpenseListProps) {
   const router = useRouter();
   const [localExpenses, setLocalExpenses] = useState(expenses);
@@ -43,8 +45,7 @@ export function ExpenseList({
   const [editingExpense, setEditingExpense] = useState<ExpenseWithSplitsClient | null>(null);
   const [historyExpenseId, setHistoryExpenseId] = useState<string | null>(null);
   const [historyExpenseTitle, setHistoryExpenseTitle] = useState<string>("");
-  // Keep timers so we can cancel on undo
-  const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
 
   // Sync when server re-renders with fresh data
   useEffect(() => {
@@ -78,51 +79,40 @@ export function ExpenseList({
     );
   }
 
-  function handleDelete(expense: ExpenseWithSplitsClient) {
+  async function handleDelete(expense: ExpenseWithSplitsClient) {
+    // Optimistically remove from UI
     setLocalExpenses((prev) => prev.filter((e) => e.id !== expense.id));
 
-    const toastId = toast("Expense deleted", {
+    const result = await deleteExpense(expense.id);
+    if (result.error) {
+      toast.error(result.error);
+      // Rollback on failure
+      setLocalExpenses((prev) => {
+        const next = [...prev, expense];
+        return next.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.id.localeCompare(a.id)
+        );
+      });
+      return;
+    }
+
+    toast("Expense deleted", {
       action: {
         label: "Undo",
-        onClick: () => {
-          // Cancel the pending server deletion
-          const timer = deleteTimers.current.get(expense.id);
-          if (timer) {
-            clearTimeout(timer);
-            deleteTimers.current.delete(expense.id);
+        onClick: async () => {
+          const undoResult = await revertExpense(result.data!.auditLogId);
+          if (undoResult.error) {
+            toast.error(undoResult.error);
+          } else {
+            toast.success("Restored");
+            router.refresh();
           }
-          // Restore the expense in the correct position
-          setLocalExpenses((prev) => {
-            const next = [...prev, expense];
-            return next.sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            );
-          });
         },
       },
       duration: 5000,
     });
 
-    // Delay the actual server call so undo has a window
-    const timer = setTimeout(async () => {
-      deleteTimers.current.delete(expense.id);
-      toast.dismiss(toastId);
-      const result = await deleteExpense(expense.id);
-      if (result.error) {
-        toast.error(result.error);
-        // Rollback on failure
-        setLocalExpenses((prev) => {
-          const next = [...prev, expense];
-          return next.sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-          );
-        });
-      } else {
-        router.refresh();
-      }
-    }, 5000);
-
-    deleteTimers.current.set(expense.id, timer);
+    router.refresh();
   }
 
   return (
@@ -152,6 +142,19 @@ export function ExpenseList({
         </Select>
       </div>
 
+      {currentMemberId && (
+        <div className="mb-3 flex items-center gap-4 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500/40 border border-emerald-500/60" />
+            You paid
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary/40 border border-primary/60" />
+            You owe
+          </span>
+        </div>
+      )}
+
       {filteredExpenses.length === 0 ? (
         <EmptyState
           icon="🔎"
@@ -163,7 +166,11 @@ export function ExpenseList({
         {filteredExpenses.map((e) => (
           <li
             key={e.id}
-            className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 rounded-lg border bg-card p-3 sm:p-4"
+            className={cn(
+              "flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 rounded-lg border bg-card p-3 sm:p-4",
+              currentMemberId && e.payerId === currentMemberId && "border-emerald-500/30 bg-emerald-500/5",
+              currentMemberId && e.payerId !== currentMemberId && e.splits.some(s => s.userId === currentMemberId) && "border-primary/30 bg-primary/5"
+            )}
           >
             {/* Left side: Content */}
             <div className="min-w-0 flex-1 space-y-1.5">

@@ -1,4 +1,4 @@
-import { getAuthorizedGroup } from "@/lib/group-access";
+import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 import { getGroupExpensesForBreakdown } from "@/app/actions/expense.actions";
 import { getGroupSettlementsForBreakdown } from "@/app/actions/settlement.actions";
 import { notFound } from "next/navigation";
@@ -17,10 +17,11 @@ interface PageProps {
 
 export default async function BalancesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements] = await Promise.all([
+  const [group, expenses, settlements, currentMemberId] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForBreakdown(groupId),
     getGroupSettlementsForBreakdown(groupId),
+    getCurrentMemberId(groupId),
   ]);
 
   if (!group) notFound();
@@ -95,6 +96,7 @@ export default async function BalancesPage({ params }: PageProps) {
         grandTotal={grandTotal.toString()}
         currency={groupCurrency}
         ratesByDate={Object.fromEntries(ratesByDate)}
+        highlightedUserId={currentMemberId ?? undefined}
       />
     </div>
   );

@@ -23,9 +23,10 @@ const memberSelect = {
 export type GroupRequestAccess =
   | { status: "not-found" }
   | { status: "locked" }
-  | { status: "authorized"; group: GroupWithMembers };
+  | { status: "needs-identity"; group: GroupWithMembers }
+  | { status: "authorized"; group: GroupWithMembers; currentMemberId: string };
 
-type GroupAccessStatus = GroupRequestAccess["status"];
+type GroupAccessStatus = "not-found" | "locked" | "needs-identity" | "authorized";
 
 const getGroupAccessStatus = cache(
   async (groupId: string): Promise<GroupAccessStatus> => {
@@ -35,19 +36,42 @@ const getGroupAccessStatus = cache(
     });
 
     if (!group) return "not-found";
-    if (!group.passwordHash) return "authorized";
 
     const deviceToken = await getDeviceTokenFromCookies();
-    if (!deviceToken) return "locked";
 
-    return (await verifyDeviceAccess(groupId, deviceToken))
-      ? "authorized"
-      : "locked";
+    // If password-protected, verify device has access
+    if (group.passwordHash) {
+      if (!deviceToken) return "locked";
+      if (!(await verifyDeviceAccess(groupId, deviceToken))) return "locked";
+    }
+
+    // Check if device has identified as a member
+    if (deviceToken) {
+      const access = await db.deviceAccess.findUnique({
+        where: { groupId_deviceToken: { groupId, deviceToken } },
+        select: { memberId: true },
+      });
+      if (access?.memberId) return "authorized";
+    }
+
+    return "needs-identity";
   }
 );
 
 export const canAccessGroup = cache(async (groupId: string): Promise<boolean> => {
-  return (await getGroupAccessStatus(groupId)) === "authorized";
+  const status = await getGroupAccessStatus(groupId);
+  return status === "authorized" || status === "needs-identity";
+});
+
+/** Get the current member ID for this device+group, or null */
+export const getCurrentMemberId = cache(async (groupId: string): Promise<string | null> => {
+  const deviceToken = await getDeviceTokenFromCookies();
+  if (!deviceToken) return null;
+  const access = await db.deviceAccess.findUnique({
+    where: { groupId_deviceToken: { groupId, deviceToken } },
+    select: { memberId: true },
+  });
+  return access?.memberId ?? null;
 });
 
 export const getGroupRequestAccess = cache(async (
@@ -55,9 +79,8 @@ export const getGroupRequestAccess = cache(async (
 ): Promise<GroupRequestAccess> => {
   const status = await getGroupAccessStatus(groupId);
 
-  if (status !== "authorized") {
-    return { status };
-  }
+  if (status === "not-found") return { status };
+  if (status === "locked") return { status };
 
   const group = await db.group.findUnique({
     where: { id: groupId },
@@ -69,15 +92,19 @@ export const getGroupRequestAccess = cache(async (
       passwordHash: true,
       members: {
         select: memberSelect,
+        orderBy: { joinedAt: "asc" },
       },
     },
   });
 
-  if (!group) {
-    return { status: "not-found" };
+  if (!group) return { status: "not-found" };
+
+  if (status === "needs-identity") {
+    return { status: "needs-identity", group };
   }
 
-  return { status: "authorized", group };
+  const currentMemberId = await getCurrentMemberId(groupId);
+  return { status: "authorized", group, currentMemberId: currentMemberId! };
 });
 
 export const getAuthorizedGroup = cache(async (groupId: string) => {

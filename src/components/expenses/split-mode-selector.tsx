@@ -1,6 +1,6 @@
 "use client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { SplitMode } from "@/hooks/use-split-calculator";
+import type { SplitMode } from "@/types/database";
 
 interface SplitModeSelectorProps {
   value: SplitMode;

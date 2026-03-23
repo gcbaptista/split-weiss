@@ -30,6 +30,7 @@ export interface ExpenseDelta {
   currency?: FieldChange;
   splitMode?: FieldChange;
   date?: FieldChange;
+  payerId?: FieldChange;
   payerName?: FieldChange;
   /** If splits changed at all, store old and new arrays in full */
   splits?: FieldChange<ExpenseSplitSnapshot[]>;
@@ -38,15 +39,17 @@ export interface ExpenseDelta {
 export type ExpenseSnapshot =
   | { action: "CREATED" }
   | { action: "UPDATED"; delta: ExpenseDelta }
-  | { action: "DELETED"; state: ExpenseStateSnapshot };
+  | { action: "DELETED"; state: ExpenseStateSnapshot }
+  | { action: "REVERTED"; delta: ExpenseDelta };
 
 export interface ExpenseAuditLogEntry {
   id: string;
   originalExpenseId: string;
   expenseId: string | null;
   groupId: string;
-  action: "CREATED" | "UPDATED" | "DELETED";
+  action: "CREATED" | "UPDATED" | "DELETED" | "REVERTED";
   snapshot: ExpenseSnapshot;
   createdAt: Date;
-  actor: { id: string; name: string };
+  actor: { id: string; name: string } | null;
+  expense?: { title: string } | null;
 }

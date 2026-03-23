@@ -72,8 +72,10 @@ export function buildDelta(
     delta.splitMode = { from: before.splitMode, to: after.splitMode };
   if (before.date.toISOString() !== after.date.toISOString())
     delta.date = { from: before.date.toISOString(), to: after.date.toISOString() };
-  if (before.payer.name !== after.payer.name)
+  if (before.payerId !== after.payerId) {
+    delta.payerId = { from: before.payerId, to: after.payerId };
     delta.payerName = { from: before.payer.name, to: after.payer.name };
+  }
 
   const oldSplits = toSplitSnapshots(beforeSplits);
   const newSplits = toSplitSnapshots(afterSplits);
