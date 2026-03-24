@@ -2,7 +2,7 @@
 
 import { Check, Copy, Share2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -15,6 +15,11 @@ interface GroupShareProps {
 
 export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupShareProps) {
   const [copied, setCopied] = useState(false);
+  const [supportsShare, setSupportsShare] = useState(false);
+
+  useEffect(() => {
+    setSupportsShare(!!navigator.share);
+  }, []);
 
   async function handleCopy() {
     if (!groupUrl) return;
@@ -38,8 +43,6 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
       await handleCopy();
     }
   }
-
-  const supportsShare = typeof navigator !== "undefined" && !!navigator.share;
 
   return (
     <div className="space-y-4">
@@ -79,4 +82,3 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
     </div>
   );
 }
-

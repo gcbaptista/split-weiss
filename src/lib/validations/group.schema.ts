@@ -17,6 +17,7 @@ export const createGroupSchema = z.object({
 export const updateGroupSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   emoji: z.string().optional().nullable(),
+  currency: z.string().length(3).optional(),
 });
 
 export type UpdateGroupInput = z.infer<typeof updateGroupSchema>;

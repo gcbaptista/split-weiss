@@ -3,7 +3,12 @@ import "server-only";
 import { cache } from "react";
 
 import { db } from "@/lib/db";
-import { generateDeviceToken, registerDeviceAccess, verifyDeviceAccess } from "@/lib/device-token";
+import {
+  cleanupDeviceAccessIfDue,
+  generateDeviceToken,
+  registerDeviceAccess,
+  verifyDeviceAccess,
+} from "@/lib/device-token";
 import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
 import { verifyPassword } from "@/lib/password";
 import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
@@ -148,6 +153,7 @@ export async function unlockGroupAccess(
   const deviceToken = (await getDeviceTokenFromCookies()) ?? generateDeviceToken();
 
   await registerDeviceAccess(groupId, deviceToken);
+  await cleanupDeviceAccessIfDue(groupId);
   await setDeviceTokenCookie(deviceToken);
   await rememberRecentGroup(groupId);
 

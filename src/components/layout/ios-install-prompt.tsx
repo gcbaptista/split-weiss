@@ -44,16 +44,23 @@ function IosSafariSteps() {
       <li className="flex items-center gap-2">
         <StepNumber n={1} />
         <span>
-          Tap <EllipsisVertical className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> in the toolbar, then <Share className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> <strong className="text-foreground">Share</strong>
+          Tap <EllipsisVertical className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> in the
+          toolbar, then <Share className="inline h-3.5 w-3.5 -mt-0.5 text-primary" />{" "}
+          <strong className="text-foreground">Share</strong>
         </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={2} />
-        <span>Tap <strong className="text-foreground">View More</strong>, then <strong className="text-foreground">+ Add to Home Screen</strong></span>
+        <span>
+          Tap <strong className="text-foreground">View More</strong>, then{" "}
+          <strong className="text-foreground">+ Add to Home Screen</strong>
+        </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={3} />
-        <span>Tap <strong className="text-foreground">Add</strong> — done! 🍺</span>
+        <span>
+          Tap <strong className="text-foreground">Add</strong> — done! 🍺
+        </span>
       </li>
     </ol>
   );
@@ -65,16 +72,21 @@ function IosChromeSteps() {
       <li className="flex items-center gap-2">
         <StepNumber n={1} />
         <span>
-          Tap the <Share className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> Share button in Chrome
+          Tap the <Share className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> Share button in
+          Chrome
         </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={2} />
-        <span>Tap <strong className="text-foreground">Add to Home Screen</strong></span>
+        <span>
+          Tap <strong className="text-foreground">Add to Home Screen</strong>
+        </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={3} />
-        <span>Tap <strong className="text-foreground">Add</strong> — done! 🍺</span>
+        <span>
+          Tap <strong className="text-foreground">Add</strong> — done! 🍺
+        </span>
       </li>
     </ol>
   );
@@ -86,16 +98,22 @@ function AndroidSteps() {
       <li className="flex items-center gap-2">
         <StepNumber n={1} />
         <span>
-          Tap the <EllipsisVertical className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> menu in Chrome
+          Tap the <EllipsisVertical className="inline h-3.5 w-3.5 -mt-0.5 text-primary" /> menu in
+          Chrome
         </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={2} />
-        <span>Tap <strong className="text-foreground">Add to Home screen</strong> or <strong className="text-foreground">Install app</strong></span>
+        <span>
+          Tap <strong className="text-foreground">Add to Home screen</strong> or{" "}
+          <strong className="text-foreground">Install app</strong>
+        </span>
       </li>
       <li className="flex items-center gap-2">
         <StepNumber n={3} />
-        <span>Tap <strong className="text-foreground">Install</strong> — done! 🍺</span>
+        <span>
+          Tap <strong className="text-foreground">Install</strong> — done! 🍺
+        </span>
       </li>
     </ol>
   );

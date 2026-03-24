@@ -39,9 +39,7 @@ export function PullToRefresh() {
       }
 
       // Apply resistance — diminishing returns past threshold
-      const dampened = distance > THRESHOLD
-        ? THRESHOLD + (distance - THRESHOLD) * 0.3
-        : distance;
+      const dampened = distance > THRESHOLD ? THRESHOLD + (distance - THRESHOLD) * 0.3 : distance;
 
       setPullDistance(dampened);
     }
@@ -98,4 +96,3 @@ export function PullToRefresh() {
     </div>
   );
 }
-

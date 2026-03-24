@@ -192,7 +192,8 @@ export function ExpenseList({
 
                 {/* Row 2: Payer and Date */}
                 <p className="text-xs text-muted-foreground">
-                  {e.payer.name} paid · {new Date(e.date).toLocaleDateString()}
+                  {e.payerId === currentMemberId ? "You" : e.payer.name} paid ·{" "}
+                  {new Date(e.date).toLocaleDateString()}
                 </p>
 
                 {/* Row 3: Users Involved + Actions (mobile) */}

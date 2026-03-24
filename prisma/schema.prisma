@@ -12,6 +12,7 @@ model Group {
   currency      String        @default("EUR")
   emoji         String?
   passwordHash  String?
+  lastDeviceAccessCleanupAt DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   members       GroupMember[]

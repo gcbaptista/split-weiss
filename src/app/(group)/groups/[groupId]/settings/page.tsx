@@ -5,6 +5,7 @@ import { GroupPasswordSettings } from "@/components/groups/group-password-settin
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
 import { GroupShare } from "@/components/groups/group-share";
 import { MemberList } from "@/components/groups/member-list";
+import { ResetIdentityButton } from "@/components/groups/reset-identity-button";
 import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
 
 interface PageProps {
@@ -26,10 +27,10 @@ export default async function GroupSettingsPage({ params }: PageProps) {
   if (!group) notFound();
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-8">
+      <section>
         <h2 className="mb-1 font-semibold">Share group</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+        <p className="mb-3 text-sm text-muted-foreground">
           Invite others by sharing the link or scanning the QR code.
         </p>
         <GroupShare
@@ -38,23 +39,28 @@ export default async function GroupSettingsPage({ params }: PageProps) {
           groupUrl={groupUrl}
           hasPassword={!!group.passwordHash}
         />
-      </div>
+      </section>
 
-      <div>
-        <h2 className="mb-4 font-semibold">Group details</h2>
-        <p className="mb-4 text-sm text-muted-foreground">Anyone in the group can edit these.</p>
-        <GroupSettingsForm groupId={groupId} initialName={group.name} initialEmoji={group.emoji} />
-      </div>
+      <section>
+        <h2 className="mb-1 font-semibold">Group details</h2>
+        <p className="mb-3 text-sm text-muted-foreground">Anyone in the group can edit these.</p>
+        <GroupSettingsForm
+          groupId={groupId}
+          initialName={group.name}
+          initialEmoji={group.emoji}
+          initialCurrency={group.currency}
+        />
+      </section>
 
-      <div>
+      <section>
         <h2 className="mb-1 font-semibold">Password protection</h2>
-        <p className="mb-4 text-sm text-muted-foreground">Ask for a password on new devices.</p>
+        <p className="mb-3 text-sm text-muted-foreground">Ask for a password on new devices.</p>
         <GroupPasswordSettings groupId={groupId} hasPassword={!!group.passwordHash} />
-      </div>
+      </section>
 
-      <div>
-        <h2 className="mb-4 font-semibold">Members</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+      <section>
+        <h2 className="mb-1 font-semibold">Members</h2>
+        <p className="mb-3 text-sm text-muted-foreground">
           Anyone in the group can add or remove people.
         </p>
         <MemberList
@@ -62,7 +68,16 @@ export default async function GroupSettingsPage({ params }: PageProps) {
           groupId={groupId}
           currentMemberId={currentMemberId ?? undefined}
         />
-      </div>
+      </section>
+
+      <section>
+        <h2 className="mb-1 font-semibold">Your identity</h2>
+        <p className="mb-3 text-sm text-muted-foreground">Change who you are on this device.</p>
+        <ResetIdentityButton
+          groupId={groupId}
+          currentMemberName={group.members.find((m) => m.id === currentMemberId)?.name}
+        />
+      </section>
     </div>
   );
 }

@@ -2,7 +2,11 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-import { generateDeviceToken, registerDeviceAccess } from "@/lib/device-token";
+import {
+  cleanupDeviceAccessIfDue,
+  generateDeviceToken,
+  registerDeviceAccess,
+} from "@/lib/device-token";
 import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
 import { canAccessGroup, getCurrentMemberId, unlockGroupAccess } from "@/lib/group-access";
 import { hashPassword } from "@/lib/password";
@@ -82,17 +86,18 @@ export async function updateGroup(
   }
 
   try {
-    type GroupUpdatePayload = { name?: string; emoji?: string | null };
+    type GroupUpdatePayload = { name?: string; emoji?: string | null; currency?: string };
     const data: GroupUpdatePayload = {};
     if (parsed.data.name !== undefined) data.name = parsed.data.name;
     if ("emoji" in parsed.data) {
       const raw = parsed.data.emoji;
       data.emoji = typeof raw === "string" && raw.trim() ? raw.trim() : null;
     }
+    if (parsed.data.currency !== undefined) data.currency = parsed.data.currency;
 
     const old = await db.group.findUnique({
       where: { id: groupId },
-      select: { name: true, emoji: true },
+      select: { name: true, emoji: true, currency: true },
     });
     const group = await db.group.update({
       where: { id: groupId },
@@ -105,8 +110,8 @@ export async function updateGroup(
         actorId,
         action: "GROUP_UPDATED",
         details: {
-          from: { name: old?.name, emoji: old?.emoji },
-          to: { name: group.name, emoji: group.emoji },
+          from: { name: old?.name, emoji: old?.emoji, currency: old?.currency },
+          to: { name: group.name, emoji: group.emoji, currency: group.currency },
         },
       },
     });
@@ -210,6 +215,24 @@ export async function updateGroupPassword(
   }
 }
 
+export async function resetIdentity(groupId: string): Promise<ActionResult> {
+  const deviceToken = await getDeviceTokenFromCookies();
+  if (!deviceToken) return { error: "No device token found" };
+
+  try {
+    await db.deviceAccess.update({
+      where: { groupId_deviceToken: { groupId, deviceToken } },
+      data: { memberId: null },
+    });
+
+    revalidatePath(`/groups/${groupId}`);
+    return { data: undefined };
+  } catch (e) {
+    console.error("resetIdentity failed", e);
+    return { error: "Failed to reset identity" };
+  }
+}
+
 // TODO(security): This action has no canAccessGroup() check because it is shown to devices
 // that are not yet identified (the identity picker appears before group membership is set).
 // A device with a known groupId can call this directly to claim any member identity, bypassing
@@ -230,6 +253,8 @@ export async function identifyAsMember(groupId: string, memberId: string): Promi
     create: { groupId, deviceToken, memberId },
     update: { memberId },
   });
+
+  await cleanupDeviceAccessIfDue(groupId);
 
   await rememberRecentGroup(groupId);
   revalidatePath(`/groups/${groupId}`);
@@ -260,6 +285,8 @@ export async function addAndIdentifyAsMember(groupId: string, name: string): Pro
       create: { groupId, deviceToken, memberId: member.id },
       update: { memberId: member.id },
     });
+
+    await cleanupDeviceAccessIfDue(groupId);
 
     await rememberRecentGroup(groupId);
     revalidatePath(`/groups/${groupId}`);
