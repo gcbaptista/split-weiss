@@ -136,7 +136,8 @@
     "addingExpense": "Wird hinzugefügt...",
     "saveChanges": "Änderungen speichern",
     "expenseUpdated": "Ausgabe aktualisiert!",
-    "expenseAdded": "Ausgabe hinzugefügt!"
+    "expenseAdded": "Ausgabe hinzugefügt!",
+    "foreignCurrencyWarning": "Andere Währung als die Gruppe — stelle sicher, dass das Datum stimmt, da die Wechselkurse darauf basieren."
   },
   "balances": {
     "tabLabel": "Salden",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Überweisung, Bargeld, PayPal...",
     "recording": "Wird erfasst...",
     "markAsSettled": "Als abgerechnet markieren",
-    "settlementRecorded": "Abrechnung erfasst!"
+    "settlementRecorded": "Abrechnung erfasst!",
+    "staleRatesWarning": "Wechselkurse konnten für einige Daten nicht abgerufen werden. Werte können ungefähr sein."
   },
   "settings": {
     "tabLabel": "Einstellungen",
@@ -270,4 +272,3 @@
     "label": "Sprache"
   }
 }
-

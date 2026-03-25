@@ -136,7 +136,8 @@
     "addingExpense": "Añadiendo...",
     "saveChanges": "Guardar cambios",
     "expenseUpdated": "¡Gasto actualizado!",
-    "expenseAdded": "¡Gasto añadido!"
+    "expenseAdded": "¡Gasto añadido!",
+    "foreignCurrencyWarning": "Moneda diferente a la del grupo — asegúrate de que la fecha sea correcta, ya que las tasas de cambio se basan en ella."
   },
   "balances": {
     "tabLabel": "Saldos",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Transferencia bancaria, efectivo, Bizum...",
     "recording": "Registrando...",
     "markAsSettled": "Marcar como liquidado",
-    "settlementRecorded": "¡Liquidación registrada!"
+    "settlementRecorded": "¡Liquidación registrada!",
+    "staleRatesWarning": "No se pudieron obtener las tasas de cambio para algunas fechas. Los valores pueden ser aproximados."
   },
   "settings": {
     "tabLabel": "Ajustes",
@@ -270,4 +272,3 @@
     "label": "Idioma"
   }
 }
-

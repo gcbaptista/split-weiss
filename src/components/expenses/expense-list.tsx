@@ -31,6 +31,7 @@ interface ExpenseListProps {
   members: MemberSummary[];
   groupCurrency: string;
   currentMemberId?: string;
+  convertedAmounts?: Record<string, string>;
 }
 
 export function ExpenseList({
@@ -40,6 +41,7 @@ export function ExpenseList({
   members,
   groupCurrency,
   currentMemberId,
+  convertedAmounts = {},
 }: ExpenseListProps) {
   const t = useTranslations("expenses");
   const tc = useTranslations("common");
@@ -188,9 +190,25 @@ export function ExpenseList({
                 {/* Row 1: Title and Amount (mobile) */}
                 <div className="flex items-start justify-between gap-2 sm:block">
                   <p className="text-sm font-medium flex-1 min-w-0">{e.title}</p>
-                  <span className="text-base font-semibold tabular-nums shrink-0 sm:hidden">
-                    {formatCurrency(e.amount, e.currency)}
-                  </span>
+                  <div className="text-right shrink-0 sm:hidden">
+                    {(() => {
+                      const converted = convertedAmounts[e.id];
+                      return converted ? (
+                        <>
+                          <span className="text-base font-semibold tabular-nums">
+                            {formatCurrency(e.amount, e.currency)}
+                          </span>
+                          <p className="text-[10px] text-muted-foreground tabular-nums">
+                            ≈ {formatCurrency(converted, groupCurrency)}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-base font-semibold tabular-nums">
+                          {formatCurrency(e.amount, e.currency)}
+                        </span>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 {/* Row 2: Payer and Date */}
@@ -260,9 +278,25 @@ export function ExpenseList({
 
               {/* Right side: Amount and Actions (desktop only) */}
               <div className="hidden sm:flex items-center gap-3 shrink-0">
-                <span className="text-base font-semibold tabular-nums">
-                  {formatCurrency(e.amount, e.currency)}
-                </span>
+                <div className="text-right">
+                  {(() => {
+                    const converted = convertedAmounts[e.id];
+                    return converted ? (
+                      <>
+                        <span className="text-base font-semibold tabular-nums">
+                          {formatCurrency(e.amount, e.currency)}
+                        </span>
+                        <p className="text-[10px] text-muted-foreground tabular-nums">
+                          ≈ {formatCurrency(converted, groupCurrency)}
+                        </p>
+                      </>
+                    ) : (
+                      <span className="text-base font-semibold tabular-nums">
+                        {formatCurrency(e.amount, e.currency)}
+                      </span>
+                    );
+                  })()}
+                </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"

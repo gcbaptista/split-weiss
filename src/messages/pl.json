@@ -136,7 +136,8 @@
     "addingExpense": "Dodawanie...",
     "saveChanges": "Zapisz zmiany",
     "expenseUpdated": "Wydatek zaktualizowany!",
-    "expenseAdded": "Wydatek dodany!"
+    "expenseAdded": "Wydatek dodany!",
+    "foreignCurrencyWarning": "Inna waluta niż grupa — upewnij się, że data jest prawidłowa, ponieważ kursy wymiany są na niej oparte."
   },
   "balances": {
     "tabLabel": "Salda",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Przelew, gotówka, BLIK...",
     "recording": "Rejestrowanie...",
     "markAsSettled": "Oznacz jako rozliczone",
-    "settlementRecorded": "Rozliczenie zarejestrowane!"
+    "settlementRecorded": "Rozliczenie zarejestrowane!",
+    "staleRatesWarning": "Kursy wymiany nie mogły zostać pobrane dla niektórych dat. Wartości mogą być przybliżone."
   },
   "settings": {
     "tabLabel": "Ustawienia",
@@ -270,4 +272,3 @@
     "label": "Język"
   }
 }
-

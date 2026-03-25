@@ -136,7 +136,8 @@
     "addingExpense": "A adicionar...",
     "saveChanges": "Guardar alterações",
     "expenseUpdated": "Despesa atualizada!",
-    "expenseAdded": "Despesa adicionada!"
+    "expenseAdded": "Despesa adicionada!",
+    "foreignCurrencyWarning": "Moeda diferente do grupo — confirma que a data está correta, pois as taxas de câmbio são baseadas nela."
   },
   "balances": {
     "tabLabel": "Saldos",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Transferência bancária, dinheiro, MB WAY...",
     "recording": "A registar...",
     "markAsSettled": "Marcar como acertado",
-    "settlementRecorded": "Acerto registado!"
+    "settlementRecorded": "Acerto registado!",
+    "staleRatesWarning": "Não foi possível obter taxas de câmbio para algumas datas. Os valores podem ser aproximados."
   },
   "settings": {
     "tabLabel": "Definições",
@@ -267,9 +269,6 @@
     "androidStep3": "Toca em Instalar — feito! 🍺"
   },
   "localeSwitcher": {
-    "label": "Idioma",
-    "en": "English",
-    "pt": "Português"
+    "label": "Idioma"
   }
 }
-

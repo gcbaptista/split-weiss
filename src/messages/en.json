@@ -136,7 +136,8 @@
     "addingExpense": "Adding...",
     "saveChanges": "Save changes",
     "expenseUpdated": "Expense updated!",
-    "expenseAdded": "Expense added!"
+    "expenseAdded": "Expense added!",
+    "foreignCurrencyWarning": "Different currency than the group — make sure the date is accurate, as exchange rates are based on it."
   },
   "balances": {
     "tabLabel": "Balances",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Bank transfer, cash, MB WAY...",
     "recording": "Recording...",
     "markAsSettled": "Mark as settled",
-    "settlementRecorded": "Settlement recorded!"
+    "settlementRecorded": "Settlement recorded!",
+    "staleRatesWarning": "Exchange rates could not be fetched for some dates. Values may be approximate."
   },
   "settings": {
     "tabLabel": "Settings",
@@ -270,4 +272,3 @@
     "label": "Language"
   }
 }
-

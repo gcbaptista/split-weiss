@@ -136,7 +136,8 @@
     "addingExpense": "Aggiunta...",
     "saveChanges": "Salva modifiche",
     "expenseUpdated": "Spesa aggiornata!",
-    "expenseAdded": "Spesa aggiunta!"
+    "expenseAdded": "Spesa aggiunta!",
+    "foreignCurrencyWarning": "Valuta diversa da quella del gruppo — assicurati che la data sia corretta, poiché i tassi di cambio si basano su di essa."
   },
   "balances": {
     "tabLabel": "Saldi",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Bonifico, contanti, Satispay...",
     "recording": "Registrazione...",
     "markAsSettled": "Segna come saldato",
-    "settlementRecorded": "Saldo registrato!"
+    "settlementRecorded": "Saldo registrato!",
+    "staleRatesWarning": "I tassi di cambio non sono stati recuperati per alcune date. I valori potrebbero essere approssimativi."
   },
   "settings": {
     "tabLabel": "Impostazioni",
@@ -270,4 +272,3 @@
     "label": "Lingua"
   }
 }
-

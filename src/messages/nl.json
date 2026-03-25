@@ -136,7 +136,8 @@
     "addingExpense": "Toevoegen...",
     "saveChanges": "Wijzigingen opslaan",
     "expenseUpdated": "Uitgave bijgewerkt!",
-    "expenseAdded": "Uitgave toegevoegd!"
+    "expenseAdded": "Uitgave toegevoegd!",
+    "foreignCurrencyWarning": "Andere valuta dan de groep — zorg dat de datum klopt, want de wisselkoersen zijn daarop gebaseerd."
   },
   "balances": {
     "tabLabel": "Saldi",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Overboeking, contant, Tikkie...",
     "recording": "Vastleggen...",
     "markAsSettled": "Markeren als verrekend",
-    "settlementRecorded": "Verrekening vastgelegd!"
+    "settlementRecorded": "Verrekening vastgelegd!",
+    "staleRatesWarning": "Wisselkoersen konden voor sommige datums niet worden opgehaald. Waarden kunnen bij benadering zijn."
   },
   "settings": {
     "tabLabel": "Instellingen",
@@ -270,4 +272,3 @@
     "label": "Taal"
   }
 }
-

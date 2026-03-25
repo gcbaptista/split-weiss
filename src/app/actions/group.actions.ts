@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 
+import { fetchRatesMap } from "@/lib/currency/frankfurter";
 import { db } from "@/lib/db";
 import {
   cleanupDeviceAccessIfDue,
@@ -115,6 +116,27 @@ export async function updateGroup(
         },
       },
     });
+
+    // If currency changed, pre-fetch exchange rates in the background
+    // so pages load fast on the next visit
+    if (old?.currency && group.currency !== old.currency) {
+      void (async () => {
+        try {
+          const expenses = await db.expense.findMany({
+            where: { groupId },
+            select: { date: true },
+          });
+          const dates = [
+            ...new Set(expenses.map((e) => e.date.toISOString().slice(0, 10))),
+            "latest",
+          ];
+          await fetchRatesMap(group.currency, dates);
+        } catch {
+          // Best-effort — pages will fetch on demand if this fails
+        }
+      })();
+    }
+
     revalidatePath(`/groups/${groupId}`);
     revalidatePath("/groups");
     return { data: group };

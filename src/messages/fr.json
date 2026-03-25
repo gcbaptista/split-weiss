@@ -136,7 +136,8 @@
     "addingExpense": "Ajout...",
     "saveChanges": "Enregistrer les modifications",
     "expenseUpdated": "Dépense mise à jour !",
-    "expenseAdded": "Dépense ajoutée !"
+    "expenseAdded": "Dépense ajoutée !",
+    "foreignCurrencyWarning": "Devise différente de celle du groupe — vérifie que la date est correcte, car les taux de change en dépendent."
   },
   "balances": {
     "tabLabel": "Soldes",
@@ -173,7 +174,8 @@
     "notePlaceholder": "Virement bancaire, espèces, Lydia...",
     "recording": "Enregistrement...",
     "markAsSettled": "Marquer comme réglé",
-    "settlementRecorded": "Règlement enregistré !"
+    "settlementRecorded": "Règlement enregistré !",
+    "staleRatesWarning": "Les taux de change n'ont pas pu être récupérés pour certaines dates. Les valeurs peuvent être approximatives."
   },
   "settings": {
     "tabLabel": "Paramètres",
@@ -270,4 +272,3 @@
     "label": "Langue"
   }
 }
-

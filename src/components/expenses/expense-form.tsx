@@ -219,6 +219,11 @@ export function ExpenseForm({
             currency={currency}
             onCurrencyChange={setCurrency}
           />
+          {currency !== groupCurrency && (
+            <p className="text-xs text-yellow-700 dark:text-yellow-300">
+              ⚠️ {t("foreignCurrencyWarning")}
+            </p>
+          )}
         </FormItem>
         <FormField
           control={form.control}
