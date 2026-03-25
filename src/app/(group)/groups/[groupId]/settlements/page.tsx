@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { getGroupExpensesForCalculation } from "@/app/actions/expense.actions";
@@ -15,11 +16,12 @@ interface PageProps {
 
 export default async function SettlementsPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements, currentMemberId] = await Promise.all([
+  const [group, expenses, settlements, currentMemberId, t] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForCalculation(groupId),
     getGroupSettlementHistory(groupId),
     getCurrentMemberId(groupId),
+    getTranslations("settlements"),
   ]);
 
   if (!group) notFound();
@@ -28,8 +30,8 @@ export default async function SettlementsPage({ params }: PageProps) {
     return (
       <EmptyState
         icon="🤝"
-        title="Settlements need at least 2 people"
-        description="Add another member before this group can show who should pay whom."
+        title={t("needAtLeast2")}
+        description={t("needAtLeast2Description")}
       />
     );
   }

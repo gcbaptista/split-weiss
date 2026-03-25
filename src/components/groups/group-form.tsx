@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { type CreateGroupInput, createGroupSchema } from "@/lib/validations/group.schema";
 
 export function GroupForm() {
+  const t = useTranslations("groupForm");
   const router = useRouter();
   const form = useForm<CreateGroupInput>({
     resolver: zodResolver(createGroupSchema),
@@ -37,7 +39,7 @@ export function GroupForm() {
       toast.error(result.error);
       return;
     }
-    toast.success("Group created!");
+    toast.success(t("groupCreated"));
     router.push(`/groups/${result.data!.id}`);
   }
 
@@ -49,9 +51,9 @@ export function GroupForm() {
           name="creatorName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your name</FormLabel>
+              <FormLabel>{t("yourName")}</FormLabel>
               <FormControl>
-                <Input placeholder="Alex" autoComplete="name" {...field} />
+                <Input placeholder={t("yourNamePlaceholder")} autoComplete="name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -62,9 +64,9 @@ export function GroupForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Group name</FormLabel>
+              <FormLabel>{t("groupName")}</FormLabel>
               <FormControl>
-                <Input placeholder="Weekend trip" autoComplete="organization" {...field} />
+                <Input placeholder={t("groupNamePlaceholder")} autoComplete="organization" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,9 +77,9 @@ export function GroupForm() {
           name="emoji"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Emoji (optional)</FormLabel>
+              <FormLabel>{t("emoji")}</FormLabel>
               <FormControl>
-                <Input placeholder="✈️" maxLength={4} {...field} />
+                <Input placeholder={t("emojiPlaceholder")} maxLength={4} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +90,7 @@ export function GroupForm() {
           name="currency"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Default currency</FormLabel>
+              <FormLabel>{t("defaultCurrency")}</FormLabel>
               <FormControl>
                 <CurrencySelect value={field.value} onChange={field.onChange} />
               </FormControl>
@@ -101,24 +103,24 @@ export function GroupForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password (optional)</FormLabel>
+              <FormLabel>{t("password")}</FormLabel>
               <FormControl>
                 <Input
                   type="password"
-                  placeholder="Leave blank"
+                  placeholder={t("passwordPlaceholder")}
                   autoComplete="new-password"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
               <p className="text-xs text-muted-foreground">
-                Leave it blank to keep the group open.
+                {t("passwordHint")}
               </p>
             </FormItem>
           )}
         />
         <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
-          {form.formState.isSubmitting ? "Creating..." : "Create group"}
+          {form.formState.isSubmitting ? t("creating") : t("createGroup")}
         </Button>
       </form>
     </Form>

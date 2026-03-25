@@ -1,6 +1,7 @@
 "use client";
 
 import { EllipsisVertical, Share, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "splitweiss-install-dismissed";
@@ -120,6 +121,7 @@ function AndroidSteps() {
 }
 
 export function IosInstallPrompt() {
+  const t = useTranslations("install");
   const [platform, setPlatform] = useState<Platform>(null);
   const [visible, setVisible] = useState(false);
 
@@ -157,9 +159,9 @@ export function IosInstallPrompt() {
       </button>
 
       <div className="pr-6">
-        <p className="text-sm font-semibold">Install SplitWeiss</p>
+        <p className="text-sm font-semibold">{t("title")}</p>
         <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-          Get the full app experience — add to your home screen:
+          {t("subtitle")}
         </p>
         {platform === "ios-safari" && <IosSafariSteps />}
         {platform === "ios-chrome" && <IosChromeSteps />}

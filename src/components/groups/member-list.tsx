@@ -1,5 +1,6 @@
 "use client";
 import { Check, History, Pencil, Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +23,8 @@ interface MemberListProps {
 }
 
 export function MemberList({ members, groupId, currentMemberId }: MemberListProps) {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const [name, setName] = useState("");
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
       toast.error(result.error);
       return;
     }
-    toast.success("Added to group");
+    toast.success(t("addedToGroup"));
     setName("");
   }
 
@@ -48,7 +51,7 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
       toast.error(result.error);
       return;
     }
-    toast.success("Removed from group");
+    toast.success(t("removedFromGroup"));
   }
 
   function startEditing(member: MemberSummary) {
@@ -68,7 +71,7 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
       return;
     }
     setEditingId(null);
-    toast.success("Name updated");
+    toast.success(t("nameUpdated"));
     router.refresh();
   }
 
@@ -98,7 +101,7 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
                 <p className="text-sm font-medium truncate">
                   {m.name}
                   {currentMemberId === m.id && (
-                    <span className="text-muted-foreground font-normal"> (you)</span>
+                    <span className="text-muted-foreground font-normal"> {t("youLabel")}</span>
                   )}
                 </p>
               )}
@@ -159,14 +162,14 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
       </ul>
       <div className="flex gap-2 pt-2">
         <Input
-          placeholder="Name"
+          placeholder={t("namePlaceholder")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           className="flex-1"
         />
         <Button onClick={handleAdd} disabled={adding || !name.trim()}>
-          {adding ? "Adding..." : "Add"}
+          {adding ? tc("adding") : tc("add")}
         </Button>
       </div>
       {auditMember && (
@@ -182,20 +185,11 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
   );
 }
 
-const ACTION_BADGE: Record<string, { label: string; className: string }> = {
-  CREATED: {
-    label: "Created",
-    className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  },
-  UPDATED: {
-    label: "Updated",
-    className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  },
-  DELETED: { label: "Deleted", className: "bg-destructive/10 text-destructive" },
-  REVERTED: {
-    label: "Reverted",
-    className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
-  },
+const ACTION_BADGE_CLASSNAME: Record<string, string> = {
+  CREATED: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  UPDATED: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  DELETED: "bg-destructive/10 text-destructive",
+  REVERTED: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
 };
 
 function MemberAuditSheet({
@@ -207,8 +201,17 @@ function MemberAuditSheet({
   member: MemberSummary;
   onOpenChange: (open: boolean) => void;
 }) {
+  const tc = useTranslations("common");
+  const ta = useTranslations("audit");
   const [logs, setLogs] = useState<ExpenseAuditLogEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const actionLabels: Record<string, string> = {
+    CREATED: ta("created"),
+    UPDATED: ta("updated"),
+    DELETED: ta("deleted"),
+    REVERTED: ta("reverted"),
+  };
 
   useEffect(() => {
     void getMemberAuditLog(groupId, member.id)
@@ -219,14 +222,14 @@ function MemberAuditSheet({
         }
         setLogs(result.data ?? []);
       })
-      .catch(() => setError("Failed to load history"));
+      .catch(() => setError(tc("failedToLoadHistory")));
   }, [groupId, member.id]);
 
   return (
     <Sheet open onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>History · {member.name}</SheetTitle>
+          <SheetTitle>{tc("historyTitle", { title: member.name })}</SheetTitle>
         </SheetHeader>
         <div className="px-4 pb-4 space-y-3">
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -238,27 +241,29 @@ function MemberAuditSheet({
             </>
           )}
           {logs && logs.length === 0 && (
-            <p className="text-sm text-muted-foreground">No history found.</p>
+            <p className="text-sm text-muted-foreground">{tc("noHistoryFound")}</p>
           )}
           {logs?.map((entry) => {
-            const badge = ACTION_BADGE[entry.action] ?? {
-              label: "Updated",
-              className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-            };
-            const title = entry.expense?.title ?? "Deleted expense";
+            const label = actionLabels[entry.action] ?? ta("updated");
+            const badgeClass =
+              ACTION_BADGE_CLASSNAME[entry.action] ??
+              "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+            const title = entry.expense?.title ?? ta("deletedExpense");
             return (
               <div key={entry.id} className="rounded-lg border p-3 space-y-1">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium truncate max-w-[180px]">{title}</span>
-                    <Badge className={badge.className}>{badge.label}</Badge>
+                    <Badge className={badgeClass}>{label}</Badge>
                   </div>
                   <span className="text-xs text-muted-foreground">
                     {new Date(entry.createdAt).toLocaleString()}
                   </span>
                 </div>
                 {entry.actor && (
-                  <p className="text-xs text-muted-foreground">by {entry.actor.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {ta("byActor", { name: entry.actor.name })}
+                  </p>
                 )}
               </div>
             );

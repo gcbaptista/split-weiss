@@ -1,6 +1,7 @@
 "use client";
 
 import { UserPlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,6 +19,8 @@ interface GroupIdentityPickerProps {
 }
 
 export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerProps) {
+  const t = useTranslations("identity");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showNewMember, setShowNewMember] = useState(false);
@@ -34,7 +37,7 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
       }
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error(tc("somethingWentWrong"));
       setIsSubmitting(false);
     }
   }
@@ -52,7 +55,7 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
       }
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error(tc("somethingWentWrong"));
       setIsSubmitting(false);
     }
   }
@@ -61,8 +64,8 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Who are you?</CardTitle>
-          <CardDescription>Pick your name so we can highlight your balances.</CardDescription>
+          <CardTitle>{t("whoAreYou")}</CardTitle>
+          <CardDescription>{t("pickName")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -86,13 +89,13 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
                 <Input
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder="Your name"
+                  placeholder={t("yourNamePlaceholder")}
                   autoFocus
                   disabled={isSubmitting}
                   onKeyDown={(e) => e.key === "Enter" && handleAddNew()}
                 />
                 <Button disabled={isSubmitting || !newName.trim()} onClick={handleAddNew}>
-                  Join
+                  {tc("join")}
                 </Button>
               </div>
             ) : (
@@ -102,7 +105,7 @@ export function GroupIdentityPicker({ groupId, members }: GroupIdentityPickerPro
                 onClick={() => setShowNewMember(true)}
               >
                 <UserPlus className="h-5 w-5" />
-                <span className="text-sm">I&apos;m someone new</span>
+                <span className="text-sm">{t("someoneNew")}</span>
               </Button>
             )}
           </div>

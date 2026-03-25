@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { GroupCard } from "@/components/groups/group-card";
@@ -7,26 +8,17 @@ import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { getRecentAccessibleGroups } from "@/lib/group-access";
 
-const features = [
-  {
-    emoji: "⚖️",
-    title: "Flexible splitting",
-    desc: "Split by fixed amount or percentage — per person, your way.",
-  },
-  {
-    emoji: "💱",
-    title: "Multi-currency",
-    desc: "Add expenses in any currency, settled in the group's base currency.",
-  },
-  {
-    emoji: "🧮",
-    title: "Smart settlement",
-    desc: "Minimizes the number of payments needed to clear all debts.",
-  },
-];
-
 export default async function LandingPage() {
-  const recentGroups = await getRecentAccessibleGroups();
+  const [recentGroups, t] = await Promise.all([
+    getRecentAccessibleGroups(),
+    getTranslations("landing"),
+  ]);
+
+  const features = [
+    { emoji: "⚖️", title: t("features.splitting.title"), desc: t("features.splitting.desc") },
+    { emoji: "💱", title: t("features.currency.title"), desc: t("features.currency.desc") },
+    { emoji: "🧮", title: t("features.settlement.title"), desc: t("features.settlement.desc") },
+  ];
 
   return (
     <div className="min-h-screen bg-muted/10">
@@ -36,11 +28,11 @@ export default async function LandingPage() {
           <section className="pt-10 pb-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Recent groups</h2>
-                <p className="text-sm text-muted-foreground">Pick up where you left off.</p>
+                <h2 className="text-xl font-semibold">{t("recentGroups")}</h2>
+                <p className="text-sm text-muted-foreground">{t("recentGroupsSubtitle")}</p>
               </div>
               <Button render={<Link href="/groups/new" />} variant="outline">
-                New group
+                {t("newGroup")}
               </Button>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,18 +50,16 @@ export default async function LandingPage() {
         ) : (
           <section className="py-24 text-center space-y-6 max-w-2xl mx-auto">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl leading-tight">
-              Never wonder who owes whom again.
+              {t("heroTitle")}
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Split expenses with friends. Multi-currency. Free forever.
-            </p>
+            <p className="text-muted-foreground text-lg">{t("heroSubtitle")}</p>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button render={<Link href="/groups/new" />} size="lg">
-                Create a group
+                {t("createGroup")}
               </Button>
             </div>
             <div className="mx-auto w-full max-w-sm pt-2 space-y-3">
-              <p className="text-sm text-muted-foreground">Have a group link?</p>
+              <p className="text-sm text-muted-foreground">{t("haveGroupLink")}</p>
               <JoinGroupForm />
               <div className="flex justify-center">
                 <QrScannerButton />

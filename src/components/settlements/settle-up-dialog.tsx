@@ -1,5 +1,6 @@
 "use client";
 import Decimal from "decimal.js";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ export function SettleUpDialog({
   groupId,
   currency,
 }: SettleUpDialogProps) {
+  const t = useTranslations("settlements");
   const router = useRouter();
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -55,7 +57,7 @@ export function SettleUpDialog({
       toast.error(result.error);
       return;
     }
-    toast.success("Settlement recorded!");
+    toast.success(t("settlementRecorded"));
     setNote("");
     onOpenChange(false);
     router.refresh();
@@ -67,23 +69,23 @@ export function SettleUpDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Record settlement</DialogTitle>
+          <DialogTitle>{t("recordSettlement")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            <strong>{debt.fromName}</strong> pays <strong>{debt.toName}</strong>{" "}
+            <strong>{debt.fromName}</strong>{" → "}<strong>{debt.toName}</strong>{" "}
             {formatCurrency(debt.amount.toString(), currency)}
           </p>
           <div className="space-y-1">
-            <Label>Note (optional)</Label>
+            <Label>{t("noteOptional")}</Label>
             <Input
-              placeholder="Bank transfer, cash, MB WAY..."
+              placeholder={t("notePlaceholder")}
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
           <Button onClick={handleSettle} disabled={submitting} className="w-full">
-            {submitting ? "Recording..." : "Mark as settled"}
+            {submitting ? t("recording") : t("markAsSettled")}
           </Button>
         </div>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
@@ -19,7 +20,11 @@ interface GroupLayoutProps {
 
 export default async function GroupLayout({ children, params }: GroupLayoutProps) {
   const { groupId } = await params;
-  const access = await getGroupRequestAccess(groupId);
+  const [access, t, tGroups] = await Promise.all([
+    getGroupRequestAccess(groupId),
+    getTranslations("common"),
+    getTranslations("groups"),
+  ]);
 
   if (access.status === "not-found") return <GroupNotFoundState />;
   if (access.status === "locked") return <GroupUnlockPrompt groupId={groupId} />;
@@ -42,7 +47,7 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
           className="mb-2 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground sm:hidden"
         >
           <ChevronLeft className="h-4 w-4" />
-          Groups
+          {tGroups("backToGroups")}
         </Link>
         <div className="flex items-center justify-between gap-3 pb-4">
           <div className="min-w-0 flex items-center gap-3">
@@ -50,8 +55,7 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
             <div className="min-w-0">
               <h1 className="truncate text-xl font-bold sm:text-2xl">{group.name}</h1>
               <p className="text-sm text-muted-foreground">
-                {group.currency} · {group.members.length} member
-                {group.members.length !== 1 ? "s" : ""}
+                {group.currency} · {t("member", { count: group.members.length })}
               </p>
             </div>
           </div>

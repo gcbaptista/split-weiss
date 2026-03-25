@@ -1,6 +1,7 @@
 "use client";
 
 import { Link as LinkIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -35,6 +36,8 @@ function extractGroupId(input: string): string | null {
 }
 
 export function JoinGroupForm() {
+  const t = useTranslations("joinGroup");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -43,7 +46,7 @@ export function JoinGroupForm() {
     e.preventDefault();
     const groupId = extractGroupId(value);
     if (!groupId) {
-      setError("Paste a group link or ID");
+      setError(t("error"));
       return;
     }
     setError("");
@@ -60,14 +63,14 @@ export function JoinGroupForm() {
             setValue(e.target.value);
             if (error) setError("");
           }}
-          placeholder="Paste group link or ID"
+          placeholder={t("placeholder")}
           className="pl-9"
           autoCapitalize="none"
           autoCorrect="off"
         />
       </div>
       <Button type="submit" disabled={!value.trim()}>
-        Go
+        {tc("go")}
       </Button>
     </form>
   );

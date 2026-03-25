@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,6 +28,7 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
+  const t = useTranslations("unlock");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<PasswordFormData>({
@@ -46,10 +48,10 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
         return;
       }
 
-      toast.success("Unlocked");
+      toast.success(t("unlocked"));
       router.refresh();
     } catch {
-      toast.error("Couldn't open the group");
+      toast.error(t("couldNotOpen"));
       setIsSubmitting(false);
     }
   }
@@ -58,8 +60,8 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Enter password</CardTitle>
-          <CardDescription>This group is locked on new devices.</CardDescription>
+          <CardTitle>{t("enterPassword")}</CardTitle>
+          <CardDescription>{t("lockedDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -69,11 +71,11 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="Password"
+                        placeholder={t("passwordPlaceholder")}
                         autoComplete="current-password"
                         autoFocus
                         {...field}
@@ -85,7 +87,7 @@ export function GroupUnlockPrompt({ groupId }: { groupId: string }) {
               />
 
               <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? "Checking..." : "Unlock"}
+                {isSubmitting ? t("checking") : t("unlock")}
               </Button>
             </form>
           </Form>

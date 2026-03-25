@@ -1,4 +1,5 @@
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { NetBalance } from "@/lib/balances/calculator";
@@ -12,7 +13,9 @@ interface BalanceCardProps {
   isCurrentUser?: boolean;
 }
 
-export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceCardProps) {
+export async function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceCardProps) {
+  const t = await getTranslations("balances");
+  const tc = await getTranslations("common");
   const amount = parseFloat(balance.netAmount.toString());
   const isPositive = amount > 0.005;
   const isNegative = amount < -0.005;
@@ -31,7 +34,7 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-sm font-medium">{isCurrentUser ? "You" : user.name}</p>
+          <p className="text-sm font-medium">{isCurrentUser ? tc("you") : user.name}</p>
           <p
             className={cn(
               "flex items-center gap-1 text-xs",
@@ -45,13 +48,13 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
             {!isPositive && !isNegative && <Minus className="h-3 w-3" aria-hidden />}
             {isPositive
               ? isCurrentUser
-                ? "you are owed"
-                : "is owed"
+                ? t("youAreOwed")
+                : t("isOwed")
               : isNegative
                 ? isCurrentUser
-                  ? "you owe"
-                  : "owes"
-                : "settled up"}
+                  ? t("youOwe")
+                  : t("owes")
+                : t("settledUp")}
           </p>
         </div>
       </div>

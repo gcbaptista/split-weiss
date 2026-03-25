@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -19,9 +20,10 @@ export default async function GroupSettingsPage({ params }: PageProps) {
   const proto = headersList.get("x-forwarded-proto") ?? "https";
   const groupUrl = `${proto}://${host}/groups/${groupId}`;
 
-  const [group, currentMemberId] = await Promise.all([
+  const [group, currentMemberId, t] = await Promise.all([
     getAuthorizedGroup(groupId),
     getCurrentMemberId(groupId),
+    getTranslations("settings"),
   ]);
 
   if (!group) notFound();
@@ -29,10 +31,8 @@ export default async function GroupSettingsPage({ params }: PageProps) {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-1 font-semibold">Share group</h2>
-        <p className="mb-3 text-sm text-muted-foreground">
-          Invite others by sharing the link or scanning the QR code.
-        </p>
+        <h2 className="mb-1 font-semibold">{t("shareGroup")}</h2>
+        <p className="mb-3 text-sm text-muted-foreground">{t("shareGroupDescription")}</p>
         <GroupShare
           groupId={groupId}
           groupName={group.name}
@@ -42,8 +42,8 @@ export default async function GroupSettingsPage({ params }: PageProps) {
       </section>
 
       <section>
-        <h2 className="mb-1 font-semibold">Group details</h2>
-        <p className="mb-3 text-sm text-muted-foreground">Anyone in the group can edit these.</p>
+        <h2 className="mb-1 font-semibold">{t("groupDetails")}</h2>
+        <p className="mb-3 text-sm text-muted-foreground">{t("groupDetailsDescription")}</p>
         <GroupSettingsForm
           groupId={groupId}
           initialName={group.name}
@@ -53,16 +53,14 @@ export default async function GroupSettingsPage({ params }: PageProps) {
       </section>
 
       <section>
-        <h2 className="mb-1 font-semibold">Password protection</h2>
-        <p className="mb-3 text-sm text-muted-foreground">Ask for a password on new devices.</p>
+        <h2 className="mb-1 font-semibold">{t("passwordProtection")}</h2>
+        <p className="mb-3 text-sm text-muted-foreground">{t("passwordProtectionDescription")}</p>
         <GroupPasswordSettings groupId={groupId} hasPassword={!!group.passwordHash} />
       </section>
 
       <section>
-        <h2 className="mb-1 font-semibold">Members</h2>
-        <p className="mb-3 text-sm text-muted-foreground">
-          Anyone in the group can add or remove people.
-        </p>
+        <h2 className="mb-1 font-semibold">{t("members")}</h2>
+        <p className="mb-3 text-sm text-muted-foreground">{t("membersDescription")}</p>
         <MemberList
           members={group.members}
           groupId={groupId}
@@ -71,8 +69,8 @@ export default async function GroupSettingsPage({ params }: PageProps) {
       </section>
 
       <section>
-        <h2 className="mb-1 font-semibold">Your identity</h2>
-        <p className="mb-3 text-sm text-muted-foreground">Change who you are on this device.</p>
+        <h2 className="mb-1 font-semibold">{t("yourIdentity")}</h2>
+        <p className="mb-3 text-sm text-muted-foreground">{t("yourIdentityDescription")}</p>
         <ResetIdentityButton
           groupId={groupId}
           currentMemberName={group.members.find((m) => m.id === currentMemberId)?.name}

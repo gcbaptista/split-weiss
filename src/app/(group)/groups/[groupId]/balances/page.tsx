@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
 import { AlertTriangle } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { getGroupExpensesForBreakdown } from "@/app/actions/expense.actions";
@@ -18,11 +19,12 @@ interface PageProps {
 
 export default async function BalancesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements, currentMemberId] = await Promise.all([
+  const [group, expenses, settlements, currentMemberId, t] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForBreakdown(groupId),
     getGroupSettlementsForBreakdown(groupId),
     getCurrentMemberId(groupId),
+    getTranslations("balances"),
   ]);
 
   if (!group) notFound();
@@ -34,8 +36,8 @@ export default async function BalancesPage({ params }: PageProps) {
     return (
       <EmptyState
         icon="⚖️"
-        title="No expenses yet"
-        description="Add expenses to see balances and spending."
+        title={t("noExpenses")}
+        description={t("noExpensesDescription")}
       />
     );
   }
@@ -105,7 +107,7 @@ export default async function BalancesPage({ params }: PageProps) {
       {hasStaleRates && (
         <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-200">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          Exchange rates could not be fetched for some dates. Values may be approximate.
+          {t("staleRatesWarning")}
         </div>
       )}
 

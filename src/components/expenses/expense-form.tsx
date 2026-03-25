@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Decimal from "decimal.js";
 import { AlertCircle, Lock, LockOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -93,6 +94,7 @@ export function ExpenseForm({
   expenseId,
   initialExpense,
 }: ExpenseFormProps) {
+  const t = useTranslations("expenses");
   const router = useRouter();
   const [currency, setCurrency] = useState(initialExpense?.currency ?? groupCurrency);
   const [splitMode, setSplitMode] = useState<SplitMode>(
@@ -154,25 +156,25 @@ export function ExpenseForm({
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, percentage: s.percentage, isLocked: s.isLocked }));
         if (includedInputs.length === 0)
-          return { splits: null, splitError: "Include at least one person" };
+          return { splits: null, splitError: t("includeAtLeastOne") };
         result = calculatePercentage(total, includedInputs);
       } else {
         const includedInputs = splitInputs
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, amount: s.amount, isLocked: s.isLocked }));
         if (includedInputs.length === 0)
-          return { splits: null, splitError: "Include at least one person" };
+          return { splits: null, splitError: t("includeAtLeastOne") };
         result = calculateLock(total, includedInputs);
       }
       return { splits: result, splitError: null };
     } catch (e) {
-      return { splits: null, splitError: e instanceof Error ? e.message : "Split error" };
+      return { splits: null, splitError: e instanceof Error ? e.message : t("splitError") };
     }
   }, [watchAmount, splitMode, splitInputs]);
 
   async function onSubmit(data: CreateExpenseInput) {
     if (!splits) {
-      toast.error(splitError ?? "Invalid split configuration");
+      toast.error(splitError ?? t("invalidSplit"));
       return;
     }
     const splitData = splits.map((s) => ({
@@ -188,7 +190,7 @@ export function ExpenseForm({
       toast.error(result.error);
       return;
     }
-    toast.success(expenseId ? "Expense updated!" : "Expense added!");
+    toast.success(expenseId ? t("expenseUpdated") : t("expenseAdded"));
     onSuccess?.();
     router.refresh();
   }
@@ -201,16 +203,16 @@ export function ExpenseForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("description")}</FormLabel>
               <FormControl>
-                <Input placeholder="Dinner, taxi, hotel..." {...field} />
+                <Input placeholder={t("descriptionPlaceholder")} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormItem>
-          <FormLabel>Amount</FormLabel>
+          <FormLabel>{t("amount")}</FormLabel>
           <AmountInput
             value={watchAmount}
             onChange={(v) => form.setValue("amount", v)}
@@ -223,12 +225,12 @@ export function ExpenseForm({
           name="payerId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Paid by</FormLabel>
+              <FormLabel>{t("paidBy")}</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue>
-                      {members.find((m) => m.id === field.value)?.name ?? "Select member"}
+                      {members.find((m) => m.id === field.value)?.name ?? t("selectMember")}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
@@ -245,7 +247,7 @@ export function ExpenseForm({
         />
 
         <div className="space-y-3">
-          <Label>Split</Label>
+          <Label>{t("split")}</Label>
           <SplitModeSelector value={splitMode} onChange={handleModeChange} />
 
           {/* PERCENTAGE — name | include switch | % input | lock icon */}
@@ -427,11 +429,11 @@ export function ExpenseForm({
         <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
           {form.formState.isSubmitting
             ? expenseId
-              ? "Saving..."
-              : "Adding..."
+              ? t("savingExpense")
+              : t("addingExpense")
             : expenseId
-              ? "Save changes"
-              : "Add expense"}
+              ? t("saveChanges")
+              : t("addExpense")}
         </Button>
       </form>
     </Form>

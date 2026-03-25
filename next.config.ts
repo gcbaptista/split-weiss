@@ -1,4 +1,7 @@
+import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // Content-Security-Policy: Next.js App Router requires 'unsafe-inline' for script-src and
 // style-src because it inlines JSON payloads and critical CSS during hydration. The Frankfurter
@@ -37,4 +40,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

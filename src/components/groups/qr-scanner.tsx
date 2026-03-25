@@ -1,6 +1,7 @@
 "use client";
 
 import { Camera, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -29,6 +30,7 @@ function extractGroupPath(text: string): string | null {
 }
 
 export function QrScannerButton() {
+  const t = useTranslations("qrScanner");
   const router = useRouter();
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState("");
@@ -71,7 +73,7 @@ export function QrScannerButton() {
           const path = extractGroupPath(decodedText);
           if (path) {
             hasNavigated.current = true;
-            toast.success("Group found!");
+            toast.success(t("groupFound"));
             stopScanner();
             router.push(path);
           }
@@ -81,7 +83,7 @@ export function QrScannerButton() {
         }
       );
     } catch {
-      setError("Could not access camera. Check permissions.");
+      setError(t("cameraError"));
       setScanning(false);
     }
   }, [router, stopScanner]);
@@ -100,7 +102,7 @@ export function QrScannerButton() {
     return (
       <Button variant="outline" size="sm" onClick={startScanner} className="gap-2">
         <Camera className="h-4 w-4" />
-        Scan QR
+        {t("scanQR")}
       </Button>
     );
   }
@@ -108,7 +110,7 @@ export function QrScannerButton() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
       <div className="flex items-center justify-between border-b px-4 py-3">
-        <h2 className="font-semibold">Scan group QR code</h2>
+        <h2 className="font-semibold">{t("scanTitle")}</h2>
         <Button variant="ghost" size="sm" onClick={stopScanner}>
           <X className="h-5 w-5" />
         </Button>
@@ -121,7 +123,7 @@ export function QrScannerButton() {
         />
         {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
         <p className="mt-4 text-sm text-muted-foreground">
-          Point your camera at a SplitWeiss QR code
+          {t("scanHint")}
         </p>
       </div>
     </div>

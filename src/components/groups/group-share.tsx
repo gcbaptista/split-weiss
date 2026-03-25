@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Copy, Share2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,8 @@ interface GroupShareProps {
 }
 
 export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupShareProps) {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const [copied, setCopied] = useState(false);
   const [supportsShare, setSupportsShare] = useState(false);
 
@@ -24,8 +27,8 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
   async function handleCopy() {
     if (!groupUrl) return;
     const text = hasPassword
-      ? `Join "${groupName}" on SplitWeiss:\n${groupUrl}\n\n🔒 This group is password-protected — ask the group creator for the password.`
-      : `Join "${groupName}" on SplitWeiss:\n${groupUrl}`;
+      ? t("shareTextLocked", { name: groupName, url: groupUrl })
+      : t("shareTextOpen", { name: groupName, url: groupUrl });
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -34,8 +37,8 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
   async function handleShare() {
     if (!groupUrl) return;
     const text = hasPassword
-      ? `Join "${groupName}" on SplitWeiss!\n\n🔒 This group is password-protected — ask the group creator for the password.`
-      : `Join "${groupName}" on SplitWeiss!`;
+      ? t("shareNativeLocked", { name: groupName })
+      : t("shareNativeOpen", { name: groupName });
     try {
       await navigator.share({ title: groupName, text, url: groupUrl });
     } catch {
@@ -54,7 +57,7 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
 
       {hasPassword && (
         <p className="text-xs text-muted-foreground">
-          🔒 This group is password-protected. Share the password separately.
+          🔒 {t("passwordProtectedShare")}
         </p>
       )}
 
@@ -63,19 +66,19 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
           {copied ? (
             <>
               <Check className="mr-2 h-4 w-4" />
-              Copied
+              {tc("copied")}
             </>
           ) : (
             <>
               <Copy className="mr-2 h-4 w-4" />
-              Copy link
+              {tc("copyLink")}
             </>
           )}
         </Button>
         {supportsShare && (
           <Button className="flex-1" onClick={handleShare} disabled={!groupUrl}>
             <Share2 className="mr-2 h-4 w-4" />
-            Share
+            {tc("share")}
           </Button>
         )}
       </div>

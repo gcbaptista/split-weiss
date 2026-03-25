@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export function AddExpenseDialog({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: AddExpenseDialogProps) {
+  const t = useTranslations("expenses");
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -46,12 +48,12 @@ export function AddExpenseDialog({
       {!isControlled && (
         <DialogTrigger render={<Button />}>
           <Plus className="mr-2 h-4 w-4" />
-          Add expense
+          {t("addExpense")}
         </DialogTrigger>
       )}
       <DialogContent className="max-h-[95svh] overflow-y-auto p-4 sm:p-6 sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{expense ? "Edit expense" : "Add expense"}</DialogTitle>
+          <DialogTitle>{expense ? t("editExpense") : t("addExpense")}</DialogTitle>
         </DialogHeader>
         <ExpenseForm
           groupId={groupId}

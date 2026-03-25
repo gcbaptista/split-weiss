@@ -1,20 +1,23 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 
-export function GroupNotFoundState() {
+export async function GroupNotFoundState() {
+  const t = await getTranslations("notFound");
+
   return (
     <EmptyState
       icon="🔎"
-      title="Group not found"
-      description="This group may have been deleted, or the link may be incorrect."
+      title={t("title")}
+      description={t("description")}
       action={
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button render={<Link href="/groups" />} variant="outline">
-            Back to groups
+            {t("backToGroups")}
           </Button>
-          <Button render={<Link href="/groups/new" />}>Create a new group</Button>
+          <Button render={<Link href="/groups/new" />}>{t("createNewGroup")}</Button>
         </div>
       }
     />

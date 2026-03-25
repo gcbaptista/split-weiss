@@ -1,5 +1,6 @@
 "use client";
 import { History, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -40,6 +41,8 @@ export function ExpenseList({
   groupCurrency,
   currentMemberId,
 }: ExpenseListProps) {
+  const t = useTranslations("expenses");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,8 +77,8 @@ export function ExpenseList({
     return (
       <EmptyState
         icon="🧾"
-        title="No expenses yet"
-        description="Add the first expense to start splitting."
+        title={t("noExpenses")}
+        description={t("noExpensesDescription")}
       />
     );
   }
@@ -96,9 +99,9 @@ export function ExpenseList({
       return;
     }
 
-    toast("Expense deleted", {
+    toast(t("expenseDeleted"), {
       action: {
-        label: "Undo",
+        label: tc("undo"),
         onClick: async () => {
           const undoResult = await revertExpense(result.data!.auditLogId);
           if (undoResult.error) {
@@ -109,7 +112,7 @@ export function ExpenseList({
               next.delete(expense.id);
               return next;
             });
-            toast.success("Restored");
+            toast.success(tc("restored"));
             router.refresh();
           }
         },
@@ -126,16 +129,16 @@ export function ExpenseList({
         <Input
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search by title or amount"
-          aria-label="Search expenses by title or amount"
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           className="h-10 sm:flex-1"
         />
         <Select value={payerFilter} onValueChange={(value) => setPayerFilter(value ?? "all")}>
           <SelectTrigger className="h-10 w-full sm:w-56" aria-label="Filter expenses by payer">
-            <SelectValue>{selectedPayer?.name ?? "All payers"}</SelectValue>
+            <SelectValue>{selectedPayer?.name ?? t("allPayers")}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All payers</SelectItem>
+            <SelectItem value="all">{t("allPayers")}</SelectItem>
             {members.map((member) => (
               <SelectItem key={member.id} value={member.id}>
                 {member.name}
@@ -149,11 +152,11 @@ export function ExpenseList({
         <div className="mb-3 flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500/40 border border-emerald-500/60" />
-            You paid
+            {t("youPaid")}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary/40 border border-primary/60" />
-            You owe
+            {t("youOwe")}
           </span>
         </div>
       )}
@@ -161,8 +164,8 @@ export function ExpenseList({
       {filteredExpenses.length === 0 ? (
         <EmptyState
           icon="🔎"
-          title="No matching expenses"
-          description="Try a different title, amount, or payer."
+          title={t("noMatching")}
+          description={t("noMatchingDescription")}
         />
       ) : (
         <ul className="space-y-2">
@@ -192,7 +195,7 @@ export function ExpenseList({
 
                 {/* Row 2: Payer and Date */}
                 <p className="text-xs text-muted-foreground">
-                  {e.payerId === currentMemberId ? "You" : e.payer.name} paid ·{" "}
+                  {t("paid", { name: e.payerId === currentMemberId ? tc("you") : e.payer.name })} ·{" "}
                   {new Date(e.date).toLocaleDateString()}
                 </p>
 

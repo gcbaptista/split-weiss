@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -46,6 +47,8 @@ export function GroupSettingsForm({
   initialEmoji,
   initialCurrency,
 }: GroupSettingsFormProps) {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [emoji, setEmoji] = useState<string | null>(initialEmoji);
@@ -61,7 +64,7 @@ export function GroupSettingsForm({
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Changes saved");
+      toast.success(t("changesSaved"));
       router.refresh();
     }
   }
@@ -69,28 +72,28 @@ export function GroupSettingsForm({
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="group-name">Group name</Label>
+        <Label htmlFor="group-name">{t("groupNameLabel")}</Label>
         <Input
           id="group-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
           maxLength={100}
-          placeholder="Group name"
+          placeholder={t("groupNamePlaceholder")}
         />
       </div>
 
       <div className="space-y-1.5">
-        <Label>Base currency</Label>
+        <Label>{t("baseCurrency")}</Label>
         <CurrencySelect value={currency} onChange={setCurrency} />
         <p className="text-xs text-muted-foreground">
-          Used for balance calculations. Existing expenses keep their original currency.
+          {t("baseCurrencyHint")}
         </p>
       </div>
 
       <div className="space-y-2">
-        <Label>Emoji</Label>
-        <p className="text-xs text-muted-foreground">Tap again to remove.</p>
+        <Label>{t("emojiLabel")}</Label>
+        <p className="text-xs text-muted-foreground">{t("emojiHint")}</p>
         <div className="flex flex-wrap gap-2">
           {EMOJI_OPTIONS.map((e) => (
             <button
@@ -109,7 +112,7 @@ export function GroupSettingsForm({
       </div>
 
       <Button onClick={handleSave} disabled={!isDirty || saving || !name.trim()} size="sm">
-        {saving ? "Saving..." : "Save changes"}
+        {saving ? tc("saving") : t("saveChanges")}
       </Button>
     </div>
   );

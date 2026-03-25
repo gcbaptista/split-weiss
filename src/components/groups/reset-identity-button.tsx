@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ interface ResetIdentityButtonProps {
 }
 
 export function ResetIdentityButton({ groupId, currentMemberName }: ResetIdentityButtonProps) {
+  const t = useTranslations("settings");
   const router = useRouter();
   const [resetting, setResetting] = useState(false);
 
@@ -23,7 +25,7 @@ export function ResetIdentityButton({ groupId, currentMemberName }: ResetIdentit
       toast.error(result.error);
       setResetting(false);
     } else {
-      toast.success("Identity reset — pick who you are.");
+      toast.success(t("identityReset"));
       router.refresh();
     }
   }
@@ -32,13 +34,13 @@ export function ResetIdentityButton({ groupId, currentMemberName }: ResetIdentit
     <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
       <p className="text-sm text-muted-foreground">
         {currentMemberName ? (
-          <>Identified as <strong className="text-foreground">{currentMemberName}</strong></>
+          <>{t("identifiedAs", { name: currentMemberName })}</>
         ) : (
-          "Not identified on this device."
+          t("notIdentified")
         )}
       </p>
       <Button variant="outline" size="sm" className="shrink-0" onClick={handleReset} disabled={resetting}>
-        {resetting ? "Resetting..." : "Switch"}
+        {resetting ? t("resetting") : t("switch")}
       </Button>
     </div>
   );

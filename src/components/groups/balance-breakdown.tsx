@@ -1,5 +1,6 @@
 "use client";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { convert } from "@/lib/currency/converter";
@@ -55,6 +56,8 @@ export function BalanceBreakdown({
   ratesByDate,
   highlightedUserId,
 }: BalanceBreakdownProps) {
+  const t = useTranslations("balances");
+  const tc = useTranslations("common");
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(new Set());
 
   const toggleMember = (userId: string) => {
@@ -153,7 +156,7 @@ export function BalanceBreakdown({
     <div className="space-y-3">
       {/* Grand total line */}
       <div className="flex items-center justify-between px-1 pb-1">
-        <span className="text-sm font-semibold text-muted-foreground">Group total</span>
+        <span className="text-sm font-semibold text-muted-foreground">{t("groupTotal")}</span>
         <span className="font-bold tabular-nums">{formatCurrency(grandTotal, currency)}</span>
       </div>
 
@@ -187,11 +190,13 @@ export function BalanceBreakdown({
                       isHighlightedUser && "text-primary"
                     )}
                   >
-                    {isHighlightedUser ? "You" : member.name}
+                    {isHighlightedUser ? tc("you") : member.name}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Paid {formatCurrency(spend?.paid ?? "0", currency)} · Share{" "}
-                    {formatCurrency(spend?.share ?? "0", currency)}
+                    {t("paidAndShare", {
+                      paid: formatCurrency(spend?.paid ?? "0", currency),
+                      share: formatCurrency(spend?.share ?? "0", currency),
+                    })}
                   </p>
                 </div>
                 <span
@@ -218,7 +223,7 @@ export function BalanceBreakdown({
                     ) : (
                       <ChevronRight className="h-3 w-3" />
                     )}
-                    {transactionCount} transaction{transactionCount !== 1 ? "s" : ""}
+                    {tc("transaction", { count: transactionCount })}
                   </button>
 
                   {isExpanded && (
@@ -242,16 +247,16 @@ export function BalanceBreakdown({
                                   {new Date(expense.date).toLocaleDateString()}
                                   {!isPayer && payerName && (
                                     <span>
-                                      {" · "}paid by {payerName}
+                                      {" · "}{t("paidBy", { name: payerName })}
                                     </span>
                                   )}
                                   {isPayer && (
                                     <span>
-                                      {" · "}paid {formatCurrency(expense.amount, expense.currency)}
+                                      {" · "}{t("paidTotal", { amount: formatCurrency(expense.amount, expense.currency) })}
                                     </span>
                                   )}
                                   <span>
-                                    {" · "}share {formatCurrency(memberShare, expense.currency)}
+                                    {" · "}{t("shareOf", { amount: formatCurrency(memberShare, expense.currency) })}
                                   </span>
                                 </p>
                               </div>
@@ -281,7 +286,7 @@ export function BalanceBreakdown({
                             >
                               <div className="min-w-0">
                                 <p className="text-sm font-medium truncate">
-                                  Settlement {isPayer ? "to" : "from"} {otherUser.name}
+                                  {isPayer ? t("settlementTo", { name: otherUser.name }) : t("settlementFrom", { name: otherUser.name })}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {new Date(settlement.date).toLocaleDateString()}

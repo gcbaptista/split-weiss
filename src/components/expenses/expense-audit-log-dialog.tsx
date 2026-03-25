@@ -1,5 +1,6 @@
 "use client";
 import { Undo2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -18,20 +19,11 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const ACTION_BADGE: Record<string, { label: string; className: string }> = {
-  CREATED: {
-    label: "Created",
-    className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  },
-  UPDATED: {
-    label: "Updated",
-    className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  },
-  DELETED: { label: "Deleted", className: "bg-destructive/10 text-destructive" },
-  REVERTED: {
-    label: "Reverted",
-    className: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
-  },
+const ACTION_BADGE_CLASSNAME: Record<string, string> = {
+  CREATED: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  UPDATED: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  DELETED: "bg-destructive/10 text-destructive",
+  REVERTED: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
 };
 
 function DiffRow({ label, before, after }: { label: string; before: string; after: string }) {
@@ -60,6 +52,7 @@ function SnapshotSummary({ state }: { state: ExpenseStateSnapshot }) {
 }
 
 function DeltaContent({ delta }: { delta: ExpenseDelta }) {
+  const ta = useTranslations("audit");
   const hasChanges =
     delta.title ||
     delta.amount ||
@@ -70,36 +63,36 @@ function DeltaContent({ delta }: { delta: ExpenseDelta }) {
     delta.splits;
 
   if (!hasChanges) {
-    return <p className="text-sm text-muted-foreground">No visible changes.</p>;
+    return <p className="text-sm text-muted-foreground">{ta("noVisibleChanges")}</p>;
   }
 
   return (
     <div className="space-y-1">
       {delta.title && (
-        <DiffRow label="Description" before={delta.title.from} after={delta.title.to} />
+        <DiffRow label={ta("descriptionLabel")} before={delta.title.from} after={delta.title.to} />
       )}
       {delta.amount && (
-        <DiffRow label="Amount" before={delta.amount.from} after={delta.amount.to} />
+        <DiffRow label={ta("amountLabel")} before={delta.amount.from} after={delta.amount.to} />
       )}
       {delta.currency && (
-        <DiffRow label="Currency" before={delta.currency.from} after={delta.currency.to} />
+        <DiffRow label={ta("currencyLabel")} before={delta.currency.from} after={delta.currency.to} />
       )}
       {delta.payerName && (
-        <DiffRow label="Paid by" before={delta.payerName.from} after={delta.payerName.to} />
+        <DiffRow label={ta("paidByLabel")} before={delta.payerName.from} after={delta.payerName.to} />
       )}
       {delta.splitMode && (
-        <DiffRow label="Split mode" before={delta.splitMode.from} after={delta.splitMode.to} />
+        <DiffRow label={ta("splitModeLabel")} before={delta.splitMode.from} after={delta.splitMode.to} />
       )}
       {delta.date && (
         <DiffRow
-          label="Date"
+          label={ta("dateLabel")}
           before={new Date(delta.date.from).toLocaleDateString()}
           after={new Date(delta.date.to).toLocaleDateString()}
         />
       )}
       {delta.splits && (
         <DiffRow
-          label="Splits"
+          label={ta("splitsLabel")}
           before={splitsSummary(delta.splits.from)}
           after={splitsSummary(delta.splits.to)}
         />
@@ -109,10 +102,11 @@ function DeltaContent({ delta }: { delta: ExpenseDelta }) {
 }
 
 function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
+  const ta = useTranslations("audit");
   const snapshot = entry.snapshot;
 
   if (snapshot.action === "CREATED") {
-    return <p className="text-sm text-muted-foreground">Expense created.</p>;
+    return <p className="text-sm text-muted-foreground">{ta("expenseCreated")}</p>;
   }
 
   if (snapshot.action === "DELETED") {
@@ -130,7 +124,7 @@ function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
       delta.date ||
       delta.splits;
     if (!hasChanges) {
-      return <p className="text-sm text-muted-foreground">Reverted to previous state.</p>;
+      return <p className="text-sm text-muted-foreground">{ta("revertedToPrevious")}</p>;
     }
     return <DeltaContent delta={delta} />;
   }
@@ -139,10 +133,19 @@ function EntryContent({ entry }: { entry: ExpenseAuditLogEntry }) {
 }
 
 function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
+  const tc = useTranslations("common");
+  const ta = useTranslations("audit");
   const [logs, setLogs] = useState<ExpenseAuditLogEntry[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [reverting, setReverting] = useState<string | null>(null);
   const router = useRouter();
+
+  const actionLabels: Record<string, string> = {
+    CREATED: ta("created"),
+    UPDATED: ta("updated"),
+    DELETED: ta("deleted"),
+    REVERTED: ta("reverted"),
+  };
 
   function loadLogs() {
     void getExpenseAuditLog(expenseId)
@@ -154,7 +157,7 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
         setLogs(result.data ?? []);
       })
       .catch(() => {
-        setError("Failed to load history");
+        setError(tc("failedToLoadHistory"));
       });
   }
 
@@ -171,7 +174,7 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
       toast.error(result.error);
       return;
     }
-    toast.success("Reverted");
+    toast.success(tc("reverted"));
     router.refresh();
     loadLogs();
   }
@@ -190,17 +193,18 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
         </>
       )}
       {logs && logs.length === 0 && (
-        <p className="text-sm text-muted-foreground">No history found.</p>
+        <p className="text-sm text-muted-foreground">{tc("noHistoryFound")}</p>
       )}
       {logs &&
         logs.map((entry) => {
-          const badge = ACTION_BADGE[entry.action] ?? { label: entry.action, className: "" };
+          const label = actionLabels[entry.action] ?? entry.action;
+          const badgeClass = ACTION_BADGE_CLASSNAME[entry.action] ?? "";
           return (
             <div key={entry.id} className="rounded-lg border p-3 space-y-2">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   {entry.actor && <span className="text-sm font-medium">{entry.actor.name}</span>}
-                  <Badge className={badge.className}>{badge.label}</Badge>
+                  <Badge className={badgeClass}>{label}</Badge>
                 </div>
                 <span className="text-xs text-muted-foreground">
                   {new Date(entry.createdAt).toLocaleString()}
@@ -227,11 +231,12 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
 }
 
 export function ExpenseAuditLogDialog({ expenseId, expenseTitle, onOpenChange }: Props) {
+  const tc = useTranslations("common");
   return (
     <Sheet open={!!expenseId} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>History · {expenseTitle}</SheetTitle>
+          <SheetTitle>{tc("historyTitle", { title: expenseTitle })}</SheetTitle>
         </SheetHeader>
         {expenseId ? <ExpenseAuditLogContent key={expenseId} expenseId={expenseId} /> : null}
       </SheetContent>

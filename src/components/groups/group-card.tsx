@@ -1,4 +1,5 @@
 import { Users } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,9 @@ interface GroupCardProps {
   };
 }
 
-export function GroupCard({ group }: GroupCardProps) {
+export async function GroupCard({ group }: GroupCardProps) {
+  const t = await getTranslations("common");
+
   return (
     <Link href={`/groups/${group.id}`}>
       <Card className="cursor-pointer transition-shadow hover:shadow-md">
@@ -27,16 +30,13 @@ export function GroupCard({ group }: GroupCardProps) {
                 <p className="mt-1 text-sm text-muted-foreground">{group.currency}</p>
               </div>
             </div>
-            <Badge variant="secondary">{group._count.expenses} expenses</Badge>
+            <Badge variant="secondary">{t("expense", { count: group._count.expenses })}</Badge>
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
-            <span>
-              {group._count.members} member
-              {group._count.members !== 1 ? "s" : ""}
-            </span>
+            <span>{t("member", { count: group._count.members })}</span>
           </div>
         </CardContent>
       </Card>

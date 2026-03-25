@@ -1,6 +1,7 @@
 "use client";
 import Decimal from "decimal.js";
 import { ArrowRight, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
@@ -44,6 +45,8 @@ export function SettlementPairs({
   members,
   highlightedUserId,
 }: SettlementPairsProps) {
+  const t = useTranslations("settlements");
+  const tc = useTranslations("common");
   const [expandedPairs, setExpandedPairs] = useState<Set<string>>(new Set());
   const [selectedDebt, setSelectedDebt] = useState<DebtItem | null>(null);
 
@@ -108,8 +111,8 @@ export function SettlementPairs({
     return (
       <EmptyState
         icon="🤝"
-        title="No settlements"
-        description="Once debts are calculated, suggested settlements will appear here."
+        title={t("noSettlements")}
+        description={t("noSettlementsDescription")}
       />
     );
   }
@@ -136,8 +139,8 @@ export function SettlementPairs({
           const isUserRelevant =
             highlightedUserId &&
             (pair.fromUserId === highlightedUserId || pair.toUserId === highlightedUserId);
-          const fromLabel = pair.fromUserId === highlightedUserId ? "You" : pair.fromName;
-          const toLabel = pair.toUserId === highlightedUserId ? "You" : pair.toName;
+          const fromLabel = pair.fromUserId === highlightedUserId ? tc("you") : pair.fromName;
+          const toLabel = pair.toUserId === highlightedUserId ? tc("you") : pair.toName;
           const isExpanded = expandedPairs.has(pair.key);
           const hasHistory = pair.settlements.length > 0;
 
@@ -182,11 +185,11 @@ export function SettlementPairs({
                         variant={isUserRelevant ? "default" : "outline"}
                         onClick={() => setSelectedDebt(pair.debt)}
                       >
-                        Settle up
+                        {t("settleUp")}
                       </Button>
                     </>
                   ) : (
-                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">Settled up</span>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">{t("settledUp")}</span>
                   )}
                 </div>
               </div>
@@ -203,8 +206,7 @@ export function SettlementPairs({
                     ) : (
                       <ChevronRight className="h-3 w-3" />
                     )}
-                    {pair.settlements.length} past settlement
-                    {pair.settlements.length !== 1 ? "s" : ""}
+                    {tc("pastSettlement", { count: pair.settlements.length })}
                   </button>
                   {isExpanded && (
                     <div className="divide-y border-t">
@@ -247,8 +249,8 @@ export function SettlementPairs({
                 toUserId: selectedDebt.toUserId,
                 amount: new Decimal(selectedDebt.amount),
                 fromName:
-                  selectedDebt.fromUserId === highlightedUserId ? "You" : selectedDebt.fromName,
-                toName: selectedDebt.toUserId === highlightedUserId ? "You" : selectedDebt.toName,
+                  selectedDebt.fromUserId === highlightedUserId ? tc("you") : selectedDebt.fromName,
+                toName: selectedDebt.toUserId === highlightedUserId ? tc("you") : selectedDebt.toName,
               }
             : null
         }
