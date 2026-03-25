@@ -197,8 +197,8 @@ export function BalanceBreakdown({
                 <span
                   className={cn(
                     "text-base font-semibold tabular-nums shrink-0",
-                    netValue > 0 && "text-green-600",
-                    netValue < 0 && "text-red-600"
+                    netValue > 0 && "text-green-600 dark:text-green-400",
+                    netValue < 0 && "text-red-600 dark:text-red-400"
                   )}
                 >
                   {netValue > 0 && "+"}
@@ -258,8 +258,8 @@ export function BalanceBreakdown({
                               <span
                                 className={cn(
                                   "text-sm font-medium tabular-nums shrink-0",
-                                  tx.runningBalance > 0.005 && "text-green-600",
-                                  tx.runningBalance < -0.005 && "text-red-600"
+                                  tx.runningBalance > 0.005 && "text-green-600 dark:text-green-400",
+                                  tx.runningBalance < -0.005 && "text-red-600 dark:text-red-400"
                                 )}
                               >
                                 {tx.runningBalance > 0.005 && "+"}
@@ -297,8 +297,8 @@ export function BalanceBreakdown({
                               <span
                                 className={cn(
                                   "text-sm font-medium tabular-nums shrink-0",
-                                  tx.runningBalance > 0.005 && "text-green-600",
-                                  tx.runningBalance < -0.005 && "text-red-600"
+                                  tx.runningBalance > 0.005 && "text-green-600 dark:text-green-400",
+                                  tx.runningBalance < -0.005 && "text-red-600 dark:text-red-400"
                                 )}
                               >
                                 {tx.runningBalance > 0.005 && "+"}

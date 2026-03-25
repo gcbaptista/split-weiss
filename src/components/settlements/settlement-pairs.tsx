@@ -152,7 +152,7 @@ export function SettlementPairs({
               {/* Pair header */}
               <div className="p-4 space-y-2 sm:flex sm:items-center sm:justify-between sm:space-y-0">
                 <div className="flex items-center gap-2 text-sm min-w-0">
-                  {!isOutstanding && <Check className="h-4 w-4 text-green-600 shrink-0" />}
+                  {!isOutstanding && <Check className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />}
                   <span
                     className={cn(
                       "text-sm font-medium truncate max-w-[120px] sm:max-w-none",
@@ -186,7 +186,7 @@ export function SettlementPairs({
                       </Button>
                     </>
                   ) : (
-                    <span className="text-xs text-green-600 font-medium">Settled up</span>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">Settled up</span>
                   )}
                 </div>
               </div>
@@ -224,7 +224,7 @@ export function SettlementPairs({
                               )}
                             </p>
                           </div>
-                          <span className="text-sm font-medium tabular-nums text-green-600 shrink-0">
+                          <span className="text-sm font-medium tabular-nums text-green-600 dark:text-green-400 shrink-0">
                             {formatCurrency(s.amount.toString(), s.currency)}
                           </span>
                         </div>

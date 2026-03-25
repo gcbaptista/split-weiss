@@ -103,7 +103,7 @@ export default async function BalancesPage({ params }: PageProps) {
   return (
     <div className="space-y-6">
       {hasStaleRates && (
-        <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
+        <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-200">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           Exchange rates could not be fetched for some dates. Values may be approximate.
         </div>

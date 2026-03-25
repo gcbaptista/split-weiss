@@ -35,8 +35,8 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
           <p
             className={cn(
               "flex items-center gap-1 text-xs",
-              isPositive && "text-green-600",
-              isNegative && "text-red-500",
+              isPositive && "text-green-600 dark:text-green-400",
+              isNegative && "text-red-500 dark:text-red-400",
               !isPositive && !isNegative && "text-muted-foreground"
             )}
           >
@@ -58,8 +58,8 @@ export function BalanceCard({ balance, user, currency, isCurrentUser }: BalanceC
       <span
         className={cn(
           "font-semibold tabular-nums",
-          isPositive && "text-green-600",
-          isNegative && "text-red-500",
+          isPositive && "text-green-600 dark:text-green-400",
+          isNegative && "text-red-500 dark:text-red-400",
           !isPositive && !isNegative && "text-muted-foreground"
         )}
       >
