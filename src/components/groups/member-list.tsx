@@ -1,5 +1,5 @@
 "use client";
-import { Check, History, Pencil, Trash2, X } from "lucide-react";
+import { Check, History, MoreVertical, Pencil, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +10,13 @@ import { addMember, removeMember, renameMember } from "@/app/actions/member.acti
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,35 +134,35 @@ export function MemberList({ members, groupId, currentMemberId }: MemberListProp
                 </Button>
               </div>
             ) : (
-              <div className="flex gap-1 shrink-0">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  onClick={() => startEditing(m)}
-                  aria-label="Edit name"
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
+                      aria-label="Member actions"
+                    />
+                  }
                 >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  onClick={() => handleRemove(m.id)}
-                  aria-label="Remove member"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  onClick={() => setAuditMember(m)}
-                  aria-label="View history"
-                >
-                  <History className="h-4 w-4" />
-                </Button>
-              </div>
+                  <MoreVertical className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => startEditing(m)}>
+                    <Pencil />
+                    {t("actionEdit")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setAuditMember(m)}>
+                    <History />
+                    {t("actionHistory")}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem destructive onClick={() => handleRemove(m.id)}>
+                    <Trash2 />
+                    {tc("delete")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </li>
         ))}

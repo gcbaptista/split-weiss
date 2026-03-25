@@ -23,6 +23,8 @@ interface AddExpenseDialogProps {
   defaultPayerId: string;
   // Edit mode — when provided, renders no trigger button and is controlled externally
   expense?: ExpenseWithSplitsClient;
+  // Duplicate mode — pre-fills the form but creates a new expense
+  templateExpense?: ExpenseWithSplitsClient;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -33,6 +35,7 @@ export function AddExpenseDialog({
   groupCurrency,
   defaultPayerId,
   expense,
+  templateExpense,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
 }: AddExpenseDialogProps) {
@@ -42,6 +45,10 @@ export function AddExpenseDialog({
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
   const setOpen = isControlled ? controlledOnOpenChange! : setUncontrolledOpen;
+
+  const isEdit = !!expense;
+  const isDuplicate = !isEdit && !!templateExpense;
+  const title = isEdit ? t("editExpense") : isDuplicate ? t("duplicateExpense") : t("addExpense");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -53,7 +60,7 @@ export function AddExpenseDialog({
       )}
       <DialogContent className="max-h-[95svh] overflow-y-auto p-4 sm:p-6 sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{expense ? t("editExpense") : t("addExpense")}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <ExpenseForm
           groupId={groupId}
@@ -61,8 +68,8 @@ export function AddExpenseDialog({
           groupCurrency={groupCurrency}
           defaultPayerId={defaultPayerId}
           onSuccess={() => setOpen(false)}
-          expenseId={expense?.id}
-          initialExpense={expense}
+          expenseId={isEdit ? expense?.id : undefined}
+          initialExpense={expense ?? templateExpense}
         />
       </DialogContent>
     </Dialog>

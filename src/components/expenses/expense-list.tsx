@@ -1,5 +1,5 @@
 "use client";
-import { History, Pencil, Trash2 } from "lucide-react";
+import { Copy, History, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -9,6 +9,13 @@ import { deleteExpense, revertExpense } from "@/app/actions/expense.actions";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -50,6 +57,7 @@ export function ExpenseList({
   const [searchQuery, setSearchQuery] = useState("");
   const [payerFilter, setPayerFilter] = useState("all");
   const [editingExpense, setEditingExpense] = useState<ExpenseWithSplitsClient | null>(null);
+  const [duplicatingExpense, setDuplicatingExpense] = useState<ExpenseWithSplitsClient | null>(null);
   const [historyExpenseId, setHistoryExpenseId] = useState<string | null>(null);
   const [historyExpenseTitle, setHistoryExpenseTitle] = useState<string>("");
 
@@ -240,44 +248,22 @@ export function ExpenseList({
                       </div>
                     )}
                   </div>
-                  {/* Action buttons — inline on mobile */}
-                  <div className="flex items-center gap-0.5 shrink-0 sm:hidden">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                      onClick={() => setEditingExpense(e)}
-                      aria-label="Edit expense"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                      onClick={() => handleDelete(e)}
-                      aria-label="Delete expense"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                      onClick={() => {
-                        setHistoryExpenseId(e.id);
-                        setHistoryExpenseTitle(e.title);
-                      }}
-                      aria-label="View history"
-                    >
-                      <History className="h-3.5 w-3.5" />
-                    </Button>
+                  {/* Action menu — ⋮ dropdown on mobile */}
+                  <div className="sm:hidden shrink-0">
+                    <ExpenseActionsMenu
+                      size="sm"
+                      t={t} tc={tc}
+                      onEdit={() => setEditingExpense(e)}
+                      onDuplicate={() => setDuplicatingExpense(e)}
+                      onHistory={() => { setHistoryExpenseId(e.id); setHistoryExpenseTitle(e.title); }}
+                      onDelete={() => handleDelete(e)}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Right side: Amount and Actions (desktop only) */}
-              <div className="hidden sm:flex items-center gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-2 shrink-0">
                 <div className="text-right">
                   {(() => {
                     const converted = convertedAmounts[e.id];
@@ -297,38 +283,13 @@ export function ExpenseList({
                     );
                   })()}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => setEditingExpense(e)}
-                    aria-label="Edit expense"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    onClick={() => handleDelete(e)}
-                    aria-label="Delete expense"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => {
-                      setHistoryExpenseId(e.id);
-                      setHistoryExpenseTitle(e.title);
-                    }}
-                    aria-label="View history"
-                  >
-                    <History className="h-4 w-4" />
-                  </Button>
-                </div>
+                <ExpenseActionsMenu
+                  t={t} tc={tc}
+                  onEdit={() => setEditingExpense(e)}
+                  onDuplicate={() => setDuplicatingExpense(e)}
+                  onHistory={() => { setHistoryExpenseId(e.id); setHistoryExpenseTitle(e.title); }}
+                  onDelete={() => handleDelete(e)}
+                />
               </div>
             </li>
           ))}
@@ -347,6 +308,19 @@ export function ExpenseList({
           }}
         />
       )}
+      {duplicatingExpense && (
+        <AddExpenseDialog
+          groupId={groupId}
+          members={members}
+          groupCurrency={groupCurrency}
+          defaultPayerId={defaultPayerId}
+          templateExpense={duplicatingExpense}
+          open={!!duplicatingExpense}
+          onOpenChange={(o) => {
+            if (!o) setDuplicatingExpense(null);
+          }}
+        />
+      )}
       <ExpenseAuditLogDialog
         expenseId={historyExpenseId}
         expenseTitle={historyExpenseTitle}
@@ -355,5 +329,61 @@ export function ExpenseList({
         }}
       />
     </>
+  );
+}
+
+function ExpenseActionsMenu({
+  size = "md",
+  t,
+  tc,
+  onEdit,
+  onDuplicate,
+  onHistory,
+  onDelete,
+}: {
+  size?: "sm" | "md";
+  t: ReturnType<typeof useTranslations<"expenses">>;
+  tc: ReturnType<typeof useTranslations<"common">>;
+  onEdit: () => void;
+  onDuplicate: () => void;
+  onHistory: () => void;
+  onDelete: () => void;
+}) {
+  const btnCls = size === "sm" ? "h-7 w-7" : "h-8 w-8";
+  const iconCls = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4";
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`${btnCls} text-muted-foreground hover:text-foreground`}
+            aria-label="Expense actions"
+          />
+        }
+      >
+        <MoreVertical className={iconCls} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={onEdit}>
+          <Pencil />
+          {t("actionEdit")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onDuplicate}>
+          <Copy />
+          {t("actionDuplicate")}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onHistory}>
+          <History />
+          {t("actionHistory")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem destructive onClick={onDelete}>
+          <Trash2 />
+          {tc("delete")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
