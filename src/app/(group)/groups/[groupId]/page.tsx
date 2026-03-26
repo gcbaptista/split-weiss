@@ -21,7 +21,7 @@ export default async function GroupExpensesPage({ params }: PageProps) {
 
   if (!group) notFound();
 
-  const defaultPayerId = group.members[0]?.id;
+  const defaultPayerId = currentMemberId ?? group.members[0]?.id;
   if (!defaultPayerId) notFound();
 
   // Compute converted amounts for expenses in a different currency

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { convert } from "@/lib/currency/converter";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { ExchangeRates } from "@/types/currency";
 import type {
   ExpenseBreakdownClient,
@@ -244,7 +244,7 @@ export function BalanceBreakdown({
                               <div className="min-w-0">
                                 <p className="text-sm font-medium truncate">{expense.title}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {new Date(expense.date).toLocaleDateString()}
+                                  {formatDate(expense.date)}
                                   {!isPayer && payerName && (
                                     <span>
                                       {" · "}{t("paidBy", { name: payerName })}
@@ -289,7 +289,7 @@ export function BalanceBreakdown({
                                   {isPayer ? t("settlementTo", { name: otherUser.name }) : t("settlementFrom", { name: otherUser.name })}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {new Date(settlement.date).toLocaleDateString()}
+                                  {formatDate(settlement.date)}
                                   <span>
                                     {" · "}
                                     {formatCurrency(

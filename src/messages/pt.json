@@ -129,6 +129,7 @@
     "description": "Descrição",
     "descriptionPlaceholder": "Jantar, táxi, hotel...",
     "amount": "Montante",
+    "date": "Data",
     "paidBy": "Pago por",
     "selectMember": "Selecionar membro",
     "split": "Divisão",

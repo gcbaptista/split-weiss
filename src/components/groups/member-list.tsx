@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { getMemberAuditLog } from "@/app/actions/expense.actions";
 import { addMember, removeMember, renameMember } from "@/app/actions/member.actions";
+import { formatDateTime } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -264,7 +265,7 @@ function MemberAuditSheet({
                     <Badge className={badgeClass}>{label}</Badge>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(entry.createdAt).toLocaleString()}
+                    {formatDateTime(entry.createdAt)}
                   </span>
                 </div>
                 {entry.actor && (

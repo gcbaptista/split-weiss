@@ -129,6 +129,7 @@
     "description": "Descrizione",
     "descriptionPlaceholder": "Cena, taxi, hotel...",
     "amount": "Importo",
+    "date": "Data",
     "paidBy": "Pagato da",
     "selectMember": "Seleziona membro",
     "split": "Divisione",

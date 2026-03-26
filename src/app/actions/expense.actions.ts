@@ -35,7 +35,7 @@ function serializeExpenseForResult(expense: Expense): Expense {
 export async function createExpense(formData: unknown): Promise<ActionResult<Expense>> {
   const parsed = createExpenseSchema.safeParse(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Validation error" };
-  const { groupId, splits: splitInputs, splitMode, amount, ...rest } = parsed.data;
+  const { groupId, splits: splitInputs, splitMode, amount, date, ...rest } = parsed.data;
 
   if (!(await canAccessGroup(groupId))) {
     return { error: "Can't access this group" };
@@ -56,7 +56,7 @@ export async function createExpense(formData: unknown): Promise<ActionResult<Exp
           groupId,
           amount,
           splitMode,
-          date: new Date(),
+          date: new Date(date),
           splits: {
             create: splitResults.map((s) => ({
               userId: s.userId,
@@ -198,7 +198,7 @@ export async function updateExpense(
     return { error: "Can't access this group" };
   }
 
-  const { splits: splitInputs, splitMode, amount, ...rest } = parsed.data;
+  const { splits: splitInputs, splitMode, amount, date, ...rest } = parsed.data;
   try {
     const total = new Decimal(amount);
     const actorId = await getCurrentMemberId(existing.groupId);
@@ -215,6 +215,7 @@ export async function updateExpense(
           ...rest,
           amount,
           splitMode,
+          date: new Date(date),
           splits: {
             create: splitResults.map((s) => ({
               userId: s.userId,
@@ -429,6 +430,7 @@ export async function revertExpense(auditLogId: string): Promise<ActionResult<Ex
       if (delta.amount) updateData.amount = delta.amount.from;
       if (delta.currency) updateData.currency = delta.currency.from;
       if (delta.splitMode) updateData.splitMode = delta.splitMode.from;
+      if (delta.date) updateData.date = new Date(delta.date.from);
       if (delta.payerId) {
         updateData.payerId = delta.payerId.from;
       }

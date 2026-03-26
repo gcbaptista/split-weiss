@@ -33,7 +33,7 @@ export default async function GroupLayout({ children, params }: GroupLayoutProps
 
   const group = access.group;
   const members = group.members;
-  const defaultPayerId = members[0]?.id;
+  const defaultPayerId = access.currentMemberId ?? members[0]?.id;
 
   if (!defaultPayerId) return <GroupNotFoundState />;
 

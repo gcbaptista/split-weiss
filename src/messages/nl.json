@@ -129,6 +129,7 @@
     "description": "Beschrijving",
     "descriptionPlaceholder": "Diner, taxi, hotel...",
     "amount": "Bedrag",
+    "date": "Datum",
     "paidBy": "Betaald door",
     "selectMember": "Lid selecteren",
     "split": "Verdeling",

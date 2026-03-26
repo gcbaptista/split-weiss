@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 import type { ExpenseAuditLogEntry, ExpenseDelta, ExpenseStateSnapshot } from "@/types/audit";
 
 interface Props {
@@ -86,8 +86,8 @@ function DeltaContent({ delta }: { delta: ExpenseDelta }) {
       {delta.date && (
         <DiffRow
           label={ta("dateLabel")}
-          before={new Date(delta.date.from).toLocaleDateString()}
-          after={new Date(delta.date.to).toLocaleDateString()}
+          before={formatDate(delta.date.from)}
+          after={formatDate(delta.date.to)}
         />
       )}
       {delta.splits && (
@@ -207,7 +207,7 @@ function ExpenseAuditLogContent({ expenseId }: { expenseId: string }) {
                   <Badge className={badgeClass}>{label}</Badge>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(entry.createdAt).toLocaleString()}
+                  {formatDateTime(entry.createdAt)}
                 </span>
               </div>
               <EntryContent entry={entry} />

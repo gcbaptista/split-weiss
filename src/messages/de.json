@@ -129,6 +129,7 @@
     "description": "Beschreibung",
     "descriptionPlaceholder": "Abendessen, Taxi, Hotel...",
     "amount": "Betrag",
+    "date": "Datum",
     "paidBy": "Bezahlt von",
     "selectMember": "Mitglied auswählen",
     "split": "Aufteilung",

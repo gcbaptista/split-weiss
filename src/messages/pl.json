@@ -129,6 +129,7 @@
     "description": "Opis",
     "descriptionPlaceholder": "Kolacja, taxi, hotel...",
     "amount": "Kwota",
+    "date": "Data",
     "paidBy": "Zapłacone przez",
     "selectMember": "Wybierz członka",
     "split": "Podział",

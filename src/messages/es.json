@@ -129,6 +129,7 @@
     "description": "Descripción",
     "descriptionPlaceholder": "Cena, taxi, hotel...",
     "amount": "Cantidad",
+    "date": "Fecha",
     "paidBy": "Pagado por",
     "selectMember": "Seleccionar miembro",
     "split": "División",

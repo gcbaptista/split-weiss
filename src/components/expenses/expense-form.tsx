@@ -121,6 +121,9 @@ export function ExpenseForm({
       currency,
       splitMode: (initialExpense?.splitMode as SplitMode) ?? "LOCK",
       payerId: initialExpense?.payerId ?? defaultPayerId,
+      date: initialExpense?.date
+        ? new Date(initialExpense.date).toISOString().slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
       splits: [],
     },
   });
@@ -225,6 +228,19 @@ export function ExpenseForm({
             </p>
           )}
         </FormItem>
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("date")}</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="payerId"

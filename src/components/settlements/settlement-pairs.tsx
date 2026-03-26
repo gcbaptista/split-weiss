@@ -7,7 +7,7 @@ import { useState } from "react";
 import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { MemberSummary, SettlementHistoryClient } from "@/types/database";
 
 interface DebtItem {
@@ -217,7 +217,7 @@ export function SettlementPairs({
                         >
                           <div className="min-w-0">
                             <p className="text-xs text-muted-foreground">
-                              {new Date(s.date).toLocaleDateString()}
+                              {formatDate(s.date)}
                               {s.note && (
                                 <span>
                                   {" · "}
