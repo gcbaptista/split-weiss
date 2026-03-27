@@ -85,6 +85,16 @@ interface SplitInputState {
   isIncluded: boolean;
 }
 
+function getLastCurrency(participantName: string): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(`splitweiss_last_currency_${participantName}`);
+}
+
+function setLastCurrency(participantName: string, currency: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(`splitweiss_last_currency_${participantName}`, currency);
+}
+
 export function ExpenseForm({
   groupId,
   members,
@@ -96,7 +106,15 @@ export function ExpenseForm({
 }: ExpenseFormProps) {
   const t = useTranslations("expenses");
   const router = useRouter();
-  const [currency, setCurrency] = useState(initialExpense?.currency ?? groupCurrency);
+  const [currency, setCurrency] = useState(() => {
+    if (initialExpense?.currency) return initialExpense.currency;
+    const payerName = members.find((m) => m.id === defaultPayerId)?.name;
+    if (payerName) {
+      const last = getLastCurrency(payerName);
+      if (last) return last;
+    }
+    return groupCurrency;
+  });
   const [splitMode, setSplitMode] = useState<SplitMode>(
     (initialExpense?.splitMode as SplitMode) ?? "LOCK"
   );
@@ -193,6 +211,8 @@ export function ExpenseForm({
       toast.error(result.error);
       return;
     }
+    const payerName = members.find((m) => m.id === data.payerId)?.name;
+    if (payerName) setLastCurrency(payerName, currency);
     toast.success(expenseId ? t("expenseUpdated") : t("expenseAdded"));
     onSuccess?.();
     router.refresh();
@@ -247,7 +267,19 @@ export function ExpenseForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("paidBy")}</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  if (!initialExpense) {
+                    const payerName = members.find((m) => m.id === value)?.name;
+                    if (payerName) {
+                      const last = getLastCurrency(payerName);
+                      if (last) setCurrency(last);
+                    }
+                  }
+                }}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue>
