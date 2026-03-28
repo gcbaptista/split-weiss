@@ -225,54 +225,49 @@ export function BalanceBreakdown({
                   {isExpanded && (
                     <div className="divide-y border-t">
                       {transactions.map((tx) => {
+                        const impact = tx.impactGroupCurrency;
+                        const bal = tx.runningBalance;
+
                         if (tx.type === "expense" && tx.expense) {
                           const expense = tx.expense;
-                          const memberSplit = expense.splits.find((s) => s.userId === member.id);
-                          const memberShare = memberSplit?.amount ?? "0";
                           const isPayer = expense.payerId === member.id;
-                          const payerName = isPayer ? null : expense.payer.name;
+                          const payerName = isPayer
+                            ? isHighlightedUser
+                              ? tc("you")
+                              : member.name
+                            : expense.payer.name;
 
                           return (
                             <div
                               key={tx.id}
                               className="flex items-center justify-between gap-3 px-4 py-3 pl-9 bg-muted/10"
                             >
-                              <div className="min-w-0">
+                              <div className="min-w-0 flex-1">
                                 <p className="text-sm font-medium truncate">{expense.title}</p>
                                 <p className="text-xs text-muted-foreground">
                                   {formatDate(expense.date)}
-                                  {!isPayer && payerName && (
-                                    <span>
-                                      {" · "}
-                                      {t("paidBy", { name: payerName })}
-                                    </span>
-                                  )}
-                                  {isPayer && (
-                                    <span>
-                                      {" · "}
-                                      {t("paidTotal", {
-                                        amount: formatCurrency(expense.amount, expense.currency),
-                                      })}
-                                    </span>
-                                  )}
                                   <span>
                                     {" · "}
-                                    {t("shareOf", {
-                                      amount: formatCurrency(memberShare, expense.currency),
-                                    })}
+                                    {t("paidBy", { name: payerName })}
                                   </span>
                                 </p>
                               </div>
-                              <span
-                                className={cn(
-                                  "text-sm font-medium tabular-nums shrink-0",
-                                  tx.runningBalance > 0.005 && "text-green-600 dark:text-green-400",
-                                  tx.runningBalance < -0.005 && "text-red-600 dark:text-red-400"
-                                )}
-                              >
-                                {tx.runningBalance > 0.005 && "+"}
-                                {formatCurrency(tx.runningBalance.toFixed(2), currency)}
-                              </span>
+                              <div className="text-right shrink-0">
+                                <span
+                                  className={cn(
+                                    "text-sm font-semibold tabular-nums",
+                                    bal > 0.005 && "text-green-600 dark:text-green-400",
+                                    bal < -0.005 && "text-red-600 dark:text-red-400"
+                                  )}
+                                >
+                                  {bal > 0.005 && "+"}
+                                  {formatCurrency(bal.toFixed(2), currency)}
+                                </span>
+                                <p className={cn("text-[10px] tabular-nums text-muted-foreground")}>
+                                  {impact > 0.005 && "+"}
+                                  {formatCurrency(impact.toFixed(2), currency)}
+                                </p>
+                              </div>
                             </div>
                           );
                         }
@@ -287,11 +282,15 @@ export function BalanceBreakdown({
                               key={tx.id}
                               className="flex items-center justify-between gap-3 px-4 py-3 pl-9 bg-muted/10"
                             >
-                              <div className="min-w-0">
+                              <div className="min-w-0 flex-1">
                                 <p className="text-sm font-medium truncate">
                                   {isPayer
-                                    ? t("settlementTo", { name: otherUser.name })
-                                    : t("settlementFrom", { name: otherUser.name })}
+                                    ? t("settlementTo", {
+                                        name: otherUser.name,
+                                      })
+                                    : t("settlementFrom", {
+                                        name: otherUser.name,
+                                      })}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {formatDate(settlement.date)}
@@ -304,16 +303,22 @@ export function BalanceBreakdown({
                                   </span>
                                 </p>
                               </div>
-                              <span
-                                className={cn(
-                                  "text-sm font-medium tabular-nums shrink-0",
-                                  tx.runningBalance > 0.005 && "text-green-600 dark:text-green-400",
-                                  tx.runningBalance < -0.005 && "text-red-600 dark:text-red-400"
-                                )}
-                              >
-                                {tx.runningBalance > 0.005 && "+"}
-                                {formatCurrency(tx.runningBalance.toFixed(2), currency)}
-                              </span>
+                              <div className="text-right shrink-0">
+                                <span
+                                  className={cn(
+                                    "text-sm font-semibold tabular-nums",
+                                    bal > 0.005 && "text-green-600 dark:text-green-400",
+                                    bal < -0.005 && "text-red-600 dark:text-red-400"
+                                  )}
+                                >
+                                  {bal > 0.005 && "+"}
+                                  {formatCurrency(bal.toFixed(2), currency)}
+                                </span>
+                                <p className={cn("text-[10px] tabular-nums text-muted-foreground")}>
+                                  {impact > 0.005 && "+"}
+                                  {formatCurrency(impact.toFixed(2), currency)}
+                                </p>
+                              </div>
                             </div>
                           );
                         }

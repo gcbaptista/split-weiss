@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { createExpense, updateExpense } from "@/app/actions/expense.actions";
@@ -82,11 +82,11 @@ export function ExpenseForm({ onSuccess, expenseId, initialExpense }: ExpenseFor
     },
   });
 
-  const watchAmount = form.watch("amount");
+  const watchAmount = useWatch({ control: form.control, name: "amount" });
 
   const { splits, splitError } = useMemo(
     () => computeSplits(watchAmount),
-    [watchAmount, splitMode, splitInputs, computeSplits]
+    [watchAmount, computeSplits]
   );
 
   async function onSubmit(data: CreateExpenseInput) {
