@@ -1,6 +1,6 @@
-import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { GroupPasswordSettings } from "@/components/groups/group-password-settings";
 import { GroupSettingsForm } from "@/components/groups/group-settings-form";
@@ -33,12 +33,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
       <section>
         <h2 className="mb-1 font-semibold">{t("shareGroup")}</h2>
         <p className="mb-3 text-sm text-muted-foreground">{t("shareGroupDescription")}</p>
-        <GroupShare
-          groupId={groupId}
-          groupName={group.name}
-          groupUrl={groupUrl}
-          hasPassword={!!group.passwordHash}
-        />
+        <GroupShare groupName={group.name} groupUrl={groupUrl} hasPassword={!!group.passwordHash} />
       </section>
 
       <section>

@@ -1,8 +1,8 @@
 "use client";
 import { ArrowLeftRight, Receipt, Scale, Settings } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 function getActiveTab(pathname: string, groupId: string) {
   if (pathname === `/groups/${groupId}`) return "expenses";
@@ -21,10 +21,30 @@ export function MobileTabBar({ groupId }: { groupId: string }) {
   const tst = useTranslations("settings");
 
   const tabs = [
-    { value: "expenses", label: te("tabLabel"), icon: Receipt, href: (id: string) => `/groups/${id}` },
-    { value: "balances", label: tb("tabLabel"), icon: Scale, href: (id: string) => `/groups/${id}/balances` },
-    { value: "settlements", label: ts("settleLabel"), icon: ArrowLeftRight, href: (id: string) => `/groups/${id}/settlements` },
-    { value: "settings", label: tst("tabLabel"), icon: Settings, href: (id: string) => `/groups/${id}/settings` },
+    {
+      value: "expenses",
+      label: te("tabLabel"),
+      icon: Receipt,
+      href: (id: string) => `/groups/${id}`,
+    },
+    {
+      value: "balances",
+      label: tb("tabLabel"),
+      icon: Scale,
+      href: (id: string) => `/groups/${id}/balances`,
+    },
+    {
+      value: "settlements",
+      label: ts("settleLabel"),
+      icon: ArrowLeftRight,
+      href: (id: string) => `/groups/${id}/settlements`,
+    },
+    {
+      value: "settings",
+      label: tst("tabLabel"),
+      icon: Settings,
+      href: (id: string) => `/groups/${id}/settings`,
+    },
   ];
 
   return (

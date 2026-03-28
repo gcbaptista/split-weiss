@@ -1,7 +1,7 @@
 "use client";
 import { Undo2 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -75,13 +75,25 @@ function DeltaContent({ delta }: { delta: ExpenseDelta }) {
         <DiffRow label={ta("amountLabel")} before={delta.amount.from} after={delta.amount.to} />
       )}
       {delta.currency && (
-        <DiffRow label={ta("currencyLabel")} before={delta.currency.from} after={delta.currency.to} />
+        <DiffRow
+          label={ta("currencyLabel")}
+          before={delta.currency.from}
+          after={delta.currency.to}
+        />
       )}
       {delta.payerName && (
-        <DiffRow label={ta("paidByLabel")} before={delta.payerName.from} after={delta.payerName.to} />
+        <DiffRow
+          label={ta("paidByLabel")}
+          before={delta.payerName.from}
+          after={delta.payerName.to}
+        />
       )}
       {delta.splitMode && (
-        <DiffRow label={ta("splitModeLabel")} before={delta.splitMode.from} after={delta.splitMode.to} />
+        <DiffRow
+          label={ta("splitModeLabel")}
+          before={delta.splitMode.from}
+          after={delta.splitMode.to}
+        />
       )}
       {delta.date && (
         <DiffRow

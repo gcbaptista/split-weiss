@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { createExpense, updateExpense } from "@/app/actions/expense.actions";
 import { AmountInput } from "@/components/shared/amount-input";
 import { Button } from "@/components/ui/button";
-import { useGroupContext } from "@/contexts/group-context";
 import {
   Form,
   FormControl,
@@ -26,10 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGroupContext } from "@/contexts/group-context";
 import { useSplitInputs } from "@/hooks/use-split-inputs";
 import { type CreateExpenseInput, createExpenseSchema } from "@/lib/validations/expense.schema";
-import type { ExpenseWithSplitsClient } from "@/types/database";
-import type { SplitMode } from "@/types/database";
+import type { ExpenseWithSplitsClient, SplitMode } from "@/types/database";
 
 import { SplitEditor } from "./split-editor";
 
@@ -49,11 +48,7 @@ function setLastCurrency(memberId: string, currency: string): void {
   localStorage.setItem(`splitweiss_last_currency_${memberId}`, currency);
 }
 
-export function ExpenseForm({
-  onSuccess,
-  expenseId,
-  initialExpense,
-}: ExpenseFormProps) {
+export function ExpenseForm({ onSuccess, expenseId, initialExpense }: ExpenseFormProps) {
   const { groupId, members, groupCurrency, defaultPayerId } = useGroupContext();
   const t = useTranslations("expenses");
   const router = useRouter();
@@ -63,18 +58,13 @@ export function ExpenseForm({
     if (last) return last;
     return groupCurrency;
   });
-  const {
-    splitMode,
-    splitInputs,
-    setSplitInputs,
-    handleModeChange,
-    computeSplits,
-  } = useSplitInputs({
-    members,
-    initialExpense,
-    errorMessage: t("includeAtLeastOne"),
-    genericErrorMessage: t("splitError"),
-  });
+  const { splitMode, splitInputs, setSplitInputs, handleModeChange, computeSplits } =
+    useSplitInputs({
+      members,
+      initialExpense,
+      errorMessage: t("includeAtLeastOne"),
+      genericErrorMessage: t("splitError"),
+    });
 
   const form = useForm<CreateExpenseInput>({
     resolver: zodResolver(createExpenseSchema),
@@ -96,7 +86,7 @@ export function ExpenseForm({
 
   const { splits, splitError } = useMemo(
     () => computeSplits(watchAmount),
-    [watchAmount, splitMode, splitInputs]
+    [watchAmount, splitMode, splitInputs, computeSplits]
   );
 
   async function onSubmit(data: CreateExpenseInput) {

@@ -34,11 +34,13 @@ interface SettlementPairsProps {
   settlements: SettlementHistoryClient[];
 }
 
-export function SettlementPairs({
-  debts,
-  settlements,
-}: SettlementPairsProps) {
-  const { groupId, groupCurrency: currency, members, currentMemberId: highlightedUserId } = useGroupContext();
+export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
+  const {
+    groupId,
+    groupCurrency: currency,
+    members,
+    currentMemberId: highlightedUserId,
+  } = useGroupContext();
   const t = useTranslations("settlements");
   const tc = useTranslations("common");
   const [expandedPairs, setExpandedPairs] = useState<Set<string>>(new Set());
@@ -149,7 +151,9 @@ export function SettlementPairs({
               {/* Pair header */}
               <div className="p-4 space-y-2 sm:flex sm:items-center sm:justify-between sm:space-y-0">
                 <div className="flex items-center gap-2 text-sm min-w-0">
-                  {!isOutstanding && <Check className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />}
+                  {!isOutstanding && (
+                    <Check className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                  )}
                   <span
                     className={cn(
                       "text-sm font-medium truncate max-w-[120px] sm:max-w-none",
@@ -183,7 +187,9 @@ export function SettlementPairs({
                       </Button>
                     </>
                   ) : (
-                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">{t("settledUp")}</span>
+                    <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                      {t("settledUp")}
+                    </span>
                   )}
                 </div>
               </div>
@@ -244,7 +250,8 @@ export function SettlementPairs({
                 amount: new Decimal(selectedDebt.amount),
                 fromName:
                   selectedDebt.fromUserId === highlightedUserId ? tc("you") : selectedDebt.fromName,
-                toName: selectedDebt.toUserId === highlightedUserId ? tc("you") : selectedDebt.toName,
+                toName:
+                  selectedDebt.toUserId === highlightedUserId ? tc("you") : selectedDebt.toName,
               }
             : null
         }

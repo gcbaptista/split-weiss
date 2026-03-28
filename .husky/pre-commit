@@ -1,0 +1,9 @@
+if ! npm run format:check; then
+  echo "\n❌ Formatting check failed. Run 'npm run format' to fix it.\n"
+  exit 1
+fi
+
+if ! npm run lint; then
+  echo "\n❌ Linting failed. Run 'npm run lint -- --fix' to auto-fix issues.\n"
+  exit 1
+fi

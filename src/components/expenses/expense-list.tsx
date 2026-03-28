@@ -22,10 +22,7 @@ interface ExpenseListProps {
   convertedAmounts?: Record<string, string>;
 }
 
-export function ExpenseList({
-  expenses,
-  convertedAmounts = {},
-}: ExpenseListProps) {
+export function ExpenseList({ expenses, convertedAmounts = {} }: ExpenseListProps) {
   const { members, groupCurrency, currentMemberId } = useGroupContext();
   const t = useTranslations("expenses");
   const tc = useTranslations("common");
@@ -34,7 +31,9 @@ export function ExpenseList({
   const filters = useExpenseFilters({ expenses, currentMemberId });
 
   const [editingExpense, setEditingExpense] = useState<ExpenseWithSplitsClient | null>(null);
-  const [duplicatingExpense, setDuplicatingExpense] = useState<ExpenseWithSplitsClient | null>(null);
+  const [duplicatingExpense, setDuplicatingExpense] = useState<ExpenseWithSplitsClient | null>(
+    null
+  );
   const [historyExpenseId, setHistoryExpenseId] = useState<string | null>(null);
   const [historyExpenseTitle, setHistoryExpenseTitle] = useState<string>("");
 
@@ -115,7 +114,10 @@ export function ExpenseList({
         formattedDate={formatDate(e.date)}
         onEdit={() => setEditingExpense(e)}
         onDuplicate={() => setDuplicatingExpense(e)}
-        onHistory={() => { setHistoryExpenseId(e.id); setHistoryExpenseTitle(e.title); }}
+        onHistory={() => {
+          setHistoryExpenseId(e.id);
+          setHistoryExpenseTitle(e.title);
+        }}
         onDelete={() => handleDelete(e)}
       />
     );
@@ -143,11 +145,7 @@ export function ExpenseList({
       );
     }
 
-    return (
-      <ul className="space-y-2">
-        {filters.filteredAndSortedExpenses.map(renderItem)}
-      </ul>
-    );
+    return <ul className="space-y-2">{filters.filteredAndSortedExpenses.map(renderItem)}</ul>;
   }
 
   return (
@@ -187,20 +185,26 @@ export function ExpenseList({
         <AddExpenseDialog
           expense={editingExpense}
           open={!!editingExpense}
-          onOpenChange={(o) => { if (!o) setEditingExpense(null); }}
+          onOpenChange={(o) => {
+            if (!o) setEditingExpense(null);
+          }}
         />
       )}
       {duplicatingExpense && (
         <AddExpenseDialog
           templateExpense={duplicatingExpense}
           open={!!duplicatingExpense}
-          onOpenChange={(o) => { if (!o) setDuplicatingExpense(null); }}
+          onOpenChange={(o) => {
+            if (!o) setDuplicatingExpense(null);
+          }}
         />
       )}
       <ExpenseAuditLogDialog
         expenseId={historyExpenseId}
         expenseTitle={historyExpenseTitle}
-        onOpenChange={(o) => { if (!o) setHistoryExpenseId(null); }}
+        onOpenChange={(o) => {
+          if (!o) setHistoryExpenseId(null);
+        }}
       />
     </>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useTransition } from "react";
 
 import { setLocale } from "@/app/actions/locale.actions";
@@ -24,7 +24,10 @@ export function LocaleSwitcher() {
 
   return (
     <Select value={currentLocale} onValueChange={handleSelect} disabled={isPending}>
-      <SelectTrigger size="sm" className="w-auto min-w-0 border-none shadow-none text-xs text-muted-foreground hover:text-foreground bg-transparent">
+      <SelectTrigger
+        size="sm"
+        className="w-auto min-w-0 border-none shadow-none text-xs text-muted-foreground hover:text-foreground bg-transparent"
+      >
         <SelectValue>{localeNames[currentLocale as Locale]}</SelectValue>
       </SelectTrigger>
       <SelectContent>
@@ -37,4 +40,3 @@ export function LocaleSwitcher() {
     </Select>
   );
 }
-

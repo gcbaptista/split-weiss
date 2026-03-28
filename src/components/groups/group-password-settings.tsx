@@ -1,8 +1,8 @@
 "use client";
 
 import { Eye, EyeOff, Lock, LockOpen } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -80,7 +80,9 @@ export function GroupPasswordSettings({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="group-password">{hasPassword ? t("changePassword") : t("addPassword")}</Label>
+        <Label htmlFor="group-password">
+          {hasPassword ? t("changePassword") : t("addPassword")}
+        </Label>
         <div className="relative">
           <Input
             id="group-password"
@@ -100,9 +102,7 @@ export function GroupPasswordSettings({
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
-          {hasPassword
-            ? t("changePasswordHint")
-            : t("addPasswordHint")}
+          {hasPassword ? t("changePasswordHint") : t("addPasswordHint")}
         </p>
       </div>
 

@@ -33,12 +33,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        <title>SplitWeiss</title>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icon.svg" />
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className={`${inter.className} ${spaceGrotesk.variable}`}>
-        <Providers locale={locale} messages={messages}>{children}</Providers>
+        <Providers locale={locale} messages={messages}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

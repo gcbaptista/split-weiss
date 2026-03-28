@@ -1,13 +1,17 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
+
+const subscribe = () => () => {};
 
 export function ThemeColorMeta() {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     if (!mounted) return;
@@ -19,4 +23,3 @@ export function ThemeColorMeta() {
 
   return null;
 }
-

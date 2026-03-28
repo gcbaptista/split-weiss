@@ -2,7 +2,7 @@
 
 import { EllipsisVertical, Share, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "splitweiss-install-dismissed";
 const VISIT_COUNT_KEY = "splitweiss-visit-count";
@@ -122,24 +122,25 @@ function AndroidSteps() {
 
 export function IosInstallPrompt() {
   const t = useTranslations("install");
-  const [platform, setPlatform] = useState<Platform>(null);
-  const [visible, setVisible] = useState(false);
+  const installState = useSyncExternalStore(
+    () => () => {},
+    () => {
+      const detected = detectPlatform();
+      if (!detected) return null;
 
-  useEffect(() => {
-    const detected = detectPlatform();
-    if (!detected) return;
+      const dismissed = localStorage.getItem(STORAGE_KEY);
+      if (dismissed) return null;
 
-    const dismissed = localStorage.getItem(STORAGE_KEY);
-    if (dismissed) return;
+      const count = parseInt(localStorage.getItem(VISIT_COUNT_KEY) ?? "0", 10) + 1;
+      localStorage.setItem(VISIT_COUNT_KEY, count.toString());
 
-    const count = parseInt(localStorage.getItem(VISIT_COUNT_KEY) ?? "0", 10) + 1;
-    localStorage.setItem(VISIT_COUNT_KEY, count.toString());
-
-    if (count >= MIN_VISITS) {
-      setPlatform(detected);
-      setVisible(true);
-    }
-  }, []);
+      if (count >= MIN_VISITS) return detected;
+      return null;
+    },
+    () => null
+  );
+  const [visible, setVisible] = useState(true);
+  const platform = installState;
 
   function dismiss() {
     localStorage.setItem(STORAGE_KEY, "true");
@@ -160,9 +161,7 @@ export function IosInstallPrompt() {
 
       <div className="pr-6">
         <p className="text-sm font-semibold">{t("title")}</p>
-        <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-          {t("subtitle")}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{t("subtitle")}</p>
         {platform === "ios-safari" && <IosSafariSteps />}
         {platform === "ios-chrome" && <IosChromeSteps />}
         {platform === "android" && <AndroidSteps />}

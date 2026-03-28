@@ -14,8 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import type { MemberSummary } from "@/types/database";
 import type { GroupBy, SortBy } from "@/hooks/use-expense-filters";
+import type { MemberSummary } from "@/types/database";
 
 interface ExpenseFilterPanelProps {
   t: ReturnType<typeof useTranslations<"expenses">>;

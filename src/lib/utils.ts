@@ -13,10 +13,7 @@ export function cn(...inputs: ClassValue[]) {
  * Format a date string or Date object using a fixed locale ("en-US") to avoid
  * server/client hydration mismatches caused by locale differences.
  */
-export function formatDate(
-  date: string | Date,
-  options?: Intl.DateTimeFormatOptions
-): string {
+export function formatDate(date: string | Date, options?: Intl.DateTimeFormatOptions): string {
   const d = typeof date === "string" ? new Date(date) : date;
   return d.toLocaleDateString("en-US", options);
 }

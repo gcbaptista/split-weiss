@@ -192,10 +192,7 @@ async function fetchAndCacheRange(
 
 // ── Public API ─────────────────────────────────────────────────────
 
-export async function fetchRates(
-  base: string,
-  date: string = "latest"
-): Promise<ExchangeRates> {
+export async function fetchRates(base: string, date: string = "latest"): Promise<ExchangeRates> {
   const cached = await db.exchangeRateCache.findUnique({
     where: { baseCurrency_date: { baseCurrency: base, date } },
     select: { date: true, rates: true, fetchedAt: true },
@@ -224,7 +221,10 @@ export async function fetchRatesMap(base: string, dates: string[]) {
 
   for (const cached of cachedRates) {
     if (isCacheFresh(cached, cached.date)) {
-      ratesByDate.set(cached.date, toExchangeRates(base, cached.date, cached.rates as Record<string, number>));
+      ratesByDate.set(
+        cached.date,
+        toExchangeRates(base, cached.date, cached.rates as Record<string, number>)
+      );
     }
   }
 
@@ -243,8 +243,12 @@ export async function fetchRatesMap(base: string, dates: string[]) {
   if (needsLatest) {
     fetches.push(
       fetchAndCacheRates(base, "latest")
-        .then((r) => { ratesByDate.set("latest", r); })
-        .catch((e) => { console.warn("[fetchRatesMap] latest fetch failed:", e); })
+        .then((r) => {
+          ratesByDate.set("latest", r);
+        })
+        .catch((e) => {
+          console.warn("[fetchRatesMap] latest fetch failed:", e);
+        })
     );
   }
 
@@ -253,8 +257,12 @@ export async function fetchRatesMap(base: string, dates: string[]) {
     const date = historicalMissing[0]!;
     fetches.push(
       fetchAndCacheRates(base, date)
-        .then((r) => { ratesByDate.set(date, r); })
-        .catch((e) => { console.warn(`[fetchRatesMap] fetch ${date} failed:`, e); })
+        .then((r) => {
+          ratesByDate.set(date, r);
+        })
+        .catch((e) => {
+          console.warn(`[fetchRatesMap] fetch ${date} failed:`, e);
+        })
     );
   } else if (historicalMissing.length > 1) {
     // Multiple dates — use time series (1 request for the whole range)
@@ -268,7 +276,9 @@ export async function fetchRatesMap(base: string, dates: string[]) {
             ratesByDate.set(date, rates);
           }
         })
-        .catch((e) => { console.warn(`[fetchRatesMap] range ${from}..${to} failed:`, e); })
+        .catch((e) => {
+          console.warn(`[fetchRatesMap] range ${from}..${to} failed:`, e);
+        })
     );
   }
 

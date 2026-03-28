@@ -7,10 +7,10 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import type { SplitInputState } from "@/hooks/use-split-inputs";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import type { SplitResult } from "@/lib/splitting";
 import type { MemberSummary, SplitMode } from "@/types/database";
-import type { SplitInputState } from "@/hooks/use-split-inputs";
 
 import { SplitModeSelector } from "./split-mode-selector";
 
@@ -86,9 +86,7 @@ export function SplitEditor({
 
   function handleAmountChange(index: number, value: string) {
     setSplitInputs((prev) =>
-      prev.map((s, j) =>
-        j === index ? { ...s, amount: value, isLocked: true } : s
-      )
+      prev.map((s, j) => (j === index ? { ...s, amount: value, isLocked: true } : s))
     );
   }
 
@@ -135,7 +133,6 @@ export function SplitEditor({
           const isLocked = input.isLocked;
           const computedAmount = splits?.find((s) => s.userId === m.id)?.amount;
           const idPrefix = isPercentage ? `pct-include-${m.id}` : `include-${m.id}`;
-
 
           return (
             <div
@@ -184,7 +181,15 @@ export function SplitEditor({
                 disabled={!isIncluded}
                 onClick={() => handleToggleLock(i)}
                 className="shrink-0 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-30 transition-colors"
-                aria-label={isLocked ? (isPercentage ? "Unlock percentage" : "Unlock amount") : (isPercentage ? "Lock percentage" : "Lock amount")}
+                aria-label={
+                  isLocked
+                    ? isPercentage
+                      ? "Unlock percentage"
+                      : "Unlock amount"
+                    : isPercentage
+                      ? "Lock percentage"
+                      : "Lock amount"
+                }
               >
                 {isLocked ? <Lock className="h-4 w-4" /> : <LockOpen className="h-4 w-4" />}
               </button>

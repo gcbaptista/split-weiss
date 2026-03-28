@@ -1,5 +1,5 @@
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { GroupCard } from "@/components/groups/group-card";
 import { JoinGroupForm } from "@/components/groups/join-group-form";

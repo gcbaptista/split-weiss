@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { AlertTriangle } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { getGroupExpensesForBreakdown } from "@/app/actions/expense.actions";
 import { getGroupSettlementsForBreakdown } from "@/app/actions/settlement.actions";
@@ -33,11 +33,7 @@ export default async function BalancesPage({ params }: PageProps) {
 
   if (expenses.length === 0) {
     return (
-      <EmptyState
-        icon="⚖️"
-        title={t("noExpenses")}
-        description={t("noExpensesDescription")}
-      />
+      <EmptyState icon="⚖️" title={t("noExpenses")} description={t("noExpensesDescription")} />
     );
   }
 

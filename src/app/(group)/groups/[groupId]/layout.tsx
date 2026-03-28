@@ -1,6 +1,6 @@
 import { ChevronLeft } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { AddExpenseDialog } from "@/components/expenses/add-expense-dialog";
 import { MobileExpenseFAB } from "@/components/expenses/mobile-expense-fab";

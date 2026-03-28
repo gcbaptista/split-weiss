@@ -3,26 +3,25 @@
 import { Check, Copy, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/button";
 
 interface GroupShareProps {
-  groupId: string;
   groupName: string;
   groupUrl: string;
   hasPassword: boolean;
 }
 
-export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupShareProps) {
+export function GroupShare({ groupName, groupUrl, hasPassword }: GroupShareProps) {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
   const [copied, setCopied] = useState(false);
-  const [supportsShare, setSupportsShare] = useState(false);
-
-  useEffect(() => {
-    setSupportsShare(!!navigator.share);
-  }, []);
+  const supportsShare = useSyncExternalStore(
+    () => () => {},
+    () => !!navigator.share,
+    () => false
+  );
 
   async function handleCopy() {
     if (!groupUrl) return;
@@ -56,9 +55,7 @@ export function GroupShare({ groupId, groupName, groupUrl, hasPassword }: GroupS
       )}
 
       {hasPassword && (
-        <p className="text-xs text-muted-foreground">
-          🔒 {t("passwordProtectedShare")}
-        </p>
+        <p className="text-xs text-muted-foreground">🔒 {t("passwordProtectedShare")}</p>
       )}
 
       <div className="flex gap-2">

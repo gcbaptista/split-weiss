@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { GroupCard } from "@/components/groups/group-card";
 import { JoinGroupForm } from "@/components/groups/join-group-form";
@@ -10,10 +10,7 @@ import { Button } from "@/components/ui/button";
 import { getRecentAccessibleGroups } from "@/lib/group-access";
 
 export default async function GroupsPage() {
-  const [groups, t] = await Promise.all([
-    getRecentAccessibleGroups(),
-    getTranslations("groups"),
-  ]);
+  const [groups, t] = await Promise.all([getRecentAccessibleGroups(), getTranslations("groups")]);
 
   return (
     <div>
@@ -38,9 +35,7 @@ export default async function GroupsPage() {
           icon="👥"
           title={t("noGroups")}
           description={t("noGroupsDescription")}
-          action={
-            <Button render={<Link href="/groups/new" />}>{t("createFirstGroup")}</Button>
-          }
+          action={<Button render={<Link href="/groups/new" />}>{t("createFirstGroup")}</Button>}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

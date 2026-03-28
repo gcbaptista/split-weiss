@@ -1,7 +1,7 @@
 "use client";
 import Decimal from "decimal.js";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -73,8 +73,9 @@ export function SettleUpDialog({
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            <strong>{debt.fromName}</strong>{" → "}<strong>{debt.toName}</strong>{" "}
-            {formatCurrency(debt.amount.toString(), currency)}
+            <strong>{debt.fromName}</strong>
+            {" → "}
+            <strong>{debt.toName}</strong> {formatCurrency(debt.amount.toString(), currency)}
           </p>
           <div className="space-y-1">
             <Label>{t("noteOptional")}</Label>

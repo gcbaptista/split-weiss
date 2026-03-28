@@ -61,7 +61,10 @@ export function useSplitInputs({
     setSplitMode(newMode);
   }
 
-  function computeSplits(watchAmount: string): { splits: SplitResult[] | null; splitError: string | null } {
+  function computeSplits(watchAmount: string): {
+    splits: SplitResult[] | null;
+    splitError: string | null;
+  } {
     if (!watchAmount || parseFloat(watchAmount) <= 0) return { splits: null, splitError: null };
     try {
       const total = new Decimal(watchAmount);
@@ -70,15 +73,13 @@ export function useSplitInputs({
         const includedInputs = splitInputs
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, percentage: s.percentage, isLocked: s.isLocked }));
-        if (includedInputs.length === 0)
-          return { splits: null, splitError: errorMessage };
+        if (includedInputs.length === 0) return { splits: null, splitError: errorMessage };
         result = calculatePercentage(total, includedInputs);
       } else {
         const includedInputs = splitInputs
           .filter((s) => s.isIncluded)
           .map((s) => ({ userId: s.userId, amount: s.amount, isLocked: s.isLocked }));
-        if (includedInputs.length === 0)
-          return { splits: null, splitError: errorMessage };
+        if (includedInputs.length === 0) return { splits: null, splitError: errorMessage };
         result = calculateLock(total, includedInputs);
       }
       return { splits: result, splitError: null };

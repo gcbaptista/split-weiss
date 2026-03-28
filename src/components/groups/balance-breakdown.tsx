@@ -7,10 +7,7 @@ import { useGroupContext } from "@/contexts/group-context";
 import { convert } from "@/lib/currency/converter";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { ExchangeRates } from "@/types/currency";
-import type {
-  ExpenseBreakdownClient,
-  SettlementBreakdownClient,
-} from "@/types/database";
+import type { ExpenseBreakdownClient, SettlementBreakdownClient } from "@/types/database";
 
 export interface MemberSpend {
   userId: string;
@@ -50,7 +47,11 @@ export function BalanceBreakdown({
   grandTotal,
   ratesByDate,
 }: BalanceBreakdownProps) {
-  const { members, groupCurrency: currency, currentMemberId: highlightedUserId } = useGroupContext();
+  const {
+    members,
+    groupCurrency: currency,
+    currentMemberId: highlightedUserId,
+  } = useGroupContext();
   const t = useTranslations("balances");
   const tc = useTranslations("common");
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(new Set());
@@ -242,16 +243,23 @@ export function BalanceBreakdown({
                                   {formatDate(expense.date)}
                                   {!isPayer && payerName && (
                                     <span>
-                                      {" · "}{t("paidBy", { name: payerName })}
+                                      {" · "}
+                                      {t("paidBy", { name: payerName })}
                                     </span>
                                   )}
                                   {isPayer && (
                                     <span>
-                                      {" · "}{t("paidTotal", { amount: formatCurrency(expense.amount, expense.currency) })}
+                                      {" · "}
+                                      {t("paidTotal", {
+                                        amount: formatCurrency(expense.amount, expense.currency),
+                                      })}
                                     </span>
                                   )}
                                   <span>
-                                    {" · "}{t("shareOf", { amount: formatCurrency(memberShare, expense.currency) })}
+                                    {" · "}
+                                    {t("shareOf", {
+                                      amount: formatCurrency(memberShare, expense.currency),
+                                    })}
                                   </span>
                                 </p>
                               </div>
@@ -281,7 +289,9 @@ export function BalanceBreakdown({
                             >
                               <div className="min-w-0">
                                 <p className="text-sm font-medium truncate">
-                                  {isPayer ? t("settlementTo", { name: otherUser.name }) : t("settlementFrom", { name: otherUser.name })}
+                                  {isPayer
+                                    ? t("settlementTo", { name: otherUser.name })
+                                    : t("settlementFrom", { name: otherUser.name })}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {formatDate(settlement.date)}

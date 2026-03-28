@@ -1,13 +1,12 @@
 "use client";
 import { Check, History, MoreVertical, Pencil, Trash2, X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { getMemberAuditLog } from "@/app/actions/expense.actions";
 import { addMember, removeMember, renameMember } from "@/app/actions/member.actions";
-import { formatDateTime } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,14 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGroupContext } from "@/contexts/group-context";
+import { formatDateTime } from "@/lib/utils";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 import type { MemberSummary } from "@/types/database";
 
-interface MemberListProps {
-  // No props needed — all data comes from GroupContext
-}
-
-export function MemberList({}: MemberListProps) {
+export function MemberList() {
   const { members, groupId, currentMemberId } = useGroupContext();
   const t = useTranslations("settings");
   const tc = useTranslations("common");
@@ -231,7 +227,7 @@ function MemberAuditSheet({
         setLogs(result.data ?? []);
       })
       .catch(() => setError(tc("failedToLoadHistory")));
-  }, [groupId, member.id]);
+  }, [groupId, member.id, tc]);
 
   return (
     <Sheet open onOpenChange={onOpenChange}>

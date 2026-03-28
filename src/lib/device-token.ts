@@ -84,10 +84,7 @@ export async function cleanupDeviceAccessIfDue(groupId: string): Promise<void> {
   const claim = await db.group.updateMany({
     where: {
       id: groupId,
-      OR: [
-        { lastDeviceAccessCleanupAt: null },
-        { lastDeviceAccessCleanupAt: { lt: cutoff } },
-      ],
+      OR: [{ lastDeviceAccessCleanupAt: null }, { lastDeviceAccessCleanupAt: { lt: cutoff } }],
     },
     data: { lastDeviceAccessCleanupAt: now },
   });
@@ -149,10 +146,7 @@ async function cleanupDeviceAccess(groupId: string): Promise<void> {
   ]);
 
   const maxDevicesForMembers = memberCount * MAX_DEVICES_PER_MEMBER;
-  const groupCap = Math.max(
-    MIN_DEVICES_PER_GROUP,
-    maxDevicesForMembers + GROUP_DEVICE_BUFFER
-  );
+  const groupCap = Math.max(MIN_DEVICES_PER_GROUP, maxDevicesForMembers + GROUP_DEVICE_BUFFER);
 
   if (accesses.length <= groupCap) return;
 
@@ -177,9 +171,7 @@ async function cleanupDeviceAccess(groupId: string): Promise<void> {
     keptIds.add(access.id);
   }
 
-  const toDelete = accesses
-    .filter((access) => !keptIds.has(access.id))
-    .map((access) => access.id);
+  const toDelete = accesses.filter((access) => !keptIds.has(access.id)).map((access) => access.id);
 
   if (toDelete.length > 0) {
     await db.deviceAccess.deleteMany({

@@ -19,10 +19,7 @@ export function MobileExpenseFAB() {
       >
         <Plus className="h-6 w-6" />
       </button>
-      <AddExpenseDialog
-        open={open}
-        onOpenChange={setOpen}
-      />
+      <AddExpenseDialog open={open} onOpenChange={setOpen} />
     </>
   );
 }

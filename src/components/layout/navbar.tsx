@@ -18,7 +18,9 @@ export function Navbar() {
               SplitWeiss
             </span>
           </div>
-          <p className="text-xs text-muted-foreground tracking-wide">Don&apos;t split wise. Split Weiss.</p>
+          <p className="text-xs text-muted-foreground tracking-wide">
+            Don&apos;t split wise. Split Weiss.
+          </p>
         </Link>
         <ThemeToggle />
       </div>

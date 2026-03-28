@@ -1,6 +1,6 @@
 import { AlertTriangle } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { getGroupExpensesForCalculation } from "@/app/actions/expense.actions";
 import { getGroupSettlementHistory } from "@/app/actions/settlement.actions";
@@ -28,11 +28,7 @@ export default async function SettlementsPage({ params }: PageProps) {
 
   if (group.members.length < 2) {
     return (
-      <EmptyState
-        icon="🤝"
-        title={t("needAtLeast2")}
-        description={t("needAtLeast2Description")}
-      />
+      <EmptyState icon="🤝" title={t("needAtLeast2")} description={t("needAtLeast2Description")} />
     );
   }
 
@@ -67,10 +63,7 @@ export default async function SettlementsPage({ params }: PageProps) {
           {t("staleRatesWarning")}
         </div>
       )}
-      <SettlementPairs
-        debts={debtsWithNames}
-        settlements={serializedSettlements}
-      />
+      <SettlementPairs debts={debtsWithNames} settlements={serializedSettlements} />
     </div>
   );
 }

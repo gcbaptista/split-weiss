@@ -40,10 +40,5 @@ export default async function GroupExpensesPage({ params }: PageProps) {
     }
   }
 
-  return (
-    <ExpenseList
-      expenses={expenses}
-      convertedAmounts={convertedAmounts}
-    />
-  );
+  return <ExpenseList expenses={expenses} convertedAmounts={convertedAmounts} />;
 }

@@ -11,8 +11,8 @@ import {
 } from "@/lib/device-token";
 import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
 import { verifyPassword } from "@/lib/password";
-import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
 import { memberSelect } from "@/lib/prisma-selects";
+import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
 import type { GroupWithMembers } from "@/types/database";
 
 export type GroupRequestAccess =

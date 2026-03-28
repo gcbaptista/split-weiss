@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -86,9 +86,7 @@ export function GroupSettingsForm({
       <div className="space-y-1.5">
         <Label>{t("baseCurrency")}</Label>
         <CurrencySelect value={currency} onChange={setCurrency} />
-        <p className="text-xs text-muted-foreground">
-          {t("baseCurrencyHint")}
-        </p>
+        <p className="text-xs text-muted-foreground">{t("baseCurrencyHint")}</p>
       </div>
 
       <div className="space-y-2">

@@ -12,4 +12,3 @@ export const localeNames: Record<Locale, string> = {
   nl: "Nederlands",
   pl: "Polski",
 };
-

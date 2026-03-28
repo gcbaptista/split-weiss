@@ -1,8 +1,8 @@
 "use client";
 
 import { Camera, X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -86,7 +86,7 @@ export function QrScannerButton() {
       setError(t("cameraError"));
       setScanning(false);
     }
-  }, [router, stopScanner]);
+  }, [router, stopScanner, t]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -122,9 +122,7 @@ export function QrScannerButton() {
           className="w-full max-w-sm overflow-hidden rounded-lg"
         />
         {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-        <p className="mt-4 text-sm text-muted-foreground">
-          {t("scanHint")}
-        </p>
+        <p className="mt-4 text-sm text-muted-foreground">{t("scanHint")}</p>
       </div>
     </div>
   );

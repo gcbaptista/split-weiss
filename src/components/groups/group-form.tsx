@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -67,7 +67,11 @@ export function GroupForm() {
             <FormItem>
               <FormLabel>{t("groupName")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("groupNamePlaceholder")} autoComplete="organization" {...field} />
+                <Input
+                  placeholder={t("groupNamePlaceholder")}
+                  autoComplete="organization"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,9 +118,7 @@ export function GroupForm() {
                 />
               </FormControl>
               <FormMessage />
-              <p className="text-xs text-muted-foreground">
-                {t("passwordHint")}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("passwordHint")}</p>
             </FormItem>
           )}
         />

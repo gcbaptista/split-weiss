@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -39,7 +39,13 @@ export function ResetIdentityButton({ groupId, currentMemberName }: ResetIdentit
           t("notIdentified")
         )}
       </p>
-      <Button variant="outline" size="sm" className="shrink-0" onClick={handleReset} disabled={resetting}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="shrink-0"
+        onClick={handleReset}
+        disabled={resetting}
+      >
         {resetting ? t("resetting") : t("switch")}
       </Button>
     </div>
