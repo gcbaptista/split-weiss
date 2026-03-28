@@ -5,7 +5,7 @@ import { getGroupExpenses } from "@/app/actions/expense.actions";
 import { ExpenseList } from "@/components/expenses/expense-list";
 import { convert } from "@/lib/currency/converter";
 import { fetchRates } from "@/lib/currency/frankfurter";
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
+import { getAuthorizedGroup } from "@/lib/group-access";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;
@@ -13,16 +13,12 @@ interface PageProps {
 
 export default async function GroupExpensesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, currentMemberId] = await Promise.all([
+  const [group, expenses] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpenses(groupId),
-    getCurrentMemberId(groupId),
   ]);
 
   if (!group) notFound();
-
-  const defaultPayerId = currentMemberId ?? group.members[0]?.id;
-  if (!defaultPayerId) notFound();
 
   // Compute converted amounts for expenses in a different currency
   const foreignExpenses = expenses.filter((e) => e.currency !== group.currency);
@@ -47,11 +43,6 @@ export default async function GroupExpensesPage({ params }: PageProps) {
   return (
     <ExpenseList
       expenses={expenses}
-      defaultPayerId={defaultPayerId}
-      groupId={groupId}
-      members={group.members}
-      groupCurrency={group.currency}
-      currentMemberId={currentMemberId ?? undefined}
       convertedAmounts={convertedAmounts}
     />
   );

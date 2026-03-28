@@ -4,23 +4,9 @@ import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import type { MemberSummary } from "@/types/database";
-
 import { AddExpenseDialog } from "./add-expense-dialog";
 
-interface MobileExpenseFABProps {
-  groupId: string;
-  members: MemberSummary[];
-  groupCurrency: string;
-  defaultPayerId: string;
-}
-
-export function MobileExpenseFAB({
-  groupId,
-  members,
-  groupCurrency,
-  defaultPayerId,
-}: MobileExpenseFABProps) {
+export function MobileExpenseFAB() {
   const t = useTranslations("expenses");
   const [open, setOpen] = useState(false);
 
@@ -34,10 +20,6 @@ export function MobileExpenseFAB({
         <Plus className="h-6 w-6" />
       </button>
       <AddExpenseDialog
-        groupId={groupId}
-        members={members}
-        groupCurrency={groupCurrency}
-        defaultPayerId={defaultPayerId}
         open={open}
         onOpenChange={setOpen}
       />

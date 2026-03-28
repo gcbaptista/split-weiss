@@ -19,7 +19,7 @@ interface ProvidersProps {
 export function Providers({ children, locale, messages }: ProvidersProps) {
   const [queryClient] = useState(() => new QueryClient());
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>

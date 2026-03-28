@@ -7,8 +7,9 @@ import { useState } from "react";
 import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
+import { useGroupContext } from "@/contexts/group-context";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
-import type { MemberSummary, SettlementHistoryClient } from "@/types/database";
+import type { SettlementHistoryClient } from "@/types/database";
 
 interface DebtItem {
   fromUserId: string;
@@ -31,20 +32,13 @@ interface PairData {
 interface SettlementPairsProps {
   debts: DebtItem[];
   settlements: SettlementHistoryClient[];
-  groupId: string;
-  currency: string;
-  members: MemberSummary[];
-  highlightedUserId?: string;
 }
 
 export function SettlementPairs({
   debts,
   settlements,
-  groupId,
-  currency,
-  members,
-  highlightedUserId,
 }: SettlementPairsProps) {
+  const { groupId, groupCurrency: currency, members, currentMemberId: highlightedUserId } = useGroupContext();
   const t = useTranslations("settlements");
   const tc = useTranslations("common");
   const [expandedPairs, setExpandedPairs] = useState<Set<string>>(new Set());

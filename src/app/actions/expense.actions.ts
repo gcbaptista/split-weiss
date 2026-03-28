@@ -1,21 +1,17 @@
 "use server";
 import type { Prisma } from "@prisma/client";
 import Decimal from "decimal.js";
-import { revalidatePath } from "next/cache";
 
 import { buildDelta, buildStateSnapshot } from "@/lib/audit/snapshot";
 import { db } from "@/lib/db";
 import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
+import { memberSelect } from "@/lib/prisma-selects";
+import { revalidateGroupPages } from "@/lib/revalidate";
 import { calculateLock, calculatePercentage } from "@/lib/splitting";
 import { createExpenseSchema } from "@/lib/validations/expense.schema";
 import type { ActionResult } from "@/types/api";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 import type { Expense, ExpenseBreakdownClient, ExpenseWithSplitsClient } from "@/types/database";
-
-const memberSelect = {
-  id: true,
-  name: true,
-} as const;
 
 function serializeExpenseForResult(expense: Expense): Expense {
   return {
@@ -82,9 +78,7 @@ export async function createExpense(formData: unknown): Promise<ActionResult<Exp
       });
       return created;
     });
-    revalidatePath(`/groups/${groupId}`);
-    revalidatePath(`/groups/${groupId}/balances`);
-    revalidatePath(`/groups/${groupId}/settlements`);
+    revalidateGroupPages(groupId);
     return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return {
@@ -244,9 +238,7 @@ export async function updateExpense(
       });
       return updated;
     });
-    revalidatePath(`/groups/${existing.groupId}`);
-    revalidatePath(`/groups/${existing.groupId}/balances`);
-    revalidatePath(`/groups/${existing.groupId}/settlements`);
+    revalidateGroupPages(existing.groupId);
     return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Failed to update expense" };
@@ -293,9 +285,7 @@ export async function deleteExpense(
       await tx.expense.delete({ where: { id: expenseId } });
       return auditLog.id;
     });
-    revalidatePath(`/groups/${expense.groupId}`);
-    revalidatePath(`/groups/${expense.groupId}/balances`);
-    revalidatePath(`/groups/${expense.groupId}/settlements`);
+    revalidateGroupPages(expense.groupId);
     return { data: { auditLogId } };
   } catch (e) {
     console.error("deleteExpense failed", e);
@@ -407,9 +397,7 @@ export async function revertExpense(auditLogId: string): Promise<ActionResult<Ex
         });
         return created;
       });
-      revalidatePath(`/groups/${logEntry.groupId}`);
-      revalidatePath(`/groups/${logEntry.groupId}/balances`);
-      revalidatePath(`/groups/${logEntry.groupId}/settlements`);
+      revalidateGroupPages(logEntry.groupId);
       return { data: serializeExpenseForResult(expense) };
     }
 
@@ -471,9 +459,7 @@ export async function revertExpense(auditLogId: string): Promise<ActionResult<Ex
       return updated;
     });
 
-    revalidatePath(`/groups/${logEntry.groupId}`);
-    revalidatePath(`/groups/${logEntry.groupId}/balances`);
-    revalidatePath(`/groups/${logEntry.groupId}/settlements`);
+    revalidateGroupPages(logEntry.groupId);
     return { data: serializeExpenseForResult(expense) };
   } catch (e) {
     return { error: e instanceof Error ? e.message : "Failed to revert expense" };

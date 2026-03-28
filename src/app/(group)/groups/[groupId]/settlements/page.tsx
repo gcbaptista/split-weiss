@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { simplifyDebts } from "@/lib/balances/simplifier";
 import { fetchRatesMap } from "@/lib/currency/frankfurter";
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
+import { getAuthorizedGroup } from "@/lib/group-access";
 
 interface PageProps {
   params: Promise<{ groupId: string }>;
@@ -17,11 +17,10 @@ interface PageProps {
 
 export default async function SettlementsPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements, currentMemberId, t] = await Promise.all([
+  const [group, expenses, settlements, t] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForCalculation(groupId),
     getGroupSettlementHistory(groupId),
-    getCurrentMemberId(groupId),
     getTranslations("settlements"),
   ]);
 
@@ -71,10 +70,6 @@ export default async function SettlementsPage({ params }: PageProps) {
       <SettlementPairs
         debts={debtsWithNames}
         settlements={serializedSettlements}
-        groupId={groupId}
-        currency={group.currency}
-        members={group.members}
-        highlightedUserId={currentMemberId ?? undefined}
       />
     </div>
   );

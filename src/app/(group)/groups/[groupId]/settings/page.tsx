@@ -61,11 +61,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
       <section>
         <h2 className="mb-1 font-semibold">{t("members")}</h2>
         <p className="mb-3 text-sm text-muted-foreground">{t("membersDescription")}</p>
-        <MemberList
-          members={group.members}
-          groupId={groupId}
-          currentMemberId={currentMemberId ?? undefined}
-        />
+        <MemberList />
       </section>
 
       <section>

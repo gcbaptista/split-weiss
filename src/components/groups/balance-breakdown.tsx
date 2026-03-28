@@ -3,12 +3,12 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { useGroupContext } from "@/contexts/group-context";
 import { convert } from "@/lib/currency/converter";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { ExchangeRates } from "@/types/currency";
 import type {
   ExpenseBreakdownClient,
-  MemberSummary,
   SettlementBreakdownClient,
 } from "@/types/database";
 
@@ -25,14 +25,11 @@ interface SerializableNetBalance {
 
 interface BalanceBreakdownProps {
   balances: SerializableNetBalance[];
-  members: MemberSummary[];
   expenses: ExpenseBreakdownClient[];
   settlements: SettlementBreakdownClient[];
   memberSpend: MemberSpend[];
   grandTotal: string;
-  currency: string;
   ratesByDate: Record<string, ExchangeRates>;
-  highlightedUserId?: string;
 }
 
 interface MemberTransaction {
@@ -47,15 +44,13 @@ interface MemberTransaction {
 
 export function BalanceBreakdown({
   balances,
-  members,
   expenses,
   settlements,
   memberSpend,
   grandTotal,
-  currency,
   ratesByDate,
-  highlightedUserId,
 }: BalanceBreakdownProps) {
+  const { members, groupCurrency: currency, currentMemberId: highlightedUserId } = useGroupContext();
   const t = useTranslations("balances");
   const tc = useTranslations("common");
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(new Set());

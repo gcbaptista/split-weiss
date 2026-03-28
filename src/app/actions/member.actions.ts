@@ -1,8 +1,8 @@
 "use server";
-import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { canAccessGroup, getCurrentMemberId } from "@/lib/group-access";
+import { revalidateGroupPages } from "@/lib/revalidate";
 import { addMemberSchema } from "@/lib/validations/group.schema";
 import type { ActionResult } from "@/types/api";
 
@@ -37,10 +37,7 @@ export async function addMember(formData: unknown): Promise<ActionResult> {
         details: { memberId: member.id, name: trimmed },
       },
     });
-    revalidatePath(`/groups/${groupId}`);
-    revalidatePath(`/groups/${groupId}/balances`);
-    revalidatePath(`/groups/${groupId}/settlements`);
-    revalidatePath(`/groups/${groupId}/settings`);
+    revalidateGroupPages(groupId);
     return { data: undefined };
   } catch (error) {
     console.error("addMember failed", error);
@@ -85,10 +82,7 @@ export async function renameMember(
         details: { memberId, from: old?.name, to: trimmed },
       },
     });
-    revalidatePath(`/groups/${groupId}`);
-    revalidatePath(`/groups/${groupId}/balances`);
-    revalidatePath(`/groups/${groupId}/settlements`);
-    revalidatePath(`/groups/${groupId}/settings`);
+    revalidateGroupPages(groupId);
     return { data: undefined };
   } catch (e) {
     console.error("renameMember failed", e);
@@ -150,10 +144,7 @@ export async function removeMember(groupId: string, memberId: string): Promise<A
       return { error: result.error };
     }
 
-    revalidatePath(`/groups/${groupId}`);
-    revalidatePath(`/groups/${groupId}/balances`);
-    revalidatePath(`/groups/${groupId}/settlements`);
-    revalidatePath(`/groups/${groupId}/settings`);
+    revalidateGroupPages(groupId);
     return { data: undefined };
   } catch (e) {
     console.error("removeMember failed", e);

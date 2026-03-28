@@ -21,16 +21,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGroupContext } from "@/contexts/group-context";
 import type { ExpenseAuditLogEntry } from "@/types/audit";
 import type { MemberSummary } from "@/types/database";
 
 interface MemberListProps {
-  members: MemberSummary[];
-  groupId: string;
-  currentMemberId?: string;
+  // No props needed — all data comes from GroupContext
 }
 
-export function MemberList({ members, groupId, currentMemberId }: MemberListProps) {
+export function MemberList({}: MemberListProps) {
+  const { members, groupId, currentMemberId } = useGroupContext();
   const t = useTranslations("settings");
   const tc = useTranslations("common");
   const [name, setName] = useState("");

@@ -12,15 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { ExpenseWithSplitsClient, MemberSummary } from "@/types/database";
+import type { ExpenseWithSplitsClient } from "@/types/database";
 
 import { ExpenseForm } from "./expense-form";
 
 interface AddExpenseDialogProps {
-  groupId: string;
-  members: MemberSummary[];
-  groupCurrency: string;
-  defaultPayerId: string;
   // Edit mode — when provided, renders no trigger button and is controlled externally
   expense?: ExpenseWithSplitsClient;
   // Duplicate mode — pre-fills the form but creates a new expense
@@ -30,10 +26,6 @@ interface AddExpenseDialogProps {
 }
 
 export function AddExpenseDialog({
-  groupId,
-  members,
-  groupCurrency,
-  defaultPayerId,
   expense,
   templateExpense,
   open: controlledOpen,
@@ -63,10 +55,6 @@ export function AddExpenseDialog({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <ExpenseForm
-          groupId={groupId}
-          members={members}
-          groupCurrency={groupCurrency}
-          defaultPayerId={defaultPayerId}
           onSuccess={() => setOpen(false)}
           expenseId={isEdit ? expense?.id : undefined}
           initialExpense={expense ?? templateExpense}

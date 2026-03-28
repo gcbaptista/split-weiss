@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { DEFAULT_CURRENCY } from "@/lib/currency/constants";
 import { type CreateGroupInput, createGroupSchema } from "@/lib/validations/group.schema";
 
 export function GroupForm() {
@@ -27,7 +28,7 @@ export function GroupForm() {
     defaultValues: {
       creatorName: "",
       name: "",
-      currency: "EUR",
+      currency: DEFAULT_CURRENCY,
       emoji: "",
       password: "",
     },

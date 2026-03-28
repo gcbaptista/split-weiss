@@ -12,12 +12,8 @@ import {
 import { getDeviceTokenFromCookies, setDeviceTokenCookie } from "@/lib/device-token-server";
 import { verifyPassword } from "@/lib/password";
 import { getRecentGroupIds, rememberRecentGroup } from "@/lib/recent-groups";
+import { memberSelect } from "@/lib/prisma-selects";
 import type { GroupWithMembers } from "@/types/database";
-
-const memberSelect = {
-  id: true,
-  name: true,
-} as const;
 
 export type GroupRequestAccess =
   | { status: "not-found" }

@@ -35,18 +35,6 @@ export interface ExpenseWithSplitsClient extends Omit<Expense, "amount"> {
   payer: MemberSummary;
 }
 
-export interface SettlementWithUsers extends Settlement {
-  fromUser: MemberSummary;
-  toUser: MemberSummary;
-}
-
-// Client-safe version with Decimal converted to string
-export interface SettlementWithUsersClient extends Omit<Settlement, "amount"> {
-  amount: string;
-  fromUser: MemberSummary;
-  toUser: MemberSummary;
-}
-
 export interface SettlementHistoryClient extends Pick<
   Settlement,
   "id" | "currency" | "date" | "fromUserId" | "toUserId" | "note"

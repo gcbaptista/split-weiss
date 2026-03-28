@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { calculateBalances } from "@/lib/balances/calculator";
 import { convert } from "@/lib/currency/converter";
 import { fetchRatesMap } from "@/lib/currency/frankfurter";
-import { getAuthorizedGroup, getCurrentMemberId } from "@/lib/group-access";
+import { getAuthorizedGroup } from "@/lib/group-access";
 import type { ExchangeRates } from "@/types/currency";
 
 interface PageProps {
@@ -19,11 +19,10 @@ interface PageProps {
 
 export default async function BalancesPage({ params }: PageProps) {
   const { groupId } = await params;
-  const [group, expenses, settlements, currentMemberId, t] = await Promise.all([
+  const [group, expenses, settlements, t] = await Promise.all([
     getAuthorizedGroup(groupId),
     getGroupExpensesForBreakdown(groupId),
     getGroupSettlementsForBreakdown(groupId),
-    getCurrentMemberId(groupId),
     getTranslations("balances"),
   ]);
 
@@ -113,14 +112,11 @@ export default async function BalancesPage({ params }: PageProps) {
 
       <BalanceBreakdown
         balances={allBalances}
-        members={members}
         expenses={expenses}
         settlements={settlements}
         memberSpend={memberSpend}
         grandTotal={grandTotal.toString()}
-        currency={groupCurrency}
         ratesByDate={Object.fromEntries(ratesByDate)}
-        highlightedUserId={currentMemberId ?? undefined}
       />
     </div>
   );

@@ -10,7 +10,7 @@ export interface ExpenseStateSnapshot {
   title: string;
   amount: string;
   currency: string;
-  splitMode: "EQUAL" | "PERCENTAGE" | "LOCK";
+  splitMode: "PERCENTAGE" | "LOCK";
   date: string;
   payerId: string;
   payerName: string;
