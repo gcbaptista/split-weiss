@@ -193,7 +193,7 @@
     "recordSettlement": "Record settlement",
     "paysTo": "{from} pays {to} {amount}",
     "noteOptional": "Note (optional)",
-    "notePlaceholder": "Bank transfer, cash, MB WAY...",
+    "notePlaceholder": "Bank transfer, cash, Revolut...",
     "recording": "Recording...",
     "markAsSettled": "Mark as settled",
     "settlementRecorded": "Settlement recorded!",
