@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import type { SplitInputState } from "@/hooks/use-split-inputs";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
 import type { SplitResult } from "@/lib/splitting";
+import { sanitizeDecimalInput } from "@/lib/utils";
 import type { MemberSummary, SplitMode } from "@/types/database";
 
 import { SplitModeSelector } from "./split-mode-selector";
@@ -85,15 +86,17 @@ export function SplitEditor({
   }
 
   function handleAmountChange(index: number, value: string) {
+    const clean = sanitizeDecimalInput(value);
     setSplitInputs((prev) =>
-      prev.map((s, j) => (j === index ? { ...s, amount: value, isLocked: true } : s))
+      prev.map((s, j) => (j === index ? { ...s, amount: clean, isLocked: true } : s))
     );
   }
 
   function handlePercentageChange(index: number, value: string) {
+    const clean = sanitizeDecimalInput(value);
     setSplitInputs((prev) => {
       const updated = prev.map((s, j) =>
-        j === index ? { ...s, percentage: value, isLocked: true } : s
+        j === index ? { ...s, percentage: clean, isLocked: true } : s
       );
       // Redistribute remaining percentage among unlocked included rows
       const lockedSum = updated
