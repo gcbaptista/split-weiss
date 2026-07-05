@@ -26,6 +26,19 @@ export function formatDateTime(date: string | Date): string {
   return d.toLocaleString("en-US");
 }
 
+/**
+ * Sanitize free-typed numeric input into a plain decimal string.
+ * Treats "," as a decimal separator (common on non-US iOS keyboards, where
+ * the decimal key inserts a comma instead of a period) and strips any other
+ * non-digit characters, keeping only the first decimal point found.
+ */
+export function sanitizeDecimalInput(raw: string): string {
+  return raw
+    .replace(/,/g, ".")
+    .replace(/[^0-9.]/g, "")
+    .replace(/^(\d*\.?\d*).*$/, "$1");
+}
+
 export function formatCurrency(amount: string | number, currency: string): string {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
   if (isNaN(num)) return `0.00 ${currency}`;

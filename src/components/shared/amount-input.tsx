@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { CURRENCY_SYMBOLS } from "@/lib/currency/constants";
+import { sanitizeDecimalInput } from "@/lib/utils";
 
 import { CurrencySelect } from "./currency-select";
 
@@ -22,9 +23,7 @@ export function AmountInput({
   const symbol = CURRENCY_SYMBOLS[currency];
 
   function handleChange(raw: string) {
-    // Allow digits, one decimal point, and nothing else
-    const clean = raw.replace(/[^0-9.]/g, "").replace(/^(\d*\.?\d*).*$/, "$1");
-    onChange(clean);
+    onChange(sanitizeDecimalInput(raw));
   }
 
   return (
