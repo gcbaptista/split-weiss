@@ -5,17 +5,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev       # Start development server
-npm run build     # Production build
-npm run lint      # Run ESLint
+pnpm dev       # Start development server
+pnpm build     # Production build
+pnpm lint      # Run ESLint
 ```
 
 There are no test scripts configured. Database commands:
 
 ```bash
-npx prisma db push        # Push schema.prisma directly to the database
-npx prisma generate       # Regenerate Prisma client after schema changes
-npx prisma studio         # Open Prisma Studio GUI
+pnpm prisma db push        # Push schema.prisma directly to the database
+pnpm prisma generate       # Regenerate Prisma client after schema changes
+pnpm prisma studio         # Open Prisma Studio GUI
 ```
 
 ## Architecture

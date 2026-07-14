@@ -2,6 +2,7 @@
   "name": "split-weiss",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.13.0",
   "scripts": {
     "dev": "prisma generate && next dev",
     "build": "prisma generate && next build",
@@ -48,6 +49,7 @@
     "@types/qrcode.react": "^1.0.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
     "eslint-config-prettier": "^10.1.8",
