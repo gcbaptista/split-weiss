@@ -23,10 +23,10 @@ SplitWeiss is a no-login expense-sharing app built for groups — trips, dinners
 ## Getting Started
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env.local  # fill in your DATABASE_URL
-npx prisma db push
-npm run dev
+pnpm prisma db push
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
@@ -34,11 +34,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Scripts
 
 ```bash
-npm run dev       # Start development server
-npm run build     # Production build
-npm run lint      # Run ESLint
+pnpm dev       # Start development server
+pnpm build     # Production build
+pnpm lint      # Run ESLint
 
-npx prisma db push        # Push schema.prisma to the database
-npx prisma generate       # Regenerate Prisma client
-npx prisma studio         # Open Prisma Studio GUI
+pnpm prisma db push        # Push schema.prisma to the database
+pnpm prisma generate       # Regenerate Prisma client
+pnpm prisma studio         # Open Prisma Studio GUI
 ```
