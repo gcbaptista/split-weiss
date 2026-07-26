@@ -197,6 +197,7 @@
     "recording": "Rejestrowanie...",
     "markAsSettled": "Oznacz jako rozliczone",
     "settlementRecorded": "Rozliczenie zarejestrowane!",
+    "settlementDeleted": "Rozliczenie usunięte",
     "staleRatesWarning": "Kursy wymiany nie mogły zostać pobrane dla niektórych dat. Wartości mogą być przybliżone."
   },
   "settings": {

@@ -26,6 +26,7 @@ interface SettleUpDialogProps {
   debt: DebtForDialog | null;
   groupId: string;
   currency: string;
+  onSettled?: () => void;
 }
 
 export function SettleUpDialog({
@@ -34,6 +35,7 @@ export function SettleUpDialog({
   debt,
   groupId,
   currency,
+  onSettled,
 }: SettleUpDialogProps) {
   const t = useTranslations("settlements");
   const router = useRouter();
@@ -60,6 +62,10 @@ export function SettleUpDialog({
     toast.success(t("settlementRecorded"));
     setNote("");
     onOpenChange(false);
+    // Hide this pair's "Settle up" button immediately — router.refresh() is
+    // async and the stale server-computed debt list would otherwise still
+    // show it as outstanding, inviting a second (duplicate) settlement.
+    onSettled?.();
     router.refresh();
   }
 

@@ -197,6 +197,7 @@
     "recording": "Vastleggen...",
     "markAsSettled": "Markeren als verrekend",
     "settlementRecorded": "Verrekening vastgelegd!",
+    "settlementDeleted": "Verrekening verwijderd",
     "staleRatesWarning": "Wisselkoersen konden voor sommige datums niet worden opgehaald. Waarden kunnen bij benadering zijn."
   },
   "settings": {

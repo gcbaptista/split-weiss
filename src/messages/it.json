@@ -197,6 +197,7 @@
     "recording": "Registrazione...",
     "markAsSettled": "Segna come saldato",
     "settlementRecorded": "Saldo registrato!",
+    "settlementDeleted": "Saldo eliminato",
     "staleRatesWarning": "I tassi di cambio non sono stati recuperati per alcune date. I valori potrebbero essere approssimativi."
   },
   "settings": {

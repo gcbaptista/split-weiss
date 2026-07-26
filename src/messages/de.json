@@ -197,6 +197,7 @@
     "recording": "Wird erfasst...",
     "markAsSettled": "Als abgerechnet markieren",
     "settlementRecorded": "Abrechnung erfasst!",
+    "settlementDeleted": "Abrechnung gelöscht",
     "staleRatesWarning": "Wechselkurse konnten für einige Daten nicht abgerufen werden. Werte können ungefähr sein."
   },
   "settings": {
