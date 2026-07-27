@@ -197,6 +197,7 @@
     "recording": "Recording...",
     "markAsSettled": "Mark as settled",
     "settlementRecorded": "Settlement recorded!",
+    "settlementDeleted": "Settlement deleted",
     "staleRatesWarning": "Exchange rates could not be fetched for some dates. Values may be approximate."
   },
   "settings": {

@@ -197,6 +197,7 @@
     "recording": "Registrando...",
     "markAsSettled": "Marcar como liquidado",
     "settlementRecorded": "¡Liquidación registrada!",
+    "settlementDeleted": "Liquidación eliminada",
     "staleRatesWarning": "No se pudieron obtener las tasas de cambio para algunas fechas. Los valores pueden ser aproximados."
   },
   "settings": {

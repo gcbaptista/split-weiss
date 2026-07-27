@@ -1,9 +1,12 @@
 "use client";
 import Decimal from "decimal.js";
-import { ArrowRight, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { toast } from "sonner";
 
+import { createSettlement, deleteSettlement } from "@/app/actions/settlement.actions";
 import { SettleUpDialog } from "@/components/settlements/settle-up-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
@@ -43,8 +46,21 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
   } = useGroupContext();
   const t = useTranslations("settlements");
   const tc = useTranslations("common");
+  const router = useRouter();
   const [expandedPairs, setExpandedPairs] = useState<Set<string>>(new Set());
   const [selectedDebt, setSelectedDebt] = useState<DebtItem | null>(null);
+  // Pairs just settled locally, hidden as outstanding until the server-computed
+  // `debts` prop catches up — prevents a slow refresh from leaving the "Settle
+  // up" button active long enough to be tapped twice for the same debt.
+  const [settlingKeys, setSettlingKeys] = useState<Set<string>>(new Set());
+  const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(new Set());
+  // Once the server-computed `debts` prop refreshes, it already reflects any
+  // settlements just recorded — drop the optimistic overrides in the same render.
+  const [prevDebts, setPrevDebts] = useState(debts);
+  if (prevDebts !== debts) {
+    setPrevDebts(debts);
+    setSettlingKeys(new Set());
+  }
 
   // Build pair map
   const pairMap = new Map<string, PairData>();
@@ -58,7 +74,7 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
       toUserId: d.toUserId,
       fromName: d.fromName,
       toName: d.toName,
-      debt: d,
+      debt: settlingKeys.has(key) ? null : d,
       settlements: [],
     });
   }
@@ -66,6 +82,7 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
   // Add settlements to existing pairs or create new ones
   const userMap = new Map(members.map((m) => [m.id, m]));
   for (const s of settlements) {
+    if (pendingDeleteIds.has(s.id)) continue;
     const key = `${s.fromUserId}:${s.toUserId}`;
     const existing = pairMap.get(key);
     if (existing) {
@@ -126,6 +143,52 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
       return next;
     });
   };
+
+  async function handleDeleteSettlement(settlement: SettlementHistoryClient) {
+    setPendingDeleteIds((prev) => new Set(prev).add(settlement.id));
+
+    const result = await deleteSettlement(settlement.id);
+    if (result.error) {
+      toast.error(result.error);
+      setPendingDeleteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(settlement.id);
+        return next;
+      });
+      return;
+    }
+
+    toast(t("settlementDeleted"), {
+      action: {
+        label: tc("undo"),
+        onClick: async () => {
+          const undoResult = await createSettlement({
+            groupId,
+            fromUserId: settlement.fromUserId,
+            toUserId: settlement.toUserId,
+            amount: settlement.amount,
+            currency: settlement.currency,
+            date: settlement.date.toISOString().split("T")[0],
+            note: settlement.note ?? undefined,
+          });
+          if (undoResult.error) {
+            toast.error(undoResult.error);
+          } else {
+            setPendingDeleteIds((prev) => {
+              const next = new Set(prev);
+              next.delete(settlement.id);
+              return next;
+            });
+            toast.success(tc("restored"));
+            router.refresh();
+          }
+        },
+      },
+      duration: 5000,
+    });
+
+    router.refresh();
+  }
 
   return (
     <>
@@ -226,9 +289,18 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
                               )}
                             </p>
                           </div>
-                          <span className="text-sm font-medium tabular-nums text-green-600 dark:text-green-400 shrink-0">
-                            {formatCurrency(s.amount.toString(), s.currency)}
-                          </span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-sm font-medium tabular-nums text-green-600 dark:text-green-400">
+                              {formatCurrency(s.amount.toString(), s.currency)}
+                            </span>
+                            <button
+                              onClick={() => handleDeleteSettlement(s)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                              aria-label={tc("delete")}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -257,6 +329,11 @@ export function SettlementPairs({ debts, settlements }: SettlementPairsProps) {
         }
         groupId={groupId}
         currency={currency}
+        onSettled={() => {
+          if (!selectedDebt) return;
+          const key = `${selectedDebt.fromUserId}:${selectedDebt.toUserId}`;
+          setSettlingKeys((prev) => new Set(prev).add(key));
+        }}
       />
     </>
   );

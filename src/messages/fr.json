@@ -197,6 +197,7 @@
     "recording": "Enregistrement...",
     "markAsSettled": "Marquer comme réglé",
     "settlementRecorded": "Règlement enregistré !",
+    "settlementDeleted": "Règlement supprimé",
     "staleRatesWarning": "Les taux de change n'ont pas pu être récupérés pour certaines dates. Les valeurs peuvent être approximatives."
   },
   "settings": {

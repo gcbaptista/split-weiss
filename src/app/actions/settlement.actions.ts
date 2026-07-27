@@ -44,6 +44,41 @@ export async function createSettlement(formData: unknown): Promise<ActionResult<
   }
 }
 
+export async function deleteSettlement(settlementId: string): Promise<ActionResult<Settlement>> {
+  const settlement = await db.settlement.findUnique({ where: { id: settlementId } });
+  if (!settlement) return { error: "Settlement not found" };
+
+  if (!(await canAccessGroup(settlement.groupId))) {
+    return { error: "Can't access this group" };
+  }
+
+  try {
+    const actorId = await getCurrentMemberId(settlement.groupId);
+    await db.$transaction(async (tx) => {
+      await tx.settlement.delete({ where: { id: settlementId } });
+      await tx.groupAuditLog.create({
+        data: {
+          groupId: settlement.groupId,
+          actorId,
+          action: "SETTLEMENT_DELETED",
+          details: {
+            settlementId: settlement.id,
+            fromUserId: settlement.fromUserId,
+            toUserId: settlement.toUserId,
+            amount: settlement.amount.toString(),
+            currency: settlement.currency,
+          },
+        },
+      });
+    });
+    revalidateGroupPages(settlement.groupId);
+    return { data: settlement };
+  } catch (e) {
+    console.error("deleteSettlement failed", e);
+    return { error: "Failed to delete settlement" };
+  }
+}
+
 export async function getGroupSettlements(groupId: string) {
   if (!(await canAccessGroup(groupId))) {
     return [];
